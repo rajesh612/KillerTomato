@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
+          xmlns:h="http://java.sun.com/jsf/html"
+          xmlns:f="http://java.sun.com/jsf/core"
+          xmlns:af="http://xmlns.oracle.com/adf/faces"
+          xmlns:afh="http://xmlns.oracle.com/adf/faces/html">
+  <jsp:directive.page contentType="text/html;charset=windows-1252"/>
+  <f:view>
+    <afh:html>
+      <afh:head title="request_info">
+        <meta http-equiv="Content-Type"
+              content="text/html; charset=windows-1252"/>
+      </afh:head>
+      <afh:body>
+        <h:form>
+          <af:panelPage>
+            <f:facet name="menu1">
+              <af:menuTabs var="menuTab" id="menuTabsArea"
+                           value="#{menuModel.model}">
+                <f:facet name="nodeStamp">
+                  <af:commandMenuItem text="#{menuTab.label}"
+                                      action="#{menuTab.getOutcome}"
+                                      rendered="#{menuTab.shown and 
+                                                  menuTab.type=='default'}"/>
+                </f:facet>
+              </af:menuTabs>
+            </f:facet>
+            <f:facet name="menuGlobal">
+              <af:menuButtons var="menuButton" id="menuButtsArea"
+                              value="#{menuModel.model}">
+                <f:facet name="nodeStamp">
+                  <af:commandMenuItem text="#{menuButton.label}"
+                                      action="#{menuButton.getOutcome}"
+                                      icon="#{menuButton.icon}"
+                                      rendered="#{menuButton.type=='global'}"
+                                      type="global"/>
+                </f:facet>
+              </af:menuButtons>
+            </f:facet>
+            <f:facet name="branding">
+              <af:objectImage source="/myicons/oracle_logo.gif"/>
+            </f:facet>
+            <f:facet name="brandingApp">
+              <af:objectImage source="/myicons/mapviewer.gif"/>
+            </f:facet>
+            <f:facet name="appCopyright">
+              <af:outputText value="#{mvbundle.copyright}"/>
+            </f:facet>
+            <f:facet name="appPrivacy"/>
+            <f:facet name="appAbout"/>
+            <af:objectSpacer width="10" height="10"/>
+            <af:panelGroup>
+              <f:verbatim>
+                <iframe
+                    name="iframe"
+                    width="80%"
+                    height="1000"
+                    src="/mapviewer/inforeq.html"
+                    frameborder="0"
+                    scrolling="auto" >
+                  </iframe>
+              </f:verbatim>
+            </af:panelGroup>
+            <f:facet name="menu2">
+              <af:menuBar var="menuSubTab" id="menuSubTabsArea" startDepth="1"
+                          value="#{menuModel.model}">
+                <f:facet name="nodeStamp">
+                  <af:commandMenuItem text="#{menuSubTab.label}"
+                                      action="#{menuSubTab.getOutcome}"/>
+                </f:facet>
+              </af:menuBar>
+            </f:facet>
+            <f:facet name="brandingAppContextual">
+              <af:outputFormatted value="Location, Location, Location"
+                                  styleUsage="inContextBranding"/>
+            </f:facet>
+          </af:panelPage>
+        </h:form>
+      </afh:body>
+    </afh:html>
+  </f:view>
+</jsp:root>

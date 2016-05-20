@@ -1,0 +1,116 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html" charset="UTF-8">
+<TITLE>Map Cache Server/Map Client</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+  var mapview;
+  var themebasedfoi ;
+  
+  function on_load_mapview() 
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.7706;
+    var mapZoom      =  2;       
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+    mapview.setCenter(mpoint);   
+    mapview.setZoomLevel(mapZoom);    
+    
+    themebasedfoi = new MVThemeBasedFOI('themebasedfoi','mvdemo.customers');
+    
+    themebasedfoi.setBoundingTheme(true);
+    mapview.addThemeBasedFOI(themebasedfoi);
+    mapview.addNavigationPanel('west');
+    mapview.display();
+  }
+  
+  function setVisible(item)
+  {
+    var themebasedfoi = mapview.getThemeBasedFOI(item.value);	  		
+    themebasedfoi.setVisible(!themebasedfoi.isVisible());
+  }
+
+</script>
+</head>
+
+<body onload= javascript:on_load_mapview() >
+   <h3>Oracle Maps example - Bounding theme</h3>
+   <div id="map" style=";width: 600px; height: 500px;"></div> 
+   
+   <div id="demo" style="">
+      <ul>  
+        <LI><INPUT TYPE="checkbox" value="themebasedfoi" onclick="setVisible(this)" checked/>customers  
+        <LI><a href="javascript:themebasedfoi.zoomToTheme()">Click here to view all FOIs of the CUSTOMERS theme</a>
+        <LI><a href="javascript:themebasedfoi.centerToTheme()">Click here to recenter to map at the center of the theme</a>
+      </ul>
+   </div> 
+   
+<h3>Instructions</h3>
+   Bounding theme can be used to tell the map client to automatically adjust 
+   the map center and zoom level so that the map covers 
+   the bounding box of all the features of a specified theme (the "bounding" theme).
+   This occurs typically during the map intialization stage.
+   <BR></BR>
+   In addition to boudning them, client application can also 
+   directly invoke the method MVThemeBasedFOI.zoomToTheme() to achieve the same 
+   goal, even after map has been displayed. For example, if you zoom in a couple of
+   times on the above map, you will no longer see all the customers (red dots)
+   of the CUSTOMER theme. If you wish to snap the map back to an area that
+   lets you view all the customers at the same time, you can click the above
+   link to do so.
+
+<h3>Source code</h3>
+The following code shows how to set a theme-based FOI layer as the bounding
+theme.
+<blockquote>
+<pre>
+  var mapview;
+  var themebasedfoi ;
+  
+  function on_load_mapview() 
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.7706;
+    var mapZoom      =  5;       
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+    mapview.setCenter(mpoint);   
+    mapview.setZoomLevel(mapZoom);    
+    
+    themebasedfoi = new MVThemeBasedFOI('themebasedfoi','mvdemo.customers');
+    <font color="#ff0000">
+    themebasedfoi.setBoundingTheme(true);
+    </font>
+    mapview.addThemeBasedFOI(themebasedfoi);
+    mapview.addNavigationPanel('west');
+    mapview.display();
+  }
+  
+  function setVisible(item)
+  {
+    var themebasedfoi = mapview.getThemeBasedFOI(item.value);	  		
+    themebasedfoi.setVisible(!themebasedfoi.isVisible());
+  }
+</pre>
+</blockquote>
+
+When you click on the HTML link to zoom to the theme, this is what's happening
+behind the scene:
+<blockquote>
+<pre>
+&lt;a href="<font color="#ff0000">javascript:themebasedfoi.zoomToTheme()</font>"&gt;click here to view all FOIs of the CUSTOMERS theme&lt;/a&gt;
+</pre>
+</blockquote>
+
+</body>
+</html>
+
+

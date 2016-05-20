@@ -1,0 +1,106 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html" charset=UTF-8">
+<TITLE>Map Cache Server/Map Client</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+  var themebasedfoi;
+  
+  function showMap() 
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.7706;
+    var mapZoom      =  4;       
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    var mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+    mapview.setCenter(mpoint);   
+    mapview.setZoomLevel(mapZoom);    
+    
+    themebasedfoi = new MVThemeBasedFOI('themebasedfoi1','mvdemo.customers');
+    
+    themebasedfoi.setBringToTopOnMouseOver(true);
+    mapview.addThemeBasedFOI(themebasedfoi);
+          
+    mapview.display();
+  }
+  
+  function getQueryResult()
+  {
+    var obj = document.getElementById("obj");
+    
+    var attrs = themebasedfoi.getFOIData()[obj.value].attrs;
+    var imgurl = themebasedfoi.getFOIData()[obj.value].imgurl;
+    alert("Attrs:" + attrs + "\n imgURL:" + imgurl) ;
+  }                     
+</script>
+</head>
+
+<body onload="javascript:showMap()" >
+<H3>Oracle Maps example - get FOI properties </h3>
+
+<a href="javascript:getQueryResult()">Show properties</a> of the FOI with ID: <input id="obj" type=text value="0">
+
+   <div id="map" style="left:0px; top:10px; width:100%; height:60%"></div>
+
+<HR>
+<h3>Instructions</h3>
+  This demo shows how to obtain a specific FOI's properties that are returned as part of the
+  database query for a Theme based FOI layer. Each FOI displayed on the map has
+  a unique ID associated with it. Application can use this ID to get the FOI 
+  object and its associated properties.
+  <BR>
+  In the above text field, enter an id such as 5 or 7, and then click the 'Show properties' link.
+<h3>Source code</h3>
+Here is the JavaScript code.
+<blockquote>
+  <pre>
+	  var themebasedfoi;
+	  
+	  function showMap() 
+	  {	
+		var baseURL  = "http://"+document.location.host+"/mapviewer";
+		var mapCenterLon = -122.45;
+		var mapCenterLat =  37.7706;
+		var mapZoom      =  4;       
+		var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+		var mapview = new MVMapView(document.getElementById("map"), baseURL);
+		mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+		mapview.setCenter(mpoint);   
+		mapview.setZoomLevel(mapZoom);    
+		
+		themebasedfoi = new MVThemeBasedFOI('themebasedfoi1','mvdemo.customers');
+		
+		themebasedfoi.setBringToTopOnMouseOver(true);
+		mapview.addThemeBasedFOI(themebasedfoi);
+			  
+		mapview.display();
+	  }
+	  <font color="#ff0000">
+	  function getQueryResult()
+	  {
+		var obj = document.getElementById("obj");
+		
+		var attrs = themebasedfoi.getFOIData()[obj.value].attrs;
+		var imgurl = themebasedfoi.getFOIData()[obj.value].imgurl;
+		alert("Attrs:" + attrs + "\n imgURL:" + imgurl) ;
+	  }                     
+	  </font>
+  </pre>
+</blockquote>
+
+And here is how the function <I>getQueryResult</I> is wired to the HTML link 'Show Properties'
+and the ID field.
+<blockquote>
+	<pre>
+      &lt;a href="javascript:getQueryResult()"&gt;Show properties&lt;/a&gt; of the FOI with ID: &lt;input id="obj" type=text value="0"&gt;	
+	</pre>
+</blockquote>
+</body>
+</html>
+
+

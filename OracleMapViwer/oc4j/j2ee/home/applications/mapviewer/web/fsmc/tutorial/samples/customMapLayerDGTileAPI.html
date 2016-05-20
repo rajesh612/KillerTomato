@@ -1,0 +1,195 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Custom Map Tile Layer</TITLE>
+<link rel="stylesheet" type="text/css" href="/mapviewer/fsmc/tutorial/t.css" />
+<style type="text/css">
+ #map 
+  {
+      width: 100%;
+      height: 100%;
+      border: 2px solid black;
+  }
+</style>
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+<script language="Javascript" src="http://www.digitalglobe.com/js/jImageConnect.js"></script>
+<!--<script language="Javascript" src="jImageConnect.js"></script>-->
+
+ 
+<script language=javascript>
+  var mapConfig = 
+    {mapTileLayer:"custom_DG_tiles",
+     format:"JPEG",
+     coordSys:{srid:8307,type:"GEODETIC",distConvFactor:0.0, minX:-180.0,minY:-90.0,maxX:180.0,maxY:90.0}
+     //coordSys:{srid:53004,type:"PROJECTED",distConvFactor:1.0, minX:-2.0015086E7,minY:-2.0015086E7,maxX:2.0015086E7,maxY:2.0015086E7}
+     //coordSys:{srid:54004,type:"PROJECTED",distConvFactor:1.0, minX:-2.0037508E7,minY:-2.0037508E7,maxX:2.0037508E7,maxY:2.0037508E7}
+    };
+    
+  var baseURL  = "http://"+document.location.host+"/mapviewer";
+
+	//Note: you must enter valid key, clientId, and appId credentials
+	// that you can request from Digital Globe's site for this purpose
+	// http://dgl.us.neolane.net/res/dgl/survey/Oracle_Home.jsp?deliveryId=7208644
+	
+  var JIObj = new jImageConnect(
+  {
+
+   // geo-constrained acct. County of San Francisco
+   'key':'cb53ivIuHW1QCdsM8AVame8cHIQi3bUR',
+   'clientId':'2576000995', 
+   'objectName':'JIObj', 'appId':'020100S',
+ 'tileProjection':'latlon'});
+// 'tileProjection':'mercator-spheroid'});
+// 'tileProjection':'mercator-ellipsoid'});
+  mapConfig.zoomLevels = JIObj.getZoomLevels();
+  
+  function showMap() 
+  { 
+    var mapview = new MVMapView(document.getElementById("map"), baseURL);
+    var dgBasemap = new MVCustomMapTileLayer(mapConfig, function (tx,ty,tw,th,level) { 
+					var viewableAoi = new AreaOfInterest({'top':(ty+th), 'left':tx, 'bottom':ty, 'right':(tx+tw)});
+					return(JIObj.getTileUrl(viewableAoi, level, 'a'))});
+    mapview.addMapTileLayer(dgBasemap);
+    mapview.setCenter(MVSdoGeometry.createPoint(-122.5,37.75,8307));
+    mapview.setZoomLevel(12);
+    mapview.addNavigationPanel() ;  
+    mapview.addCopyRightNote('<font size="4" color="white">&copy; 2009 DigitalGlobe, Navteq</font>'); 
+    
+    // add states boundaries and highways as whole image foi themes
+    var countiesFOI;
+    var highwaysFOI;
+    countiesFOI = new MVThemeBasedFOI("counties from db", "mvdemo.theme_demo_counties");
+    countiesFOI.setMaxWholeImageLevel(16);
+    countiesFOI.setClickable(false);
+    countiesFOI.enableLabels(true);
+    mapview.addThemeBasedFOI(countiesFOI);
+
+    highwaysFOI = new MVThemeBasedFOI("highways from db", "mvdemo.theme_demo_highways");
+    highwaysFOI.setMaxWholeImageLevel(18);
+    highwaysFOI.setClickable(false);
+    highwaysFOI.enableLabels(true);
+    highwaysFOI.setMinVisibleZoomLevel(9);
+    mapview.addThemeBasedFOI(highwaysFOI);
+
+ 
+    mapview.display();
+  }
+  
+
+</script>
+</head>
+
+<body onload="javascript:showMap()">
+<h2>Oracle Maps example - DigitalGlobe imagery tile layer</h2>
+
+<table width="100%" height="70%">
+<tr>
+<td width="60%">
+   <div id="map" style="left:10px; top:10px;width:95%; height: 95%"></div> 
+</td>
+</tr>
+</table>
+<div style="left:10px; top:10px;margin-left:1%;margin-right:10%;">
+<H3>Instructions</H3>
+
+<p>
+This demo shows the use of MVCustomMapTileLayer to display external 
+custom map tiles served directly from a web based map tile 
+server. It uses the DigitalGlobe service and jImageConnect API.  
+</p>
+
+<p>
+The evaluation key used here is geo-contrained to San Francisco County, California. 
+So you will get error messages or blank tiles if you zoom out or pan outside the area.
+Sign up for a regular evaluation key from <a  
+href ="http://dgl.us.neolane.net/res/dgl/survey/Oracle_Home.jsp?deliveryId=7208644">
+<b>DigitalGlobe</b></a> in order to use this service's functionality in your own prototype
+or application.
+</p>
+   
+<p>In order to let the javascript map client know how to assemble and display
+map tiles, you must provide the map tile layer definition that defines map 
+coordinate system, zoom levels and tiling rules when creating the MVCustomMapTileLayer
+object for the external map tile layer.</p>
+
+Map tile layer definition is defined as a javascript object as follows. Please refer to
+the <a href="../../apidoc/symbols/MVMapView.html#!s!addMapTileLayerDefinition">API doc</a> for more information.  
+
+<pre>
+  var mapConfig = 
+    {mapTileLayer:"custom_DG_tiles",
+     format:"JPEG",
+     coordSys:{
+              srid:54004,type:"PROJECTED",distConvFactor:1.0, 
+              minX:-2.0037508E7,minY:-2.0037508E7,maxX:2.0037508E7,maxY:2.0037508E7}
+    };
+    ...
+    // since the zoom levels are defined by DigitalGlobe get the definition
+    // from the jImageConnect object
+    mapConfig.zoomLevels = JIObj.getZoomLevels();  
+</pre>
+
+<p>The javascript map client calculates the map tiles that are needed to display
+the map and their positioning based on the map tile layer definition information. It then
+calls a tileURLProvider function defined by the application to get the URLs of the 
+map tiles that it needs. In this example, the tileURLProvider function is 
+the anonymous function that in turn calls DigitalGlobe's implementation of getTileURL
+in their jImageConnect library, i.e. JIObj.getTileUrl(viewableAoi, level, 'a').
+Please refer to the <a href="../../apidoc/symbols/MVCustomMapTileLayer.html">API doc</a> for more details
+on the Oracle Maps MVCustomMapTileLayer interface and DigitalGlobe's documentation 
+for details on the jImageConnect API.
+<pre>
+var dgBasemap = new MVCustomMapTileLayer(mapConfig, 
+          function (tx,ty,tw,th,level) { 
+             var viewableAoi = new AreaOfInterest({'top':(ty+th), 'left':tx, 'bottom':ty, 'right':(tx+tw)});
+             return(JIObj.getTileUrl(viewableAoi, level, 'a'))
+             }
+        );
+</pre>
+
+<H3>Source code</H3>
+<blockquote>
+<pre>
+
+  <font color="#ff0000">
+  var mapConfig = 
+    {mapTileLayer:"custom_DG_tiles",
+     format:"JPEG",
+     coordSys:{
+              srid:54004,type:"PROJECTED",distConvFactor:1.0, 
+              minX:-2.0037508E7,minY:-2.0037508E7,maxX:2.0037508E7,maxY:2.0037508E7}
+    };
+
+  var baseURL  = "http://"+document.location.host+"/mapviewer";
+
+  var JIObj = new jImageConnect(
+  {'key':'cb53ivIuHW1QCdsM8AVame8cHIQi3bUR',
+   'clientId':'2576000995', 
+   'objectName':'JIObj', 'appId':'020100S'});
+  mapConfig.zoomLevels = JIObj.getZoomLevels();
+  </font>
+  
+  function showMap() 
+  { 
+  <font color="#ff0000">
+    var mapview = new MVMapView(document.getElementById("map"), baseURL);
+    var dgBasemap = new MVCustomMapTileLayer(mapConfig, function (tx,ty,tw,th,level) { 
+          var viewableAoi = new AreaOfInterest({'top':(ty+th), 'left':tx, 'bottom':ty, 'right':(tx+tw)});
+          return(JIObj.getTileUrl(viewableAoi, level, 'a'))});
+  </font>
+    mapview.addMapTileLayer(dgBasemap);
+    mapview.setCenter(MVSdoGeometry.createPoint(-122.5,37.75,8307));
+    mapview.setZoomLevel(10);
+    mapview.addNavigationPanel() ;    
+    mapview.display();
+  }
+</pre>
+</blockquote>
+</div>
+</body>
+
+</html>
+
+
+

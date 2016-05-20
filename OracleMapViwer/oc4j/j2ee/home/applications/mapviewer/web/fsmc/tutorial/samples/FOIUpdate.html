@@ -1,0 +1,143 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Map Cache Server/Map Client</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+  var baseURL = "http://"+document.location.host+"/mapviewer";
+  var mapview;
+  var foi1, foi2, foi3;
+  
+  function showMap()
+  {	
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);    
+    var mpoint1 = MVSdoGeometry.createPoint( -122.58,37.8, 8307);
+    foi1 = MVFOI.createMarkerFOI("1", mpoint1, "images/circle.gif", 62, 61);
+    mapview.addFOI(foi1);
+    
+    mpoint1 = MVSdoGeometry.createPoint( -122.62,37.78, 8307);
+    foi2 = MVFOI.createMarkerFOI("2", mpoint1, "images/small_circle.png",10,10);
+    mapview.addFOI(foi2);
+    
+    mpoint1 = MVSdoGeometry.createPoint( -122.5,37.78, 8307);
+    foi3 = new MVFOI("3", mpoint1, "mvdemo.m.circle", null, 40,40);
+    mapview.addFOI(foi3);
+    
+    mapview.display();                                        
+  }
+  
+  function changeFOIImage()
+  {	
+    foi1.updateImageURL("images/small_circle.png",10,10);  
+  }
+
+  function changeFOIGeometry()
+  { 
+    foi1.updateGeometry(MVSdoGeometry.createPoint( -122.58,37.78, 8307));  
+  }
+  
+  function changeFOIStyle()
+  { 
+    foi3.setRenderingStyle("mvdemo.m.star");  
+    foi3.setWidth(20);
+    foi3.setHeight(20);
+    foi3.reDraw();
+  }
+  
+  function getFOIGeometry()
+  {
+    alert(foi1.getGeometry()) ;
+  }
+</script>
+</head>
+
+<body onload="javascript:showMap();">
+<h3>Oracle Maps example - Updaing FOIs with new location, rendering style and marker image</h3>
+<a href="javascript:changeFOIImage();">Change FOI image URL</a><br>
+<a href="javascript:changeFOIGeometry();">Change FOI location</a><br>
+<a href="javascript:changeFOIStyle();">Change FOI style</a><br>
+<a href="javascript:getFOIGeometry();">Get FOI location</a><br>
+      <div id="map" style="left:0px; top:10px; width:100%; height:60%"></div> 
+ 
+<HR/>
+<H3>Instructions</H3>
+This demo shows how to update FOIs that have been already displayed with new location, rendering style or marker image.
+
+<H3>Source code</H3>
+The javaScript code for this demo is shown below.
+<blockquote>
+<pre>
+  var baseURL = "http://"+document.location.host+"/mapviewer";
+  var mapview;
+  var foi1, foi2, foi3;
+  function showMap()
+  { 
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);    
+    var mpoint1 = MVSdoGeometry.createPoint( -122.58,37.8, 8307);
+    foi1 = MVFOI.createMarkerFOI("1", mpoint1, "images/circle.gif", 62, 61);
+    mapview.addFOI(foi1);
+    
+    mpoint1 = MVSdoGeometry.createPoint( -122.62,37.78, 8307);
+    foi2 = MVFOI.createMarkerFOI("2", mpoint1, "images/small_circle.png",10,10);
+    mapview.addFOI(foi2);
+    
+    mpoint1 = MVSdoGeometry.createPoint( -122.5,37.78, 8307);
+    foi3 = new MVFOI("3", mpoint1, "mvdemo.m.circle", null, 40,40);
+    mapview.addFOI(foi3);
+    
+    mapview.display();                                        
+  }
+  
+  function changeFOIImage()
+  { 
+  <font color="#ff0000">
+    foi1.updateImageURL("images/small_circle.png",10,10);  
+  </font>
+  }
+
+  function changeFOIGeometry()
+  { 
+  <font color="#ff0000">
+    foi1.updateGeometry(MVSdoGeometry.createPoint( -122.58,37.78, 8307));  
+  </font>
+  }
+  
+  function changeFOIStyle()
+  { 
+  <font color="#ff0000">
+    foi3.setRenderingStyle("mvdemo.m.star");  
+    foi3.setWidth(20);
+    foi3.setHeight(20);
+    foi3.reDraw();
+  </font>
+  }
+  
+  function getFOIGeometry()
+  {
+  <font color="#ff0000">
+    alert(foi1.getGeometry()) ;
+  </font>
+  }
+</pre>
+</blockquote>
+</body>
+</html>
+
+

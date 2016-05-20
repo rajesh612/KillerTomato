@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="1.2"
+          xmlns:h="http://java.sun.com/jsf/html"
+          xmlns:f="http://java.sun.com/jsf/core"
+          xmlns:af="http://xmlns.oracle.com/adf/faces"
+          xmlns:afh="http://xmlns.oracle.com/adf/faces/html">
+  <jsp:text>
+    <![CDATA[ <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> ]]>
+  </jsp:text>
+  <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+  <f:view>
+    <afh:html>
+      <afh:head title="view map tile layer details">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+      </afh:head>
+      <afh:body>
+        <h:form>
+          <af:panelPage title="Map tile layer - details">
+            <f:facet name="menu1"/>
+            <f:facet name="menuGlobal"/>
+            <f:facet name="branding"/>
+            <f:facet name="brandingApp">
+              <af:objectImage source="/myicons/mapviewer_admin.gif"/>
+            </f:facet>
+            <f:facet name="appCopyright"/>
+            <f:facet name="appPrivacy"/>
+            <f:facet name="appAbout"/>
+            <af:panelGroup>
+              <af:panelButtonBar>
+                <af:commandButton text="Ok" action="menu2_managemcs"/>
+              </af:panelButtonBar>
+              <af:objectSpacer width="10" height="10"/>
+              <af:panelBox text="Original XML definition">
+                <af:inputText rows="35"
+                              columns="90" value="#{adminMCIs.xmlConfig}"
+                              readOnly="false"/>
+              </af:panelBox>
+              <af:objectSpacer width="10" height="10"/>
+              <af:panelBox text="Runtime settings">
+                <af:inputText label="Tile storage:"
+                              value="#{adminMCIs.selectedCache.cacheRoot}"/>
+              </af:panelBox>
+            </af:panelGroup>
+          </af:panelPage>
+        </h:form>
+      </afh:body>
+    </afh:html>
+  </f:view>
+</jsp:root>

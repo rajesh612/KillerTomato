@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+    version="2.4">
+
+  <!-- Add servlets below -->
+
+  
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
+
+  <!-- Peek -->
+
+    <servlet>
+        <servlet-name>Peek</servlet-name>
+        <servlet-class>oracle.oc4j.peek.Peek</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Peek</servlet-name>
+        <url-pattern>/peek</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Peek</servlet-name>
+        <url-pattern>/peek/*</url-pattern>
+    </servlet-mapping>
+
+    <security-role>
+        <role-name>peek-user</role-name>
+    </security-role>
+
+    <!--Peek-login-->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Peek</web-resource-name>
+            <url-pattern>/peek/*</url-pattern>
+            <http-method>GET</http-method>
+            <http-method>POST</http-method>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>peek-user</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <login-config>
+        <auth-method>BASIC</auth-method>
+    </login-config>
+    <!--Peek-login-end-->
+
+    
+<!-- The examples are not installed because many of them do not meet the Oracle
+     Secure Coding Standards and may not conform to your organization's secure coding standards. 
+     They will introduce significant security vulnerabilities. They can nonetheless be installed 
+     by invoking the following command: 
+         "java -jar ExampleInstaller.jar install" 
+     from the j2ee/home/default-web-app directory.
+     Such a deployment may be reasonable in testing, demonstration, or development environments but 
+     is strongly discouraged in other environments. -->
+
+</web-app>

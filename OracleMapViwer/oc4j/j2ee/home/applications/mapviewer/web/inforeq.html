@@ -1,0 +1,26 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=windows-1252"></meta>
+    <title>inforeq</title>
+  </head>
+  <body>
+ <Strong> <Font color="#ff0000"> For security reason, info request is now disabled by default. 
+  You must modify MapViewer's config file in order to enable this feature. </Font> </Strong> <p>
+
+  <Strong> XML Info Request: </Strong> You can use the following text area to submit 
+  an XML info request to the MapViewer. Make sure the datasource and other parameters
+  are correct.
+  
+  <FORM action="omserver" method=post>
+  <INPUT type=submit value=Submit> <p>
+<TEXTAREA cols=70 name=xml_request rows=5>
+  &lt;?xml version="1.0" standalone="yes"?&gt;
+  &lt;info_request datasource="mvdemo"
+                   format="strict"&gt;
+          SELECT city, pop90 population, state_abrv state FROM cities
+  &lt;/info_request&gt;
+</TEXTAREA> <BR></FORM>
+
+  </body>
+</html>

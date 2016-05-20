@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="1.2"
+          xmlns:h="http://java.sun.com/jsf/html"
+          xmlns:f="http://java.sun.com/jsf/core"
+          xmlns:af="http://xmlns.oracle.com/adf/faces"
+          xmlns:afh="http://xmlns.oracle.com/adf/faces/html">
+  <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+  <f:view>
+    <afh:html>
+      <afh:head title="OracleAS MapViewer Admin">
+        <meta http-equiv="Content-Type"
+              content="text/html; charset=windows-1252"/>
+      </afh:head>
+      <afh:body>
+      <h:form>
+        <af:panelPage>
+          <f:facet name="menu1">
+            <af:menuTabs id="menuTabsArea" value="#{menuModel.model}"
+                         var="menuTab">
+              <f:facet name="nodeStamp">
+                <af:commandMenuItem text="#{menuTab.label}"
+                                    action="#{menuTab.getOutcome}"
+                                    type="default"
+                                    rendered="#{menuTab.shown and                                                    menuTab.type=='default'                                                   }"/>
+              </f:facet>
+            </af:menuTabs>
+          </f:facet>
+          <f:facet name="menuGlobal">
+            <af:menuButtons var="menuButton" id="menuButtsArea"
+                            value="#{menuModel.model}">
+              <f:facet name="nodeStamp">
+                <af:commandMenuItem text="#{menuButton.label}"
+                                    action="#{menuButton.getOutcome}"
+                                    icon="#{menuButton.icon}"
+                                    rendered="#{menuButton.type=='global'}"
+                                    type="global"/>
+              </f:facet>
+            </af:menuButtons>
+          </f:facet>
+          <f:facet name="branding">
+            <af:objectImage source="/myicons/oracle_logo.gif"/>
+          </f:facet>
+          <f:facet name="brandingApp">
+            <af:objectImage source="/myicons/mapviewer_admin.gif"/>
+          </f:facet>
+          <f:facet name="appCopyright">
+            <af:outputText value="#{mvbundle.copyright}"/>
+          </f:facet>
+          <f:facet name="appPrivacy"/>
+          <f:facet name="appAbout"/>
+          <f:facet name="brandingAppContextual">
+            <af:outputFormatted value="#{mvbundle.loclocloc}"
+				styleUsage="inContextBranding"/>
+          </f:facet>
+          <f:facet name="menu2">
+            <af:menuBar var="menuSubTab" id="menuSubTabsArea" startDepth="1"
+                        value="#{menuModel.model}">
+              <f:facet name="nodeStamp">
+                <af:commandMenuItem text="#{menuSubTab.label}"
+                                    action="#{menuSubTab.getOutcome}"/>
+              </f:facet>
+            </af:menuBar>
+          </f:facet>
+            <f:facet name="menu3">
+              <af:menuList id="menuListArea" var="menuListItem" startDepth="2"
+                           value="#{menuModel.model}">
+                <f:facet name="nodeStamp">
+                  <af:commandMenuItem text="#{menuListItem.label}"
+                                      action="#{menuListItem.getOutcome}"/>
+                </f:facet>
+              </af:menuList>
+            </f:facet>
+            <af:panelGroup layout="vertical">
+              <af:objectSpacer width="10" height="15"/>
+              <af:panelTip>
+                <af:outputFormatted value="You must first specify where the map tile images will come from. Choose Internal if this MapViewer instance will create them."/>
+              </af:panelTip>
+              <af:selectOneChoice label="Select type of map source:"
+                                  value="#{newMapCache.mapSource}">
+                <af:selectItem label="Internal" value="Internal"/>
+                <af:selectItem label="External" value="External"/>
+                <af:selectItem label="Bing Maps" value="bing"/>
+                <af:selectItem label="Google Maps" value="google"/>
+              </af:selectOneChoice>
+              <af:objectSpacer width="10" height="10"/>
+              <af:commandButton text="Continue" action="#{newMapCache.dispatch}"/>
+            </af:panelGroup>
+            <f:facet name="messages">
+              <af:messages/>
+            </f:facet>
+          </af:panelPage>
+        </h:form>
+      </afh:body>
+    </afh:html>
+  </f:view>
+</jsp:root>

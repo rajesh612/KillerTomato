@@ -1,0 +1,73 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Map Cache Server/Map Client</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+  function showMap()
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    var mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);    
+    mapview.display();  			
+  }
+</script>
+    
+</head>
+
+<body onload=javascript:showMap();>
+  <h3> Oracle Maps example - Display a map </h3>
+  
+  <div id="map" style="left:0px; top:0px; width:100%; height:60%"></div>
+  
+  <HR/>
+  <h3> Instructios </h3>
+  	Try dragging the above map around.
+  <BR/>
+  
+  <h3> Source code </h3>
+  The JavaScript source code for the above map display is listed below.
+  
+  <blockquote>
+    <pre>
+  function showMap()
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    var mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);    
+    mapview.display();  			
+  }    
+    </pre>
+  </blockquote>
+
+  The map is displayed inside a container DIV element such as the following:
+
+  <blockquote>
+  <pre>
+    &lt;div id="map" style="left:0px; top:0px; width:100%; height:60%"&gt;&lt;/div&gt;
+  </pre>
+  </blockquote>
+
+  Note that the id of the DIV element, "map", is passed into the constructor of
+the MVMapView object in the JavaScript code above. This establishes the link between
+the DIV element and the JavaScript mapping client.
+  
+</body>
+</html>
+
+

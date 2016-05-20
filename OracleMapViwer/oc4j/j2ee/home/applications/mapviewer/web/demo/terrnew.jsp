@@ -1,0 +1,231 @@
+<%-- Copyright (C) Oracle Corporation 2002. All Rights Reserved --%>
+
+<%-- DESCRIPTION: MapViewer Territory Management Demo --%>
+<%-- MODIFIED:    (MM/DD/YY)                --%>
+<%--   jxyang      06/15/02 - created for mapviewer territory demo  --%>
+
+<%@ page contentType="text/html;csetharset=windows-1252"%>
+<%@ page import="java.io.*"%>
+<%@ page import="java.net.*"%>
+<%@ page import="java.util.*"%>
+<%@ page import="oracle.lbs.mapclient.*"%>
+<%@ page import="oracle.lbs.mapcommon.MapResponse"%>
+<%@ page import="java.awt.Dimension"%>
+<%@ page import="mapdemo.*"%>
+<%
+  String sizeStr = request.getParameter("size") ;
+  String scaleStr = request.getParameter("scale") ;
+  String cxStr = request.getParameter("centerX") ;
+  String cyStr = request.getParameter("centerY") ;
+  String scxStr = request.getParameter("scenterX") ;
+  String scyStr = request.getParameter("scenterY") ;
+  String baseMap = request.getParameter("basemap");
+  String _width = request.getParameter("width") ;
+  String _height = request.getParameter("height") ;
+  String _infoon = request.getParameter("infoon") ;
+  String action = request.getParameter("action");
+  String operation = request.getParameter("operation");
+  String territory = request.getParameter("territory");
+  String idlist = request.getParameter("idlist");
+  String rectcoords = request.getParameter("rect");
+  String polycoords = request.getParameter("polygon");
+  String selection = request.getParameter("selection") ;
+  String draftName = request.getParameter("draft") ;
+  boolean infoon = _infoon==null?true:(_infoon.equalsIgnoreCase("yes")) ;
+
+  int width = 640 ;
+  int height = 480 ;
+  if(_width!=null && _height!=null)
+  {
+    try
+    {
+      width = Integer.parseInt(_width) ;
+    }
+    catch(Exception e){}
+    try
+    {
+      height = Integer.parseInt(_height) ;
+    }
+    catch(Exception e){}
+  }
+
+  boolean sessionExpired = false ;
+  if(request.getParameter("initflag")!=null || 
+     session.getAttribute("mvhandle")==null)
+    sessionExpired = true ;
+%>
+<html>
+<HEAD>
+<LINK href="images/terr.css" type=text/css rel=stylesheet>
+<script type="text/javascript"> 
+function createTerritory()
+{
+  var v = getSelectetEmployee() ;
+  if(v==null)
+  {
+    alert("Please select a representative for the new territory!") ;
+    return;
+  }
+  form.repid.value=v ;
+  form.submit() ;
+}
+function doNothing()
+{
+  form.operation.value="donothing" ;
+  form.submit() ;
+}
+// return selected employee id from the representative list
+function getSelectetEmployee()
+{
+  var tlist = document.getElementById("emplist") ;
+  if(tlist.selectedIndex==-1)
+    return null ;
+  else
+    return tlist.options[tlist.selectedIndex].value;
+}
+/* go  back to the home page showing the live data */
+function returnHome()
+{
+  form.draft.value="" ;
+  form.operation.value="donothing" ;
+  form.submit() ;
+}
+</script>
+</head>
+<body>
+   <!-------------------------------------------------------------------------
+                  Output page header (stuff you really dont need)
+    -------------------------------------------------------------------------->
+<span style="width:100%">
+  <table cellpadding="0" cellspacing="0" border="0" width="100%" summary="">
+    <tr><td>
+          <table cellpadding="0" cellspacing="2" border="0" width="100%" summary="">
+            <tr><td valign="top"><img src="../myicons/oracle_logo.gif" border="0" /> </td>
+            <td><FONT class="OraHeader">MapViewer Territory Management Demo</FONT> 
+               <a href="terrsource.html">Source Code</a></td>
+            </tr>
+          </table>
+          </td>
+    </tr>
+    <tr><td valign="top">
+          <table cellpadding="0" cellspacing="0" border="0" summary="">
+            <tr><td align="center"><img src="../myicons/t.gif" border="0" /></td></tr>
+          </table> </td>
+    </tr>
+  </table>
+  <TABLE cellSpacing=0 cellPadding=0 width="100%" border=0>
+    <TBODY>
+    <TR><!-- Navgiation Tabs Bar -->
+      <TD vAlign=bottom align=right>
+  
+        <TABLE cellSpacing=0 cellPadding=0 height=22 border=0>
+          <TBODY>
+          <TR>
+            <td align=right noWrap width=16><img height=22
+             src="images/green-head.gif" width=12></td>
+            <td background=images/green-content.gif class=OraNav1Enabled
+             noWrap><a href="javascript:returnHome();" class="OraNav1Enabled">Home</a></td>
+            <td align=right noWrap width=16><img height=22
+              src="images/green-blue.gif" width=16></td>
+            <td background=images/blue-content.gif class=OraNav1Selected
+             noWrap>Drafts</td>
+            <td align=left noWrap width=12><img height=22
+             src="images/blue-end.gif" width=12></td>
+  
+            <td noWrap width=9>&nbsp;</td>
+          </TR>
+          </TBODY>
+        </TABLE>
+      </TD>
+    </TR>
+    </TBODY>
+  </TABLE>
+  <TABLE cellSpacing=0 cellPadding=0 width="100%" border=0>
+    <TBODY>
+    <TR>
+      <TD vAlign=bottom height=24>
+        <TABLE cellSpacing=0 cellPadding=0 width="100%" border=0>
+          <TBODY>
+          <TR>
+            <TD vAlign=bottom noWrap width="52%" bgColor=#336699
+            height=30>&nbsp;</TD>
+            <TD vAlign=top noWrap width="48%" background=images/asysrtb.gif
+            height=30><IMG height=30 src="images/asysrt.gif" width=40
+              border=0></TD>
+            <TD width=8 height=30
+            xbackground="images/rhshadow.gif"><IMG
+              height=30 src="images/asylrhs.gif" width=8 border=0></TD></TR>
+          <TR>
+  
+            <TD vAlign=top noWrap background=images/asylttb.gif
+              height=10><IMG height=10 src="images/asyllhs.gif" width=12></TD>
+            <TD vAlign=top noWrap height=10><IMG src="images/asysrb.gif"
+              width=40 border=0></TD>
+            <TD vAlign=top align=left width=5><IMG height=1
+              src="images/pixel.gif" width=1></TD></TR></TBODY>
+        </TABLE>
+      </TD>
+    </TR>
+    </TBODY>
+  </TABLE>
+</span>
+<%
+  if(sessionExpired)
+  {
+%>
+<B> Session Expired. </B> 
+Please  go back to the <A href="terrinit.jsp">terrinit.jsp</A> page.
+<%
+    return ;
+  }
+%>
+<%
+  DBQueryBean queryBean = null ;
+  queryBean = (DBQueryBean)session.getAttribute("querybean");
+%>
+  <FORM name="form" action=terrmap.jsp method=post>
+     <FONT class="OraHeaderSubSub">Create a new territory and assign it to a representative from this list</FONT><br>
+     <hr>
+     <table>
+     <tbody>
+     <tr>
+     <td>
+     <select id="emplist" size=10>
+<%
+  ArrayList empList = queryBean.getEmployeeList(draftName) ;
+  if(empList!=null)
+  {
+    for(int i=0; i<empList.size(); i++)
+    {
+       String terr = (String)empList.get(i) ;
+%>
+         <option value="<%=terr.substring(0,terr.indexOf("-"))%>"><%=terr%></option>
+<%
+    }
+  }
+%>
+     </select><br>
+     </td>
+     <td>
+     <a href="javascript:createTerritory()"><img border=0 src="images/createterritory.gif"/></a><br>
+     <a href="javascript:doNothing()"><img border=0 src="images/cancel.gif"/></a>
+     </td>
+    </tr>
+    </tbody>
+    </table>
+    <input type="hidden" name="width" value="<%=width%>"/>
+    <input type="hidden" name="height" value="<%=height%>"/>                              
+    <input type="hidden" id="cx" name="centerX" value="<%=cxStr%>"/>
+    <input type="hidden" id="cy" name="centerY" value="<%=cyStr%>"/>
+    <input type="hidden" id="scx" name="scenterX" value="<%=scxStr%>"/>
+    <input type="hidden" id="scy" name="scenterY" value="<%=scyStr%>"/>
+    <input type="hidden" id="size" name="size" value="<%=sizeStr%>"/>
+    <input type="hidden" id="scale" name="scale" value="<%=scaleStr%>"/>         
+    <input type="hidden" id="infoon" name="infoon" value="<%=(infoon?"yes":"no")%>" />
+    <input type="hidden" id="operation" name="operation" value="newterritory"/>
+    <input type="hidden" id="idlist" name="idlist" value="<%=idlist%>"/>
+    <input type="hidden" id="rect" name="rect" value="<%=rectcoords%>"/>
+    <input type="hidden" id="polygon" name="polygon" value="<%=polycoords%>"/>
+    <input type="hidden" id="repid" name="repid" value=""/>
+    <input type="hidden" name="draft" value="<%=draftName%>" />
+</FORM>

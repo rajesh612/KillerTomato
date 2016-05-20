@@ -1,0 +1,140 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+    <head>
+      <title>Tutorial: Learning Oracle Maps by Example </title>
+      <style type="text/css">
+          div span {
+              vertical-align: middle;
+          }
+
+          div#TopBar {
+              background: #ff0000 url(images/oracle_bar.gif);
+              margin: 10px 10px 0 10px;
+              height:30px;
+              min-width:700px;
+              color: white;
+              font-family: Arial, Helvetica, sans-serif; 
+              font-weight: bold;
+              text-align: left;
+              text-valign: middle;
+          }
+          
+          div#LeftBar {
+              width: 13em;
+              float: left;
+              margin-left: 10px;
+              margin-top: 10px;
+          }
+          
+          div#Contents a:visited, div#Contents a:link,
+          .NavBit a:visited, .NavBit a:link {
+              color: #35556B;
+              text-decoration: none;
+          }
+          div#Contents a:hover, div#Contents a:active,  
+		  .NavBit a:hover, .NavBit a:active {  
+              color: #35556B;
+              text-decoration: underline;
+          }
+          div#Contents {
+              color: #35556B;
+              float: left;
+              font-family: Arial, Helvetica, sans-serif; 
+              margin-top: 20px;
+          }          
+          div#PageTitle {
+              font-size: 20px;
+          }
+          .linkLESSON, .nolinkLESSON {
+              margin-left: 0.5em;
+              text-indent: -0.5em
+          }
+          .linkAHEAD, .nolinkAHEAD, .linkQUESTIONS, .nolinkQUESTIONS {
+              margin-left: 1.5em; 
+              text-indent: -0.5em
+          }
+          .linkBHEAD, .nolinkBHEAD   {
+              margin-left: 2.5em;
+              text-indent: -0.5em
+          }
+          .linkCHEAD, .nolinkCHEAD   {
+              margin-left: 3.5em;
+              text-indent: -0.5em
+          }
+          .nolinkLESSON, .nolinkAHEAD, .nolinkBHEAD, .nolinkCHEAD, 
+		  .nolinkQUESTIONS {
+              font-weight: bold;
+              color: #35556B;
+          }
+          div#MainFlow {
+              margin-right: 10px;
+              margin-left: 15em;
+              margin-bottom: 2em;
+      
+          }
+      </style>
+    </head>
+<body>
+
+    <div id=TopBar>
+        <div id=PageTitle><span>Tutorial: Learning Oracle Maps by Example</span></div>
+    </div>
+    
+    <div id=LeftBar>        
+      <div id=Contents>
+        <div class="linkAHEAD"><a href="index.html">Introduction</a></div>
+        <div class="linkAHEAD"><a href="api101.html">Getting started</a></div>
+        <div class="linkAHEAD"><a href="mapdivs.html">What's in a map</a></div>
+        <div class="nolinkLESSON">Demo setup</div>
+        <div class="linkAHEAD"><a href="demos.html">Running the demos</a></div>
+      </div>
+    </div>
+    
+    <div id=MainFlow>
+    <blockquote>
+    In order to run the 50+ demos in this tutorial, you must perform the following
+    tasks in the order they are listed to prepare the database, import the MVDEMO sample
+    data set, and create the MapViewer data source named "MVDEMO".
+
+    <ol>
+      <li> Setup database metadata views *_sdo_cached_maps that are necessary for
+          the functioning of Oracle Maps. All you need to do is run with DBA database 
+      role the following SQL script:
+      $OC4J_HOME/j2ee/home/applications/mapviewer/web/WEB-INF/admin/mcsdefinition.sql,
+      where $OC4J_HOME is the root directory of this OC4J instance.
+      Note: this is a database-wide one time task. If you have performed this task
+      previously, you are all set. To check whether your db has been configured with
+      these views, just log into any DB user, and run the query "desc user_sdo_cached_maps". If
+      it returns the descriptive information about the view user_sdo_cahced_maps then you are
+      all set. </li>
+
+      <li> Drop the DB user 'mvdemo', if it exists and contains only 
+      		previously imported demo data for MapViewer. If you have your own 
+      		data in that schema, you should back them up before dropping the 
+      		user. Now recreate this 'mvdemo' db user.  Or you can just create another
+                database user for this tutorial, if you intend to keep the
+                existing 'mvdemo' user. Now unzip the new demo dataset (mvdemo.zip) that comes 
+      		with this release. Then follow the instructions in its readme file 
+      		to import the data and run the mvdemo.sql script as the new user. This will setup 
+      		the demo data set for the demos in this tutorial. <B>Note: the map
+                cache instances will also be created for you by the mvdemo.sql script. </B></li>
+   	  <li> Create a MapViewer data source named '<B>mvdemo</B>' (even if a 
+   	  different database user name is used in setp 2) . Click on the Admin 
+   	  button on the top of MapViewer's home page to log in. Then click on the 
+   	  'Management' tab, choose 'Manage MapViewer', then 'Datasources'. There 
+   	  you can create a dynamic data source that points to the new schema you 
+   	  just imported the data set into. Or go to Manage MapVieewr &gt; Configuration
+          and add a permanent data source definition named MVDEMO there (recommended).</li>
+
+     </ol>
+   	  Now you should be able to run all the demos <a href="demos.html">here</a>. 
+   	  Note that when running them for the first time, the response may take a 
+   	  while to complete, as the MapViewer server has to generate all the 
+   	  visible base map tiles on the fly. 
+   	
+   	</blockquote>
+  </div>
+ </body>
+ </html>
+ 
+

@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
+          xmlns:h="http://java.sun.com/jsf/html"
+          xmlns:f="http://java.sun.com/jsf/core"
+          xmlns:af="http://xmlns.oracle.com/adf/faces"
+          xmlns:afh="http://xmlns.oracle.com/adf/faces/html">
+  <jsp:output omit-xml-declaration="true" doctype-root-element="HTML"
+              doctype-system="http://www.w3.org/TR/html4/loose.dtd"
+              doctype-public="-//W3C//DTD HTML 4.01 Transitional//EN"/>
+  <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+  <f:view>
+    <afh:html>
+      <afh:head title="Upload adapter jar file from client">
+        <meta http-equiv="Content-Type"
+              content="text/html; charset=windows-1252"/>
+      </afh:head>
+      <afh:body>
+        <af:panelPage>
+          <f:facet name="branding">
+            <af:objectImage source="/myicons/oracle_logo.gif"/>
+          </f:facet>
+          <f:facet name="brandingApp">
+            <af:objectImage source="/myicons/mapviewer_admin.gif"/>
+          </f:facet>
+          <f:facet name="appPrivacy"/>
+          <af:panelHeader text="Upload Adapter Jar File"/>
+          <af:panelGroup layout="vertical">
+            <af:form usesUpload="true">
+              <af:inputFile label="Choose file to upload"
+                            valueChangeListener="#{edit_cache_instance.fileUploaded}"/>
+              <af:commandButton text="Upload"/>
+              <af:objectSpacer width="10" height="10"/>
+              <af:commandButton text="Return" action="success"/>
+            </af:form>
+          </af:panelGroup>
+          <f:facet name="messages">
+            <af:messages/>
+          </f:facet>
+        </af:panelPage>
+      </afh:body>
+    </afh:html>
+  </f:view>
+</jsp:root>

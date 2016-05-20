@@ -1,0 +1,312 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
+          xmlns:h="http://java.sun.com/jsf/html"
+          xmlns:f="http://java.sun.com/jsf/core"
+          xmlns:af="http://xmlns.oracle.com/adf/faces"
+          xmlns:afh="http://xmlns.oracle.com/adf/faces/html">
+  <jsp:output omit-xml-declaration="true" doctype-root-element="HTML"
+              doctype-system="http://www.w3.org/TR/html4/loose.dtd"
+              doctype-public="-//W3C//DTD HTML 4.01 Transitional//EN"/>
+  <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+  <f:view>
+    <afh:html>
+      <afh:head title="OracleAS MapViewer Admin">
+        <meta http-equiv="Content-Type"
+              content="text/html; charset=windows-1252"/>
+      </afh:head>
+      <afh:body>
+        <h:form>
+          <af:panelPage title="Editing Map Tile Layers">
+            <f:facet name="menu1">
+              <af:menuTabs id="menuTabsArea" value="#{menuModel.model}"
+                           var="menuTab">
+                <f:facet name="nodeStamp">
+                  <af:commandMenuItem text="#{menuTab.label}"
+                                      action="#{menuTab.getOutcome}"
+                                      type="default"
+                                      rendered="#{menuTab.shown and menuTab.type=='default'}"/>
+                </f:facet>
+              </af:menuTabs>
+            </f:facet>
+            <f:facet name="menuGlobal">
+              <af:menuButtons var="menuButton" id="menuButtsArea"
+                              value="#{menuModel.model}">
+                <f:facet name="nodeStamp">
+                  <af:commandMenuItem text="#{menuButton.label}"
+                                      action="#{menuButton.getOutcome}"
+                                      icon="#{menuButton.icon}"
+                                      rendered="#{menuButton.type=='global'}"
+                                      type="global"/>
+                </f:facet>
+              </af:menuButtons>
+            </f:facet>
+            <f:facet name="branding">
+              <af:objectImage source="/myicons/oracle_logo.gif"/>
+            </f:facet>
+            <f:facet name="brandingApp">
+              <af:objectImage source="/myicons/mapviewer_admin.gif"/>
+            </f:facet>
+            <f:facet name="appCopyright">
+              <af:outputText value="#{mvbundle.copyright}"/>
+            </f:facet>
+            <f:facet name="appPrivacy"/>
+            <f:facet name="appAbout"/>
+            <f:facet name="brandingAppContextual">
+              <af:outputFormatted value="#{mvbundle.loclocloc}"
+                                  styleUsage="inContextBranding"/>
+            </f:facet>
+            <f:facet name="menu2">
+              <af:menuBar var="menuSubTab" id="menuSubTabsArea" startDepth="1"
+                          value="#{menuModel.model}">
+                <f:facet name="nodeStamp">
+                  <af:commandMenuItem text="#{menuSubTab.label}"
+                                      action="#{menuSubTab.getOutcome}"/>
+                </f:facet>
+              </af:menuBar>
+            </f:facet>
+            <f:facet name="messages">
+              <af:messages/>
+            </f:facet>
+            <af:panelGroup layout="vertical">
+              <af:panelButtonBar>
+                <af:commandButton text="Cancel" action="cancel"/>
+                <af:commandButton text="XML mode"
+                                  shortDesc="switch to XML editing mode"
+                                  action="#{edit_cache_instance.switchToXMLMode}"/>
+                <af:commandButton text="Submit"
+                                  action="#{edit_cache_instance.finishEditting}"/>
+              </af:panelButtonBar>
+              <af:panelForm labelWidth="150" width="100%" maxColumns="1"
+                            partialTriggers="mapSrcPropertiesID httpProxyId">
+                <f:facet name="footer"/>
+                <af:inputText label="Name:" wrap="off"
+                              value="#{edit_cache_instance.mapCacheName}"
+                              disabled="false" readOnly="true"/>
+                <af:inputText label="Data source:" wrap="off"
+                              value="#{edit_cache_instance.dataSource}"
+                              disabled="false" readOnly="true" rows="1"/>
+                <af:inputText label="Copyright text:" wrap="off"
+                              value="#{edit_cache_instance.copyright}"
+                              disabled="false" readOnly="#{edit_cache_instance.isBuiltinExternal}" rows="1"
+                              tip="The copyright note displayed at the lower-right corner of the map."/>
+                <af:inputText label="Max browser tile cache age(hours)" rendered="#{ !edit_cache_instance.isBuiltinExternal}"
+                              value="#{edit_cache_instance.httpHeaderExpires}"
+                              tip="The maximum length of time(in hours) during which the map tiles may be  kept inside the web browser's cache."/>
+                <af:inputText label="Number of concurrent tile fetching threads" rendered="#{ !edit_cache_instance.isBuiltinExternal}"
+                              value="#{edit_cache_instance.fetchingThreads}"
+                              tip="The maximum number of threads that can concurrently fetch tiles for this tile layer."/>
+                <af:showDetail disclosedText="Basic settings" rendered="#{ !edit_cache_instance.isBuiltinExternal}"
+                               undisclosedText="Basic settings"
+                               disclosed="true">
+                  <af:panelGroup layout="vertical"
+                                 rendered="#{edit_cache_instance.isInternal}">
+                    <af:selectOneChoice label="Base map:" immediate="false"
+                                        partialTriggers="DSrcSelected"
+                                        value="#{edit_cache_instance.baseMap}">
+                      <f:selectItems value="#{edit_cache_instance.mapList}"/>
+                    </af:selectOneChoice>
+                    <af:panelLabelAndMessage label="Background:">
+                      <af:panelGroup layout="horizontal">
+                        <af:selectInputColor value="#{edit_cache_instance.bgcolor}"/>
+                        <af:objectSpacer width="10" height="10"/>
+                        <af:selectBooleanCheckbox text="transparent"
+                                                  value="#{edit_cache_instance.transparentBackground}"/>
+                      </af:panelGroup>
+                    </af:panelLabelAndMessage>
+                    <af:selectBooleanCheckbox value="#{edit_cache_instance.antialiase}"
+                                              label="Anti-aliased"/>
+                  </af:panelGroup>
+                  <af:panelGroup layout="vertical"
+                                 rendered="#{ !edit_cache_instance.isInternal}">
+                    <af:inputText label="Map service Url:" 
+                                  value="#{edit_cache_instance.mapServiceURL}"
+                                  id="mapServiceURL"/>
+                    <af:selectOneChoice label="Request method:"
+                                        value="#{edit_cache_instance.requestMethod}"
+                                        id="requestMethod" autoSubmit="false">
+                      <af:selectItem label="HTTP GET" value="GET"/>
+                      <af:selectItem label="HTTP POST" value="POST"/>
+                    </af:selectOneChoice>
+                    <af:objectSpacer width="10" height="12"/>
+                  </af:panelGroup>
+                  <af:inputText label="Tile storage:"
+                                tip="Specify the root directory for tile image files."
+                                value="#{edit_cache_instance.cacheStorage}"/>
+                  <af:inputText label="Tile width (pixels):"
+                                value="#{edit_cache_instance.tileWidth}"/>
+                  <af:inputText label="Tile height (pixels):"
+                                value="#{edit_cache_instance.tileHeight}"/>
+                  <af:selectOneChoice label="Tile format:"
+                                      value="#{edit_cache_instance.tileFormat}">
+                    <af:selectItem label="PNG" value="PNG"/>
+                    <af:selectItem label="GIF" value="GIF"/>
+                    <af:selectItem label="JPEG" value="JPEG"/>
+                  </af:selectOneChoice>
+                  <af:selectBooleanCheckbox text="transparent"
+                                            label="Background:"
+                                            tip="Specify whether the background of external map tiles are transparent."
+                                            value="#{edit_cache_instance.transparentBackground}"
+                                            id="transparentBackground"
+                                            rendered="#{ !edit_cache_instance.isInternal}"/>
+                </af:showDetail>
+                <af:panelGroup rendered="#{ !edit_cache_instance.isInternal}">
+                  <af:showDetail disclosedText="Proxy Settings" rendered="#{ !edit_cache_instance.isBuiltinExternal}"
+                                 undisclosedText="Proxy Settings"
+                                 disclosed="false">
+                    <af:selectBooleanCheckbox id="httpProxyId" autoSubmit="true"
+                                              value="#{edit_cache_instance.httpProxyRequired}"
+                                              label="HTTP proxy required"/>
+                    <af:panelGroup partialTriggers="httpProxyId"
+                                   layout="vertical"
+                                   rendered="#{edit_cache_instance.httpProxyRequired}">
+                      <af:inputText label="Proxy host:"
+                                    value="#{edit_cache_instance.proxyHost}"/>
+                      <af:inputText label="port:"
+                                    value="#{edit_cache_instance.proxyPort}"/>
+                    </af:panelGroup>
+                  </af:showDetail>
+                  <af:showDetail disclosedText="Adapter Settings"
+                                 undisclosedText="Adapter Settings"
+                                 disclosed="#{ edit_cache_instance.isBuiltinExternal}">
+                    <af:inputText label="Adapter class:" rendered="#{ !edit_cache_instance.isBuiltinExternal}"
+                                  value="#{edit_cache_instance.adapterClass}"
+                                  id="adapterClass"/>
+                    <af:panelLabelAndMessage label="Adapter Class Jar File" rendered="#{ !edit_cache_instance.isBuiltinExternal}"
+                                             tip="Upload adapter class jar file from client.">
+                      <af:commandButton text="Upload ..."
+                                        action="upload_adapter"/>
+                    </af:panelLabelAndMessage>
+                    <af:objectSpacer width="10" height="8" rendered="#{ !edit_cache_instance.isBuiltinExternal}"/>
+                    <af:panelLabelAndMessage label="Adapter properties">
+                      <af:panelGroup layout="horizontal">
+                        <af:commandButton text="Add"
+                                          action="#{edit_cache_instance.addProperty}"
+                                          id="addProperty"/>
+                      </af:panelGroup>
+                    </af:panelLabelAndMessage>
+                    <af:panelGroup id="adapterPropertyGroup">
+                      <af:panelLabelAndMessage label="Properties:"
+                                               partialTriggers="adapterPropertiesNeededID">
+                        <af:table emptyText="No property specified" rows="5"
+                                  binding="#{edit_cache_instance.ptable}"
+                                  var="row"
+                                  value="#{edit_cache_instance.properties}">
+                          <f:facet name="selection">
+                            <af:tableSelectOne text="Select and ">
+                              <af:commandButton text="Delete"
+                                                action="#{edit_cache_instance.deleteProperty}"/>
+                            </af:tableSelectOne>
+                          </f:facet>
+                          <af:column sortable="false" headerText="name">
+                            <af:inputText value="#{row.name}"/>
+                          </af:column>
+                          <af:column sortable="false" headerText="value">
+                            <af:inputText value="#{row.value}"/>
+                          </af:column>
+                        </af:table>
+                      </af:panelLabelAndMessage>
+                    </af:panelGroup>
+                  </af:showDetail>
+                </af:panelGroup>
+                <af:showDetail disclosedText="Coordinate System Definition"
+                               undisclosedText="Coordinate System Definition"
+                               disclosed="false">
+                  <af:inputText label="SRID:" readOnly="#{edit_cache_instance.isBuiltinExternal}"
+                                tip="Maps will be displayed in this SRID"
+                                value="#{edit_cache_instance.srid}"/>
+                  <af:objectSpacer width="10" height="8"/>
+                  <af:inputText label="Min X:" readOnly="#{edit_cache_instance.isBuiltinExternal}"
+                                value="#{edit_cache_instance.minX}"/>
+                  <af:inputText label="Max X:" readOnly="#{edit_cache_instance.isBuiltinExternal}"
+                                value="#{edit_cache_instance.maxX}"/>
+                  <af:inputText label="Min Y:" readOnly="#{edit_cache_instance.isBuiltinExternal}"
+                                value="#{edit_cache_instance.minY}"/>
+                  <af:inputText label="Max Y:" readOnly="#{edit_cache_instance.isBuiltinExternal}"
+                                value="#{edit_cache_instance.maxY}"/>
+                </af:showDetail>
+                <af:showDetail disclosedText="Zoom Level Definition"
+                               undisclosedText="Zoom Level Definition"
+                               disclosed="false">
+                  <af:panelLabelAndMessage label="# Zoom Levels:">
+                    <af:panelHorizontal>
+                      <af:inputText value="#{edit_cache_instance.numZoomLevels}"
+                                    readOnly="#{ !edit_cache_instance.zoomLevelListEmpty}"
+                                    columns="2"
+                                    partialTriggers="addZoomLevel deleteZoomLevel refreshZoomLevel"/>
+                      <af:inputText label="Minimum Scale:"
+                                    value="#{edit_cache_instance.minScale}"
+                                    readOnly="#{ !edit_cache_instance.zoomLevelListEmpty}"
+                                    columns="6"
+                                    partialTriggers="addZoomLevel deleteZoomLevel refreshZoomLevel"/>
+                      <af:inputText label="Maximum Scale:"
+                                    value="#{edit_cache_instance.maxScale}"
+                                    readOnly="#{ !edit_cache_instance.zoomLevelListEmpty}"
+                                    columns="6"
+                                    partialTriggers="addZoomLevel deleteZoomLevel refreshZoomLevel"/>
+                      <af:objectSpacer width="10" height="10"/>
+                    </af:panelHorizontal>
+                  </af:panelLabelAndMessage>
+                  <af:panelLabelAndMessage label="Modify zoom levels" rendered="#{!edit_cache_instance.isBuiltinExternal}">
+                    <af:commandButton text="Add" partialSubmit="false"
+                                      id="addZoomLevel" 
+                                      action="#{edit_cache_instance.addZoomLevel}"/>
+                    <af:commandButton text="Refresh"
+                                      action="#{edit_cache_instance.updateZoomLevels}"
+                                      id="refreshZoomLevel"/>
+                    <af:commandButton text="Populate zoom levels"
+                                      disabled="#{ !edit_cache_instance.zoomLevelListEmpty}"
+                                      partialTriggers="addZoomLevel deleteZoomLevel"
+                                      action="#{edit_cache_instance.populateZoomLevels}"
+                                      id="populateZoomLevels"/>
+                  </af:panelLabelAndMessage>
+                  <af:panelLabelAndMessage label="Definition">
+                    <af:table emptyText="No zoom levels were defined"
+                              value="#{edit_cache_instance.zoomLevelList}"
+                              binding="#{edit_cache_instance.levelTable}"
+                              var="level" partialTriggers="populateZoomLevels">
+                      <f:facet name="selection">
+                        <af:tableSelectMany text="Select items and ...">
+                          <af:commandButton text="Delete" disabled="#{edit_cache_instance.isBuiltinExternal}"
+                                            action="#{edit_cache_instance.deleteZoomLevel}"
+                                            partialSubmit="false"
+                                            id="deleteZoomLevel"/>
+                        </af:tableSelectMany>
+                      </f:facet>
+                      <af:column sortable="false" headerText="Level">
+                        <af:outputText value="#{level.level}"/>
+                      </af:column>
+                      <af:column sortable="false" headerText="scale" width="5" rendered="#{!edit_cache_instance.isBuiltinExternal}">
+                        <af:inputText value="#{level.scale}"/>
+                      </af:column>
+                      <af:column sortable="false" headerText="Tile width" 
+                                 width="5">
+                        <af:inputText value="#{level.tileWidth}" readOnly="#{edit_cache_instance.isBuiltinExternal}"/>
+                      </af:column>
+                      <af:column sortable="false" headerText="Tile height"
+                                 width="5">
+                        <af:inputText value="#{level.tileHeight}" readOnly="#{edit_cache_instance.isBuiltinExternal}"/>
+                      </af:column>
+                      <af:column sortable="false" headerText="Description"
+                                 width="10">
+                        <af:inputText value="#{level.description}"/>
+                      </af:column>
+                    </af:table>
+                  </af:panelLabelAndMessage>
+                </af:showDetail>
+              </af:panelForm>
+              <af:objectSeparator/>
+              <af:panelButtonBar>
+                <af:commandButton text="Cancel" action="cancel"/>
+                <af:commandButton text="XML mode"
+                                  shortDesc="switch to XML editing mode"
+                                  action="#{edit_cache_instance.switchToXMLMode}"/>
+                <af:commandButton text="Submit"
+                                  action="#{edit_cache_instance.finishEditting}"/>
+              </af:panelButtonBar>
+            </af:panelGroup>
+          </af:panelPage>
+        </h:form>
+      </afh:body>
+    </afh:html>
+  </f:view>
+</jsp:root>

@@ -1,0 +1,92 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Map Cache Server/Map Client</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+  var legend;
+  function showMap()
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    var mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);
+
+    var html = buildLegend(baseURL);
+    legend = new MVMapDecoration(html,null,null,200,110);
+    legend.setCollapsible(true);
+    mapview.addMapDecoration(legend);
+    mapview.display();  			
+  }
+
+  function buildLegend(baseURL)
+  {
+    var html = "<table border=0> <tr><td><img src="+baseURL+"/omserver?sty=L.PH&w=45&h=20&ds=mvdemo></td><td> Highways </td></tr>" +
+               "                 <tr><td><img src="+baseURL+"/omserver?sty=M.CITY+HALL+3&w=20&h=20&ds=mvdemo></td><td> Cities </td></tr>" +
+               "</table>";
+    return html;
+  }
+</script>
+    
+</head>
+
+<body onload=javascript:showMap();>
+<h3>Oracle Maps example - build your own collapsible map legend</h3>
+
+  <div id="map" style="left:0px;top:10px; width:80%; height:60%;"></div>
+
+<h3>Instructions</h3>
+This demo shows two things. First, it shows how to add a Map Decoration 
+inside the map area to display a map legend (or any HTML content for that
+matter). Second, it shows how to build your own map legend using the new 
+MapViewer request for style samples.
+
+
+<h3>Source code</h3>
+The source code for this demo is shown below.
+<blockquote>
+<pre>
+  var legend;
+  function showMap()
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    var mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);
+
+    var html = buildLegend(baseURL);
+    <font color="#ff0000">
+    legend = new MVMapDecoration(html,null,null,200,110);
+    legend.setCollapsible(true);
+    mapview.addMapDecoration(legend);
+    </font>
+    mapview.display();  			
+  }
+
+  function buildLegend(baseURL)
+  {
+    var html = "&lt;table border=0&gt; &lt;tr&gt;&lt;td&gt;&lt;img src="+baseURL+"<font color="#ff0000">/omserver?sty=L.PH&w=45&h=20&ds=mvdemo</font>&gt;&lt;/td&gt;&lt;td&gt; Highways &lt;/td&gt;&lt;/tr&gt;" +
+               "                 &lt;tr&gt;&lt;td&gt;&lt;img src="+baseURL+"<font color="#ff0000">/omserver?sty=M.CITY+HALL+3&w=20&h=20&ds=mvdemo</font>&gt;&lt;/td&gt;&lt;td&gt; Cities &lt;/td&gt;&lt;/tr&gt;" +
+               "&lt;/table&gt;";
+    return html;
+  }
+</pre>
+</blockquote>
+
+</body>
+</html>
+
+

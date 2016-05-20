@@ -1,0 +1,206 @@
+<!-- Main page for Oracle Maps online tutorial -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+    <head>
+      <title>Tutorial: Learning Oracle Maps by Example </title>
+      <style type="text/css">
+          div span {
+              vertical-align: middle;
+          }
+
+          div#TopBar {
+              background: #ff0000 url(images/oracle_bar.gif);
+              margin: 10px 10px 0 10px;
+              height:30px;
+              min-width:700px;
+              color: white;
+              font-family: Arial, Helvetica, sans-serif; 
+              font-weight: bold;
+              text-align: left;
+              text-valign: middle;
+          }
+          
+          div#LeftBar {
+              width: 13em;
+              float: left;
+              margin-left: 10px;
+              margin-top: 10px;
+          }
+          
+          div#Contents a:visited, div#Contents a:link,
+          .NavBit a:visited, .NavBit a:link {
+              color: #35556B;
+              text-decoration: none;
+          }
+          div#Contents a:hover, div#Contents a:active,  
+		  .NavBit a:hover, .NavBit a:active {  
+              color: #35556B;
+              text-decoration: underline;
+          }
+          div#Contents {
+              color: #35556B;
+              float: left;
+              font-family: Arial, Helvetica, sans-serif; 
+              margin-top: 20px;
+          }          
+          div#PageTitle {
+              font-size: 20px;
+          }
+          .linkLESSON, .nolinkLESSON {
+              margin-left: 0.5em;
+              text-indent: -0.5em
+          }
+          .linkAHEAD, .nolinkAHEAD, .linkQUESTIONS, .nolinkQUESTIONS {
+              margin-left: 1.5em; 
+              text-indent: -0.5em
+          }
+          .linkBHEAD, .nolinkBHEAD   {
+              margin-left: 2.5em;
+              text-indent: -0.5em
+          }
+          .linkCHEAD, .nolinkCHEAD   {
+              margin-left: 3.5em;
+              text-indent: -0.5em
+          }
+          .nolinkLESSON, .nolinkAHEAD, .nolinkBHEAD, .nolinkCHEAD, 
+		  .nolinkQUESTIONS {
+              font-weight: bold;
+              color: #35556B;
+          }
+          div#MainFlow {
+              margin-right: 10px;
+              margin-left: 15em;
+              margin-bottom: 2em;
+      
+          }
+      </style>
+    </head>
+<body>
+
+    <div id=TopBar>
+        <div id=PageTitle><span>Tutorial: Learning Oracle Maps by Example</span></div>
+    </div>
+    
+    <div id=LeftBar>        
+      <div id=Contents>
+        <div class="linkAHEAD"><a href="index.html">Introduction</a></div>
+        <div class="linkAHEAD"><a href="api101.html">Getting started</a></div>
+        <div class="nolinkLESSON">What's in a map</div>
+        <div class="linkAHEAD"><a href="setup.html">Demo setup</a></div>
+        <div class="linkAHEAD"><a href="demos.html">Running the demos</a>
+        </div>
+      </div>
+    </div>
+
+    <div id=MainFlow>
+	<blockquote>
+	The map container DIV object, which is placed within an application web page
+	as shown in the simple example <A href="api101.html"> here </A>, is where 
+	all the map contents are displayed. It is also where all the user 
+	interactions happen. Internally, map contents are organized in a layered
+	fashion, as illustrated in the following diagram. 
+	<BR></BR>
+	<center><img src="mapviewer.gif" width="636" height="511" />
+	</center>
+	</blockquote>
+	
+	<blockquote>
+	There are five different types of map content layers. Listed in the 
+	display order from bottom to top, they are: 
+	<ul>
+		<li> <i>base map tiles</i> layer </li>
+	    <li> <i>theme based FOI</i> layer </li>
+	    <li> <i>user defined (individual) FOI</i> layer </li>
+	    <li> <i>info window</i> layer </li>
+	    <li> <i>fixed figures</i> layer </li>
+	</ul>
+	All the layers except the fixed figures layer will move as a whole whenever
+	the user drags the map. These movable layers are automatically updated and 
+	realigned by the client library when the map is dragged or zoomed. The fixed
+	figures layer will never be moved; as such it is the ideal place for map 
+	pieces such as scale bar, map legend, copyright text, etc. Note  that for 
+	the first two layer types (base map tiles and theme based FOI), you can 
+	have multiple layers of each type.
+	</blockquote>
+	
+	<blockquote>
+	The following sections explain each type of map layer in details. 
+	</blockquote>
+
+	<h3>Base Map Layers</h3>
+	<blockquote>
+	A typical Oracle Maps application has at least one base map layer that 
+	displays a background map. A base map layer is always associated
+	with a (server-side) map cache instance, which is a cache of rendered map 
+	image files. A map cache instance, in turn, is typically associated with a 
+	MapViewer base map for a specific set of zoom levels. So for instance you 
+	can create a map cache instance for the base map named <B>DEMO_MAP</B> in 
+	the mvdemo schema. This map cache will now manage map tiles of 
+	DEMO_MAP for all specified zoom levels. 
+	<BR></BR>
+	Map tiles are fixed-size map image files that cover a small, pre-determined area of 
+	the overall map coverage.  The Oracle Maps client displays a base map layer
+	by stitching together multiple adjacent map tiles inside a browser window.
+	<BR> </BR>
+	Note that when associated with a MapViewer base map, the map image tiles in
+	a map cache instance are generated by MapViewer using its own rendering 
+	engine. You can however create a map cache instance to cache map tiles 
+	generated by an external (non-MapViewer) map provider, such as a WMS service.
+	</blockquote>
+	
+	<blockquote>
+	When multiple base map layers from different Map Cache instances are 
+	included, they must all have the same coordinate system and zoom-level 
+	definitions.  Coordinate system and zoom-level definitions are specified
+	when you first create a new map cache instance.
+	</blockquote>
+
+	<h3>Theme Based FOI Layers</h3>
+
+	<blockquote>
+	Theme based FOI layers display Features of Interest that respond to mouse
+	rollover with tool-tip like info window. As implied by its name, a theme 
+	based FOI layer is always associated with a MapViewer theme (predefined or
+	dynamically created).  
+	<br></BR>When a theme based FOI layer is to be displayed, the
+	Oracle Maps client will ask the MapViewer server to process the associated
+	theme. The MapViewer server will query the database using the current viewing
+	window as a filter, fetch and render each individual record in the result set, and send 
+	back the rendered FOI images and any associated attributes to the Oracle 
+	Maps client. You can access the attributes of each FOI using the JavaScript 
+	API, and even customize the info-tip window for each FOI layer based on 
+	such attributes.
+	</blockquote>
+
+	<h3>User Defined FOI Layer</h3>
+	<blockquote>
+	User defined FOI layer displays individual, dynamically created Features Of 
+	Interest. For instance, you may have a geometry that represents the optimal
+	route from point A to B that is obtained from an external routing service. 
+	To place this geometry on the map you will need to create an individual FOI
+	based on its coordinates.  
+	<BR></BR>
+	Other FOIs, such as hand drawn geometries resulted from a red-lining session, 
+	are also placed in this layer.
+    </blockquote>
+
+	<h3>Info Window Layer</h3>
+	<blockquote>
+	An info window is a small pop-up window that displays customizable content 
+	in the map. It is typically associated with FOIs, but you can also add your own
+	info window anywhere on the map with any desired HTML contents. 
+	All info windows, when displayed, are placed inside a layer directly above 
+	the user defined individual FOI layer. 
+	</blockquote>
+
+	<h3>Fixed Figures Layer</h3>
+
+	<blockquote>The topmost layer contains fixed figures, which are immovable 
+	elements such as copyright notes, scale bar and navigation panel. 
+	</blockquote>
+	
+	
+	</div>
+</body>
+</html>

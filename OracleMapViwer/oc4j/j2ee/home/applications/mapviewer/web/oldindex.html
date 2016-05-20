@@ -1,0 +1,224 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META content="text/html; charset=UTF-8" http-equiv=Content-Type>
+<BODY bgcolor="FFFFFF">
+
+
+<span style="width:100%">
+<table cellpadding="0" cellspacing="0" border="0" width="100%" summary="">
+<tr><td>
+    <table cellpadding="0" cellspacing="2" border="0" width="100%" summary="">
+		<tr><td valign="top"><img src="myicons/oracle_logo.gif" border="0" ALT="oracle logo"> </td></tr>
+		<tr><td valign="bottom"><img src="myicons/mapviewer.gif" border="0" ALT="map viewer logo"> <FONT color="#449922" size="+2"><b>Welcome !</b></FONT></td>
+        <td valign="bottom"><A HREF="admin.html"><img src="myicons/logon_logo.gif" border="0" ALT="admin" align="middle">Admin</A></td>
+    </tr>
+    </table>
+</tr>
+<tr><td valign="top">
+    <table cellpadding="0" cellspacing="0" border="0" summary="">
+         <tr><td align="center"><img src="myicons/t.gif" border="0" ALT="empty image"></td></tr>
+    </table>
+</tr>
+</table>
+</span>
+
+<HR>
+<TABLE cellpadding="5" cellspacing="3" border="0" summary="">
+<TR>
+<TD bgcolor="#FFFFCC"> <A HREF="#sample_mapreq">map request</A></TD>
+<TD bgcolor="#FFFFFF"> <A HREF="#mgr_datasource">datasources</A></TD>
+<TD bgcolor="#FFFFCC"> <A HREF="#mgr_info">info request</A></TD>
+<TD bgcolor="#FFFFFF"> <A HREF="#mgr_map">maps</A></TD>
+<TD bgcolor="#FFFFCC"> <A HREF="#mgr_theme">themes</A></TD>
+<TD bgcolor="#FFFFFF"> <A HREF="#mgr_style">styles</A></TD>
+<TD bgcolor="#FFFFCC"> <A HREF="mapclient">API JavaDoc</TD>
+<TD bgcolor="#FFFFFF"> <A HREF="#demos">Demos</TD>
+<!-- <TD bgcolor="#FFFFCC"> <A HREF="mvpindex.jsp">Portlet</TD> -->
+</TR>
+</TABLE>
+
+<A NAME="sample_mapreq">
+<H3>Sample Map Request:</H3>
+<FORM action=omserver method=post><TEXTAREA cols=80 name=xml_request rows=40>&lt;?xml version="1.0" standalone="yes"?&gt;
+&lt;map_request
+             title="Oracle LBS MAP"
+             basemap="demo_map"
+             datasource = "mvdemo"
+             width="640"
+             height="480"
+             bgcolor="#a6cae0"
+             antialiase="false"
+             format="PNG_STREAM"&gt;
+  &lt;center size="0.15"&gt;
+     &lt;geoFeature render_style="m.star"
+                       radius="1600,4800"
+                        label="A Place"
+                   text_style="t.Street Name" &gt;
+         &lt;geometricProperty typeName="center"&gt;
+             &lt;Point&gt;
+                 &lt;coordinates&gt;-122.2615, 37.5266&lt;/coordinates&gt;
+             &lt;/Point&gt;
+         &lt;/geometricProperty&gt;
+     &lt;/geoFeature&gt;
+  &lt;/center&gt;
+
+  &lt;!--
+  &lt;legend bgstyle="fill:#ffffff;stroke:#ff0000" profile="MEDIUM" position="SOUTH_EAST"&gt;
+          &lt;column&gt;
+            &lt;entry text="Map Legend" is_title="true" /&gt;
+            &lt;entry style="M.STAR" text="center point" /&gt;
+            &lt;entry style="M.CITY HALL 3" text="cities" /&gt;
+            &lt;entry style="M.CITY HALL 4" text="big cities" /&gt;
+            &lt;entry is_separator="true" /&gt;
+            &lt;entry style="C.ROSY BROWN STROKE" text="state boundary" /&gt;
+            &lt;entry style="L.PH" text="interstate highway" /&gt;
+            &lt;entry text="County population:" /&gt;
+            &lt;entry style="V.COUNTY_POP_DENSITY" tab="1" /&gt;
+          &lt;/column&gt;
+  &lt;/legend&gt;
+  --&gt;
+
+  &lt;!--
+  &lt;themes&gt;
+    &lt;theme name="theme1" min_scale="5.0E7" max_scale="0.0"&gt;
+       &lt;jdbc_query
+         datasource="mvdemo"
+         jdbc_srid="0"
+         spatial_column="geometry"
+         render_style="MDSYS:C.RED"
+         &gt;SELECT geometry from us_counties&lt;/jdbc_query&gt;
+     &lt;/theme&gt;
+  &lt;/themes&gt;
+  --&gt;
+
+&lt;/map_request&gt;
+</TEXTAREA> <BR><INPUT type=submit value=Submit> </FORM>
+
+
+<HR>
+<A NAME="mgr_datasource">
+<FONT COLOR="#ff0000"><H2> MapViewer Data Sources </H2> </FONT>
+
+<H3>List data sources:</H3>
+<FORM action=omserver method=post>
+<TEXTAREA cols=70 name=xml_request rows=5>&lt;?xml version="1.0" standalone="yes"?&gt;
+&lt;non_map_request&gt;
+  &lt;list_data_sources /&gt;
+&lt;/non_map_request&gt;
+</TEXTAREA> <BR><INPUT type=submit value=Submit> </FORM>
+
+<H3>Data source exists:</H3>
+<FORM action=omserver method=post>
+<TEXTAREA cols=70 name=xml_request rows=5>&lt;?xml version="1.0" standalone="yes"?&gt;
+&lt;non_map_request&gt;
+  &lt;data_source_exists data_source="mvdemo"/&gt;
+&lt;/non_map_request&gt;
+</TEXTAREA> <BR><INPUT type=submit value=Submit> </FORM>
+ 
+<HR>
+<A NAME="mgr_info">
+<FONT COLOR="#ff0000"><H2> Info Request </H2></FONT>
+
+<H3> A sample attribute request </H3>
+<FORM action=omserver method=post>
+<TEXTAREA cols=70 name=xml_request rows=5>&lt;?xml version="1.0" standalone="yes"?&gt;
+&lt;info_request datasource="mvdemo" 
+                 format="strict"&gt;
+        SELECT city, pop90 population, state_abrv state FROM cities
+&lt;/info_request&gt;
+</TEXTAREA> <BR><INPUT type=submit value=Submit> </FORM>
+
+<H3> Coordinate transformation request</H3>
+<FORM action=omserver method=post>
+<TEXTAREA cols=70 name=xml_request rows=5>&lt;?xml version="1.0" standalone="yes"?&gt;
+&lt;info_request datasource="mvdemo" format="strict"
+                                  type="query_transform_srid"&gt;
+        &lt;query_transform_srid in_srid="32775" out_srid="8265"&gt;
+              -1586495.54,2165178.57
+        &lt;/query_transform_srid&gt;
+&lt;/info_request&gt;
+</TEXTAREA> <BR><INPUT type=submit value=Submit> </FORM>
+
+<HR>
+<A NAME="mgr_map">
+<FONT COLOR="#ff0000"><H2> Listing Maps </H2></FONT>
+
+
+<H3> List all the maps defined in a data source:</H3>
+<FORM action=omserver method=post>
+<TEXTAREA cols=70 name=xml_request rows=5>&lt;?xml version="1.0" standalone="yes"?&gt;
+&lt;non_map_request&gt;
+  &lt;list_maps data_source="mvdemo" /&gt;
+&lt;/non_map_request&gt;
+</TEXTAREA> <BR><INPUT type=submit value=Submit> </FORM>
+
+<A NAME="mgr_theme">
+<HR>
+<FONT COLOR="#ff0000"><H2> Listing predefined themes </H2></FONT>
+
+
+<H3> List all the themes in a data source:</H3>
+<FORM action=omserver method=post>
+<TEXTAREA cols=70 name=xml_request rows=5>&lt;?xml version="1.0" standalone="yes"?&gt;
+&lt;non_map_request&gt;
+  &lt;list_predefined_themes data_source="mvdemo" /&gt;
+&lt;/non_map_request&gt;
+</TEXTAREA> <BR><INPUT type=submit value=Submit> </FORM>
+
+<H3> List all the themes in a data source that are part of a map:</H3>
+<FORM action=omserver method=post>
+<TEXTAREA cols=70 name=xml_request rows=5>&lt;?xml version="1.0" standalone="yes"?&gt;
+&lt;non_map_request&gt;
+  &lt;list_predefined_themes data_source="mvdemo" map="DEMO_MAP" /&gt;
+&lt;/non_map_request&gt;
+</TEXTAREA> <BR><INPUT type=submit value=Submit> </FORM>
+
+<HR>
+<A NAME="mgr_style">
+<FONT COLOR="#ff0000"><H2> Listing styles </H2></FONT>
+
+
+<H3>List styles:</H3>
+<FORM action=omserver method=post>
+<TEXTAREA cols=70 name=xml_request rows=5>&lt;?xml version="1.0" standalone="yes"?&gt;
+&lt;non_map_request&gt;
+  &lt;list_styles data_source="mvdemo" style_type="COLOR" /&gt;
+&lt;/non_map_request&gt;
+</TEXTAREA> <BR><INPUT type=submit value=Submit> </FORM>
+
+<HR>
+<A NAME="demos">
+<H3> On-line JSP Demos </H3>
+
+These are the demos that come with your MapViewer deployment. Note that the last two demos require the demo dataset be imported and a corresponding datasource defined. The demo dataset can be downloaded from <A href="http://otn.oracle.com/products/mapviewer">OTN MapViewer site</A>.
+<ul>
+  <li> <A HREF="demo/jview.jsp"> jview.jsp </A> A simple no hassle spatial data viewer <br>
+  <li> <A HREF="demo/mapclient.jsp"> mapclient.jsp </A> A simple JSP demo that uses a Java bean.<br>
+       This demo works with any Oracle Spatial dataset as long as you have defined a datasource for it. 
+  <li> <A HREF="demo/mapinit.jsp"> mapinit.jsp </A> A JSP demo using the MapViewer bean <br>
+       This demo works only if you have imported the demo dataset and defined a datasource named "mvdemo". <Font color="#ff0000">SVG in action!</FONT>
+  <li> <A HREF="demo/tagmap.jsp"> tagmap.jsp </A> A demo using MapViewer JSP tags and the bean <br>
+       This demo works only if you have imported the demo dataset and defined a datasource named "mvdemo".
+  <li> <A HREF="newdemos.html">New demos for 10.1.2 </A> A set of demos for new
+features in MapViewer 10.1.2.
+</ul>
+<p>
+
+<HR>
+
+
+<TABLE cellpadding="5" cellspacing="3" border="0" summary="">
+<TR>
+<TD bgcolor="#FFFFCC"> <A HREF="#sample_mapreq">map request </A> </TD>
+<TD bgcolor="#FFFFFF"> <A HREF="#mgr_datasource"> datasources</A> </TD>
+<TD bgcolor="#FFFFCC"> <A HREF="#mgr_info">info request</A> </TD>
+<TD bgcolor="#FFFFFF"> <A HREF="#mgr_map">maps</A> </TD>
+<TD bgcolor="#FFFFCC"> <A HREF="#mgr_theme">themes</A> </TD>
+<TD bgcolor="#FFFFFF"> <A HREF="#mgr_style">styles</A> </TD>
+<TD bgcolor="#FFFFCC"> <A HREF="mapclient"> API JavaDoc </TD>
+<TD bgcolor="#FFFFFF"> <A HREF="#demos"> Demos </TD>
+<!-- <TD bgcolor="#FFFFCC"> <A HREF="mvpindex.jsp">Portlet</TD> -->
+</TR>
+</TABLE>
+
+<hr><i><small>Build: </small></i></hr></BODY></HTML>

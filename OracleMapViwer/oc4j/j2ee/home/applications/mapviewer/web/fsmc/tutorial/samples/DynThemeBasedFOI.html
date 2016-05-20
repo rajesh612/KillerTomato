@@ -1,0 +1,112 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Map Cache Server/Map Client</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+  var mapview;
+  
+  function showMap()
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);
+    
+    temlatedThemeBasedFOI();
+    mapview.display();   
+  }
+  
+  function temlatedThemeBasedFOI()
+  {	
+    var themebasedfoi = new MVThemeBasedFOI('themebasedfoi1','mvdemo.dynamic_customers');
+    
+    themebasedfoi.setQueryParameters('SAN FRANCISCO','100');      
+    themebasedfoi.setBringToTopOnMouseOver(true);
+    
+    mapview.addThemeBasedFOI(themebasedfoi);
+    
+  }
+</script>
+
+</head>
+
+<body onload="javascript:showMap();">
+<H3>Oracle Maps example - templated theme based FOI layer</h3>
+
+      <div id="map" style="left:0px; top:10px; width:100%; height:60%"></div> 
+<HR/>
+<h3>Instructions</h3>
+This demo shows how to use a templated theme based FOI layer. A templated theme
+is a MapViewer predefined theme (<i>dynamic_customers</i> in this case) that 
+includes binding variables in its query condition. For instance, the styling 
+rules of the theme <i>dynamic_customers</i> look like this:
+<blockquote>
+  <pre>
+	  &lt;?xml version="1.0" standalone="yes"?&gt;
+	  &lt;styling_rules&gt;
+        &lt;hidden_info&gt;
+			&lt;field column="name" name="Name"/&gt;
+			&lt;field column="city" name="City"/&gt;
+			&lt;field column="sales" name="Sales"/&gt;
+	    &lt;/hidden_info&gt;
+        &lt;rule&gt;
+			&lt;features style="M.SMALL CIRCLE"&gt; <font color="#ff0000">(county=:1 and sales&gt;:2) </font>&lt;/features&gt;
+	 		&lt;label column="NAME" style="T.RED STREET"&gt; 1 &lt;/label&gt;
+	    &lt;/rule>
+     &lt;/styling_rules&gt;
+  </pre>
+</blockquote>
+
+In this case, MapViewer issues a query that filters results based on the 
+specified county name and sales range. The actual parameter values must be supplied to MapViewer in each
+map request for that theme. This demo shows you how to supply such dynamic values
+through the JavaScript API.
+
+<h3>Source code</h3>
+<blockquote>
+	<pre>
+  var mapview;
+  
+  function showMap()
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);
+    
+    temlatedThemeBasedFOI();
+    mapview.display();   
+  }
+  
+  function temlatedThemeBasedFOI()
+  {	
+    var themebasedfoi = new MVThemeBasedFOI('themebasedfoi1','mvdemo.dynamic_customers');
+    <font color="#ff0000">
+    themebasedfoi.setQueryParameters('SAN FRANCISCO','100');      
+    </font>
+    themebasedfoi.setBringToTopOnMouseOver(true);
+    
+    mapview.addThemeBasedFOI(themebasedfoi);
+    
+  }	
+	</pre>
+</blockquote>
+</body>
+	
+</html>
+
+

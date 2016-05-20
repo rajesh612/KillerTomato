@@ -1,0 +1,123 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html" charset=UTF-8">
+<TITLE>Map Cache Server/Map Client</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+  var mapview;
+  
+  function on_load_mapview() 
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -100.45;
+    var mapCenterLat =  37.7706;
+    var mapZoom      =  0;       
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+    mapview.setCenter(mpoint);   
+    mapview.setZoomLevel(mapZoom);    
+    
+    mapview.addNavigationPanel("EAST");  
+    mapview.display();
+  }
+  
+  function removeThemeBasedFOI()
+  {
+    var themebasedfoi = mapview.getThemeBasedFOI ('themebasedfoi1');
+    if(themebasedfoi)
+      mapview.removeThemeBasedFOI(themebasedfoi);
+  }	   
+  
+  function updateGeoRss(source)
+  {    
+    var style="M.CIRCLE";
+    
+    var se = document.getElementById("marker");
+    for(var i=0; i<se.options.length; i++)
+    {
+      if(se.options[i].selected)
+      {
+        style = se.options[i].value;
+        break;
+      }
+    }
+    
+    var url;
+    if(source==1) //get url from the text input
+    {
+      var urlComp = document.getElementById("_url");
+      url = urlComp.value;
+      if(url.length<5)
+      {
+        alert("Invalide URL.");
+        return;
+      }
+    }
+    else if(source==2)  //get url from the drop-down list
+    {
+      var element = document.getElementById("sample_url");
+      for(var i=0; i<element.options.length; i++)
+      {
+        if(element.options[i].selected)
+        {
+          url = element.options[i].value;        
+          break;
+        }
+      }
+    }
+    
+    alert("About to display GeoRSS from:\n "+url);
+    removeThemeBasedFOI();
+    
+    var georss = "mvdemo.__georss__"+url;
+    var themebasedfoi = new MVThemeBasedFOI('themebasedfoi1', georss);
+    themebasedfoi.setRenderingStyle(style);
+    
+    mapview.addThemeBasedFOI(themebasedfoi);
+  }
+  
+</script>
+</head>
+
+<body onload= javascript:on_load_mapview() >
+<h3>Oracle Maps example - GeoRSS support</h3>
+
+<div id="map" style="left:0px; top:10px;width: 90%; height: 75%"></div> 
+
+<P>
+
+<FORM>
+<TABLE cellspacing="10">
+  <TR>
+    <TD> Pick a map symbol: </TD>
+    <TD><SELECT name="marker" id="marker">
+          <OPTION value="M.CIRCLE"> Circle </OPTION>
+          <OPTION value="M.STAR"> Star </OPTION>
+          <OPTION value="C.BLUE"> Blue color </OPTION>
+        </SELECT>
+    </TD>
+  </TR>
+  <TR><TD cellspan="2"> Sample GeoRSS feeds: </TD> 
+    <TD><SELECT name="sample_url" id="sample_url">
+        <OPTION value="http://georss.mit.edu/tornadoes.php?year=1950">Tornadoes (1950)</OPTION>    
+        <OPTION value="http://earthquake.usgs.gov/eqcenter/catalogs/1day-M2.5.xml">Recent earthquakes</OPTION>
+        </SELECT>
+    <A HREF="javaScript:updateGeoRss(2);"> Click here to update map </A> (You may need to pan or zoom the map to see GeoRSS data) </TD>
+  </TR>  
+  <TR>
+    <TD>Enter a different GeoRSS:</TD>
+    <TD><INPUT TYPE="TEXT" ID="_url" size="70">
+    <A HREF="javaScript:updateGeoRss(1);"> Click here to update map </A> </TD>    
+  </TR>
+  
+</TABLE>
+</FORM>
+
+</body>
+</html>
+
+

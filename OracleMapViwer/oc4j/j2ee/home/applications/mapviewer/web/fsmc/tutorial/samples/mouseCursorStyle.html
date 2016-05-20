@@ -1,0 +1,110 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<META http-equiv="Content-Type" content="text/html" charset=UTF-8">
+<TITLE>Setting mouse cursor style</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+  var mapview;
+  
+  function on_load_mapview() 
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.7706;
+    var mapZoom      =  4;       
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+    mapview.setCenter(mpoint);   
+    mapview.setZoomLevel(mapZoom);    
+    mapview.setMouseCursorStyle("crosshair", "default") ;
+    mapview.setMouseCursorStyle("pointer", "dragging") ;
+    
+    var themebasedfoi = new MVThemeBasedFOI('themebasedfoi1','mvdemo.customers');
+    themebasedfoi.setMouseCursorStyle("help") ;
+    mapview.addThemeBasedFOI(themebasedfoi);
+          
+    var md= new MVMapDecoration("<img src=\"http://www.oracle.com/admin/images/ocom/oralogo_small.gif\">",0.1, 0.1,20,5);
+    md.setMouseCursorStyle("text");
+    mapview.addMapDecoration(md);
+    
+    var foi = MVFOI.createMarkerFOI("2", MVSdoGeometry.createPoint(-122.45,37.77,8307), "images/baseball.gif",28,28);
+    foi.setMouseCursorStyle("move") ;
+    mapview.addFOI(foi);
+    
+    mapview.display();
+  }
+  
+</script>
+</head>
+
+<body onload= javascript:on_load_mapview() >
+<h3>Oracle Maps example - setting mouse cursor style</h3>
+Move mouse around to see how the mouse cursor changes.
+<div id="map" style="left:0px; top:10px;width: 100%; height: 60%"></div> 
+
+<HR/>
+<h3>Instructions</h3>
+  This demo shows how to set the mouse cursor style used when the mouse is over the map, over a Theme based FOI layer, over a user defined FOI and over a map decoration object. 
+<h3>Source code</h3>
+Here is the JavaScript code for the above map.
+<blockquote>
+
+<pre>
+  var mapview;
+  
+  function on_load_mapview() 
+  { 
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.7706;
+    var mapZoom      =  4;       
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+    mapview.setCenter(mpoint);   
+    mapview.setZoomLevel(mapZoom);    
+    <font color="#ff0000">
+    mapview.setMouseCursorStyle("crosshair", "default") ;
+    mapview.setMouseCursorStyle("pointer", "dragging") ;
+    </font>
+    
+    var themebasedfoi = new MVThemeBasedFOI('themebasedfoi1','mvdemo.customers');
+    <font color="#ff0000">
+    themebasedfoi.setMouseCursorStyle("help") ;
+    </font>
+    mapview.addThemeBasedFOI(themebasedfoi);
+          
+    var md= new MVMapDecoration("<img src=\"http://www.oracle.com/admin/images/ocom/oralogo_small.gif\">",0.1, 0.1,20,5);
+    <font color="#ff0000">
+    md.setMouseCursorStyle("text");
+    </font>
+    mapview.addMapDecoration(md);
+    
+    var foi = MVFOI.createMarkerFOI("2", MVSdoGeometry.createPoint(-122.45,37.77,8307), "images/baseball.gif",28,28);
+    <font color="#ff0000">
+    foi.setMouseCursorStyle("move") ;
+    </font>
+    mapview.addFOI(foi);
+    
+    mapview.display();
+  }
+</pre>
+</blockquote>
+
+This is how the <i>removeThemeBasedFOI()</i> is invoked when you click the
+link above.
+<blockquote>
+<pre>
+Name of the Theme Based FOI layer: &lt;input id="themebasedfoiName" type=text value="themebasedfoi1"&gt;
+&lt;a href="javascript:removeThemeBasedFOI()"&gt;click here to remove it from the map&lt;/a&gt; 
+
+</pre>
+</blockquote>
+</body>
+</html>
+
+

@@ -1,0 +1,164 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Map Cache Server/Map Client</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+  var bucketStyle;
+  function showMap()
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  3;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    var mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);    
+
+    var themebasedfoi = new MVThemeBasedFOI('themebasedfoi1','mvdemo.THEME_DEMO_COUNTY_POPDENSITY');
+    themebasedfoi.setBringToTopOnMouseOver(true);
+    themebasedfoi.setMaxWholeImageLevel(9);
+    
+    setupDynamicStyles(themebasedfoi);
+    
+    mapview.addThemeBasedFOI(themebasedfoi);
+
+    mapview.addNavigationPanel("WEST");
+    
+    mapview.display();  			
+  }
+  
+  function setupDynamicStyles(themebasedfoi)
+  {
+    //create basic colors to be used 
+    var sc1 = new MVStyleColor("color1", "2a00ff", "003333");
+    var sc2 = new MVStyleColor("color2", "006eff", "003333");
+    var sc3 = new MVStyleColor("color3", "00ffcb", "003333");
+    var sc4 = new MVStyleColor("color4", "00ff21", "003333");
+    var sc5 = new MVStyleColor("color5", "ccff00", "003333");
+    var sc6 = new MVStyleColor("color6", "ff9900", "003333");
+
+    //create individual ranged buckets
+    var buckets = new Array(6);    
+    buckets[0] = new  MVNumericRangedBucket(0,     150000, "color1", "0-150k");
+    buckets[1] = new  MVNumericRangedBucket(150000, 350000, "color2", "150k-350k");
+    buckets[2] = new  MVNumericRangedBucket(350000, 500000, "color3", "350k-500k");
+    buckets[3] = new  MVNumericRangedBucket(500000, 750000, "color4", "500k-750k");
+    buckets[4] = new  MVNumericRangedBucket(750000, 1200000, "color5", "750k-1.2m");
+    buckets[5] = new  MVNumericRangedBucket(1200000, null, "color6", "1.2m-");
+    
+    var bseries = new MVBucketSeries("SCHEME_CUSTOM");
+    bseries.setBuckets(buckets);
+    
+    var bucketSty = new MVBucketStyle("pop_density", bseries);
+
+    //add all the primitive color styles we just created
+    themebasedfoi.addStyle(sc1);
+    themebasedfoi.addStyle(sc2);
+    themebasedfoi.addStyle(sc3);
+    themebasedfoi.addStyle(sc4);
+    themebasedfoi.addStyle(sc5);
+    themebasedfoi.addStyle(sc6);
+    
+    //now add the bucket style
+    themebasedfoi.addStyle(bucketSty);
+    
+    themebasedfoi.setRenderingStyle("pop_density");
+
+  }
+</script>
+    
+</head>
+
+<body onload=javascript:showMap();>
+<h3>Oracle Maps example - creating styles on the fly</h3>
+  <div id="map" style="left:0px; top:0px; width:60%; height:60%"></div>
+<h3>Instructions</h3>
+This demo shows how to create temporary MapViewer styles in the JavaScript 
+client and use it to display theme-based FOI layers.
+
+<BR></BR>
+In this specific example, the counties FOI layer is rendered by the server
+using a dynamic color-based bucket style that is created in the client side using
+the JavaScript API.
+
+<h3>Source code</h3>
+<blockquote>
+<pre>
+  var bucketStyle;
+  function showMap()
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  3;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    var mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);    
+
+    var themebasedfoi = new MVThemeBasedFOI('themebasedfoi1','mvdemo.THEME_DEMO_COUNTY_POPDENSITY');
+    themebasedfoi.setBringToTopOnMouseOver(true);
+    themebasedfoi.setMaxWholeImageLevel(9);
+    <font color="#ff0000">
+    setupDynamicStyles(themebasedfoi);
+    </font>    
+    mapview.addThemeBasedFOI(themebasedfoi);
+
+    mapview.addNavigationPanel("WEST");
+    
+    mapview.display();  			
+  }
+      <font color="#ff0000">
+
+  function setupDynamicStyles(themebasedfoi)
+  {
+    //create basic colors to be used 
+    var sc1 = new MVStyleColor("color1", "2a00ff", "003333");
+    var sc2 = new MVStyleColor("color2", "006eff", "003333");
+    var sc3 = new MVStyleColor("color3", "00ffcb", "003333");
+    var sc4 = new MVStyleColor("color4", "00ff21", "003333");
+    var sc5 = new MVStyleColor("color5", "ccff00", "003333");
+    var sc6 = new MVStyleColor("color6", "ff9900", "003333");
+
+    //create individual ranged buckets
+    var buckets = new Array(6);    
+    buckets[0] = new  MVNumericRangedBucket(0,     150000, "color1", "0-150k");
+    buckets[1] = new  MVNumericRangedBucket(150000, 350000, "color2", "150k-350k");
+    buckets[2] = new  MVNumericRangedBucket(350000, 500000, "color3", "350k-500k");
+    buckets[3] = new  MVNumericRangedBucket(500000, 750000, "color4", "500k-750k");
+    buckets[4] = new  MVNumericRangedBucket(750000, 1200000, "color5", "750k-1.2m");
+    buckets[5] = new  MVNumericRangedBucket(1200000, null, "color6", "1.2m-");
+    
+    var bseries = new MVBucketSeries("SCHEME_CUSTOM");
+    bseries.setBuckets(buckets);
+    
+    var bucketSty = new MVBucketStyle("pop_density", bseries);
+
+    //add all the primitive color styles we just created
+    themebasedfoi.addStyle(sc1);
+    themebasedfoi.addStyle(sc2);
+    themebasedfoi.addStyle(sc3);
+    themebasedfoi.addStyle(sc4);
+    themebasedfoi.addStyle(sc5);
+    themebasedfoi.addStyle(sc6);
+    
+    //now add the bucket style
+    themebasedfoi.addStyle(bucketSty);
+    
+    themebasedfoi.setRenderingStyle("pop_density");
+  }
+  </font>
+
+</pre>
+</blockquote>
+</body>
+</html>
+
+

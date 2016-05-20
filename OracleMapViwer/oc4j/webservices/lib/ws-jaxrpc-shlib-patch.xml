@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<project default="shlib-patch" basedir=".">
+
+    <!--
+        This script will updaate system-application.xml and service.xml in OC4J config directory 
+        The ORACLE_HOME must point to a valid Oracle Home.  
+        TODO, the following parameters
+        may be defined on the command-line:
+        
+        OC4JNAME :      OC4J name for any possible OC4J instance  
+                        ( e.q.: -DOC4JNAME=OC4J_BPEL ) 
+    -->
+
+    <target name="init">
+	<echo message = "Initializing  Variables" />
+        <property environment="env" />
+        <property name="OracleHome" value="${env.ORACLE_HOME}" />
+        <property name="HomeConfigPath"  value="j2ee/home/config" /> 
+        <condition property="setOc4j" >
+            <isset property="OC4JNAME" />
+        </condition>
+        <property name="Oc4jConfigPath"  value="j2ee/${OC4JNAME}/config" /> 
+        <property name="FutilJar"  value="${OracleHome}/webservices/lib/futils.jar" />
+    </target>
+    
+    <target name="shlib-patch" depends="init">
+    	<antcall target="patch-system-appl-xml" />
+    	<antcall target="patch-server-xml" />
+    	<antcall target="patch-oc4j-system-appl-xml" />
+    	<antcall target="patch-oc4j-server-xml" />
+    </target>
+ 
+    <target name="patch-system-appl-xml" unless="setOc4j" >
+    	<echo message="Patching system-application.xml for import oracle.ws.jaxrpc shlib." />
+    	<echo message="${OracleHome}/${HomeConfigPath}/system-application.xml" />
+    	<java jvm="${env.JAVA_HOME}/bin/java" jar="${FutilJar}" fork="true" failonerror="false">
+                <arg value="-sourceFile" />
+                <arg value="${OracleHome}/${HomeConfigPath}/system-application.xml" />
+                <arg value="-destFile" />
+                <arg value="${OracleHome}/${HomeConfigPath}/system-application.xml" />
+                <arg value="-searchString" />
+                <arg value="&lt;imported-shared-libraries>" />
+                <arg value="-insertString" />
+                <arg value="     &lt;import-shared-library name=''oracle.ws.jaxrpc''/>&#10;     &lt;import-shared-library name=''org.jgroups''/>" />
+        </java>
+    </target>
+   
+    <target name="patch-server-xml" unless="setOc4j" >
+    	<echo message="Patching server.xml for import oracle.ws.jaxrpc shlib." />
+    	<java jvm="${env.JAVA_HOME}/bin/java" jar="${FutilJar}" fork="true" failonerror="false">
+                <arg value="-sourceFile" />
+                <arg value="${OracleHome}/${HomeConfigPath}/server.xml" />
+                <arg value="-destFile" />
+                <arg value="${OracleHome}/${HomeConfigPath}/server.xml" />
+                <arg value="-searchString" />
+                <arg value="&lt;import-shared-library name=''oracle.ws.client''/>" />
+                <arg value="-insertString" />
+                <arg value="               &lt;import-shared-library name=''oracle.ws.jaxrpc''/>" />
+        </java>
+     </target>
+ 
+    <target name="patch-oc4j-system-appl-xml" if="setOc4j" >
+    	<echo message="Patching system-application.xml for import oracle.ws.jaxrpc shlib." />
+    	<echo message="${OracleHome}/${Oc4jConfigPath}/system-application.xml" />
+    	<java jvm="${env.JAVA_HOME}/bin/java" jar="${FutilJar}" fork="true" failonerror="false">
+                <arg value="-sourceFile" />
+                <arg value="${OracleHome}/${Oc4jConfigPath}/system-application.xml" />
+                <arg value="-destFile" />
+                <arg value="${OracleHome}/${Oc4jConfigPath}/system-application.xml" />
+                <arg value="-searchString" />
+                <arg value="&lt;imported-shared-libraries>" />
+                <arg value="-insertString" />
+                <arg value="     &lt;import-shared-library name=''oracle.ws.jaxrpc''/>&#10;     &lt;import-shared-library name=''org.jgroups''/>" />
+        </java>
+    </target>
+   
+    <target name="patch-oc4j-server-xml" if="setOc4j" >
+    	<echo message="Patching server.xml for import oracle.ws.jaxrpc shlib." />
+    	<java jvm="${env.JAVA_HOME}/bin/java" jar="${FutilJar}" fork="true" failonerror="false">
+                <arg value="-sourceFile" />
+                <arg value="${OracleHome}/${Oc4jConfigPath}/server.xml" />
+                <arg value="-destFile" />
+                <arg value="${OracleHome}/${Oc4jConfigPath}/server.xml" />
+                <arg value="-searchString" />
+                <arg value="&lt;/shared-library>" />
+                <arg value="-insertString" />
+                <arg value="      &lt;import-shared-library name=''oracle.ws.jaxrpc''/>  " />
+                <arg value="-insertBefore" />
+        </java>
+     </target>
+ 
+</project>
+

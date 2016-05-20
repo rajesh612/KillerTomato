@@ -1,0 +1,221 @@
+<page xmlns="http://xmlns.oracle.com/uix/controller"
+      xmlns:ui="http://xmlns.oracle.com/uix/ui"
+      xmlns:data="http://xmlns.oracle.com/uix/ui"
+      xmlns:ctrl="http://xmlns.oracle.com/uix/controller"
+      xmlns:html="http://www.w3.org/TR/REC-html40">
+
+<!--Browser Title Bar-->
+ <ctrl:head xmlns="http://www.w3.org/TR/REC-html40" > 
+  <title>MapViewer Help Page</title>
+ </ctrl:head>
+
+<!--Begin Page Content-->
+ <content>
+ <body xmlns="http://xmlns.oracle.com/uix/ui" >
+   <contents>
+      <pageLayout xmlns="http://xmlns.oracle.com/uix/ui" >
+           <contents>
+              <pageHeaderLayout>
+                 <!-- Branding section -->
+			<corporateBranding>
+      			<image source="/mapviewer/myicons/as10g_logo.gif" 
+                 			 text="Oracle Application Server 10g"/>
+     			</corporateBranding>
+     			<productBranding>
+       			<image source="/mapviewer/myicons/mapviewer.gif" 
+                  		 text="MapViewer"/>
+     			</productBranding>
+     			<cobranding>
+       			<image source="/mapviewer/myicons/oracle_logo.gif"
+                  		 text="Oracle"/>
+     			</cobranding>
+			<pageHeader>
+				<globalHeader text="Admin page help text"/>
+			</pageHeader>
+              </pageHeaderLayout>
+		  <styledList listStyle="decimal">
+                 <separator/>
+		     <contents>
+				<styledItem>
+					<contents>
+						<header text="What is MapViewer?">
+							<contents>
+
+The Oracle Application Server MapViewer (or simply, MapViewer) 
+is a programmable tool for rendering maps using spatial data managed by 
+Oracle Spatial or Oracle Locator (also referred to as Locator). MapViewer 
+provides tools that hide the complexity of spatial data queries and
+cartographic rendering, while providing customizable options for more advanced
+users. These tools can be deployed in a platform-independent manner and are
+designed to integrate with map-rendering applications.	
+							
+							</contents>
+						</header>
+					</contents>
+				</styledItem>
+				<styledItem>
+					<contents>
+						<header text="What are these values I am being asked for?">
+							<contents>
+<html:p> The values, map servlet url, data source name, base map, center
+point (X, Y) and map size together make up a map request.</html:p>
+
+<html:p> A request to the MapViewer servlet has the following format: </html:p>
+
+<styledText styleClass="OraInstructionTextStrong"
+            text="http://hostname[:port]/MapViewer-servlet-path?xml_request=xml-request" />
+
+<html:p> In this format: </html:p>
+
+<styledList>
+<separator>
+<spacer height="20" />
+</separator>
+<contents>
+	<styledItem>
+		<contents>
+			<styledText styleClass="OraDataText" text="hostname"/>
+			<text text=" is the network path of the server on which MapViewer is running." />
+		</contents>
+	</styledItem>
+	<styledItem>
+		<contents>
+			<styledText styleClass="OraDataText" text="port"/>
+			<text text=" is the port on which the Web server listens." />
+		</contents>
+	</styledItem>
+	<styledItem>
+		<contents>
+			<styledText styleClass="OraDataText" text="MapViewer-servlet-path"/>
+			<text text=" is the MapViewer servlet path (for example, " />
+                        <styledText styleClass ="OraPromptText" 
+                              text="mapviewer/omserver" />
+                        <text text= ")"/>
+		</contents>
+	</styledItem>
+	<styledItem>
+		<contents>
+			<styledText styleClass="OraDataText" text="xml-request "/>
+			<text text="is the URL-encoded XML request submitted using the HTML GET or POST method." />
+		</contents>
+	</styledItem>
+</contents>
+</styledList>
+		
+<html:p> 
+The input XML is required for all requests. The output depends on
+the content of the request: the response can be either an XML document, or a
+binary object containing the (generated image) file requested by the user.
+</html:p>
+<html:p> 
+In an input request, you must specify a data source, a base map
+name, a center point, and a map size. (There are additional, optional,
+parameters described in the user guide). These parameters are:
+</html:p>
+
+<styledList>
+<separator>
+<spacer height="10" />
+</separator>
+<contents>
+    <styledItem>
+       	<contents>
+	   Map Server URL: The 
+	   <styledText styleClass="OraInstructionText" text=" hostname[:port]/mapviewer-servlet-path "/>
+           part of the request.	
+	</contents>
+    </styledItem>
+
+    <styledItem>
+       	<contents>
+	   Data Source: A map data source is a named location of atdabase instance containing 
+           spatial data and metadata used in rendering maps. A data source is usually set up from
+	   the MapViewer admin page using the admin request XML API. 
+	   A sample admin request is:
+
+
+	   <styledText styleClass="OraInstructionText">
+		<contents>
+
+			&lt;?xml version="1.0" standalone="yes"?&gt;
+				&lt;non_map_request&gt;
+  					&lt;add_data_source 
+        					name="mvdemo" 
+        					jdbc_host="mapserver.example.org"
+        					jdbc_port="1521"
+        					jdbc_sid="orcl"
+        					jdbc_user="scott"
+        					jdbc_password="tiger"
+        					jdbc_mode="thin"
+        					number_of_mappers="1" /&gt;
+				&lt;/non_map_request&gt;
+
+		</contents>
+           </styledText>         
+	</contents>
+    </styledItem>
+
+    <styledItem>
+       	<contents>
+	   Base Map Name: An entry in the USER_SDO_MAPS view for the above data. 
+	   The user SCOTT will have a view named USER_SDO_MAPS that contains predefined base maps. 
+	</contents>
+    </styledItem>
+
+
+    <styledItem>
+       	<contents>
+	   Center point: Coordinates of the map center. 
+	</contents>
+    </styledItem>
+
+    <styledItem>
+       	<contents>
+	   Map size: Height of the map in the user data space. 
+	   E.g. if the data is in WGS84 and map size is 2 then the height is 2 degrees. 
+           So if the center is (-116, 38) then the initial map window will be 
+           [lower left = (-117, 37), upper right = (-115, 39)]
+	</contents>
+    </styledItem>
+
+</contents>
+</styledList>
+						
+							</contents>
+						</header>
+					</contents>
+				</styledItem>
+				<styledItem>
+					<contents>
+						<header text="How do I determine a starting map center (X,Y or Longitude/Latitude) and size?">
+							<contents>
+Use Oracle Spatial functions to determine the extent of the map layer and choose its centroid as a starting point.
+E.g. 
+<styledText styleClass="OraPromptText" 
+            text=" SELECT SDO_GEOM.SDO_CENTROID(SDO_TUNE.EXTENT_OF('COUNTIES', 'GEOMETRY'), 0.05) FROM DUAL;"/>
+	
+							</contents>
+						</header>
+					</contents>
+				</styledItem>
+		     </contents>
+		  </styledList>
+           </contents>
+        </pageLayout>
+
+       <globalHeader/>
+
+        <ui:footer>
+           <!-- Footer Elements -->
+           <ui:copyright>
+                  Copyright 2003, Oracle Corp.
+           </ui:copyright>
+           <ui:privacy>
+                    <ui:link text="Privacy Statement"
+                          destination="http://www.oracle.com/html/privacy.html"/>
+           </ui:privacy>
+        </ui:footer>
+    </contents>
+  </body>
+  </content>
+</page>

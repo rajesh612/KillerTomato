@@ -1,0 +1,219 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="1.2"
+          xmlns:h="http://java.sun.com/jsf/html"
+          xmlns:f="http://java.sun.com/jsf/core"
+          xmlns:af="http://xmlns.oracle.com/adf/faces"
+          xmlns:afh="http://xmlns.oracle.com/adf/faces/html">
+  <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+  <f:view>
+    <afh:html>
+      <afh:head title="OracleAS MapViewer Admin">
+        <meta http-equiv="Content-Type"
+              content="text/html; charset=windows-1252"/>
+      </afh:head>
+      <afh:body>
+      <h:form>
+        <af:panelPage>
+          <f:facet name="menu1">
+            <af:menuTabs id="menuTabsArea" value="#{menuModel.model}"
+                         var="menuTab">
+              <f:facet name="nodeStamp">
+                <af:commandMenuItem text="#{menuTab.label}"
+                                    action="#{menuTab.getOutcome}"
+                                    type="default"
+                                    rendered="#{menuTab.shown and                                                    menuTab.type=='default'                                                   }"/>
+              </f:facet>
+            </af:menuTabs>
+          </f:facet>
+          <f:facet name="menuGlobal">
+            <af:menuButtons var="menuButton" id="menuButtsArea"
+                            value="#{menuModel.model}">
+              <f:facet name="nodeStamp">
+                <af:commandMenuItem text="#{menuButton.label}"
+                                    action="#{menuButton.getOutcome}"
+                                    icon="#{menuButton.icon}"
+                                    rendered="#{menuButton.type=='global'}"
+                                    type="global"/>
+              </f:facet>
+            </af:menuButtons>
+          </f:facet>
+          <f:facet name="branding">
+            <af:objectImage source="/myicons/oracle_logo.gif"/>
+          </f:facet>
+          <f:facet name="brandingApp">
+            <af:objectImage source="/myicons/mapviewer_admin.gif"/>
+          </f:facet>
+          <f:facet name="appCopyright">
+            <af:outputText value="#{mvbundle.copyright}"/>
+          </f:facet>
+          <f:facet name="appPrivacy"/>
+          <f:facet name="appAbout"/>
+          <f:facet name="brandingAppContextual">
+            <af:outputFormatted value="#{mvbundle.loclocloc}"
+				styleUsage="inContextBranding"/>
+          </f:facet>
+          <f:facet name="menu2">
+            <af:menuBar var="menuSubTab" id="menuSubTabsArea" startDepth="1"
+                        value="#{menuModel.model}">
+              <f:facet name="nodeStamp">
+                <af:commandMenuItem text="#{menuSubTab.label}"
+                                    action="#{menuSubTab.getOutcome}"/>
+              </f:facet>
+            </af:menuBar>
+          </f:facet>
+            <f:facet name="menu3">
+              <af:menuList id="menuListArea" var="menuListItem" startDepth="2"
+                           value="#{menuModel.model}">
+                <f:facet name="nodeStamp">
+                  <af:commandMenuItem text="#{menuListItem.label}"
+                                      action="#{menuListItem.getOutcome}"/>
+                </f:facet>
+              </af:menuList>
+            </f:facet>
+            <af:panelGroup layout="vertical">
+            <af:commandButton text="Return"
+                                action="cancel"/>
+              <af:objectSpacer width="10" height="15"/>
+              <af:panelBox text="Create a map tile layer for external map source" width="100%">
+                <af:panelForm fieldWidth="65%" labelWidth="35%" width="100%"
+                              maxColumns="1"
+                              partialTriggers="mapSrcPropertiesID httpProxyId">
+                  <f:facet name="footer">
+                    <af:panelButtonBar>
+                      <af:commandButton text="Submit"
+                                        action="#{newMapCache.createNewMCI}"/>
+                      <af:commandButton text="Cancel"
+                                        action="cancel"/>
+                      <af:commandButton text="XML mode"
+                                        shortDesc="switch to XML editing mode"
+                                        action="ext_mci_xml"/>
+                    </af:panelButtonBar>
+                  </f:facet>
+                  <af:inputText label="Name:" wrap="off"
+                                tip="This name will be automatically prefixed with datasrc name."
+                                value="#{newMapCache.name}"/>
+                  <af:objectSpacer width="10" height="10"/>
+                  <af:selectOneChoice label="Data Source:"
+                                      value="#{newMapCache.dataSrc}"
+                                      tip="MapViewer data source; for storing map tile layer configurations">
+                    <f:selectItems value="#{metadata.dsrcList}"/>
+                  </af:selectOneChoice>
+                  
+                  <af:inputText label="Max browser tile cache age(hours)" rendered="#{newMapCache.customExternalLayer}"
+                                value="#{newMapCache.httpHeaderExpires}"
+                                tip="The maximum length of time(in hours) during which the map tiles may be  kept inside the web browser's cache."/>
+                  <af:objectSpacer width="10" height="8"/>
+                  <af:objectSeparator rendered="#{newMapCache.customExternalLayer}"/>
+                  <af:inputText label="Map service Url:"  rendered="#{newMapCache.customExternalLayer}"
+                                value="#{newMapCache.serviceUrl}"/>
+                  <af:objectSpacer width="10" height="8"  rendered="#{newMapCache.customExternalLayer}"/>
+                  <af:selectOneChoice label="Request method:" rendered="#{newMapCache.customExternalLayer}"
+                                      value="#{newMapCache.requestMethod}">
+                    <af:selectItem label="HTTP GET" value="GET"/>
+                    <af:selectItem label="HTTP POST" value="POST"/>
+                  </af:selectOneChoice>
+                  <af:objectSpacer width="10" height="10" rendered="#{newMapCache.customExternalLayer}"/>
+                  <af:selectBooleanCheckbox text="HTTP proxy required" rendered="#{newMapCache.customExternalLayer}"
+                                            value="#{newMapCache.proxyRequired}"
+                                            id="httpProxyId" autoSubmit="true"/>
+                  <af:objectSpacer width="10" height="8" rendered="#{newMapCache.proxyRequired}"/>
+                  <af:inputText label="Proxy host:" 
+                                value="#{newMapCache.proxyHost}"
+                                rendered="#{newMapCache.proxyRequired}"
+                                autoSubmit="false"/>
+                  <af:inputText label="port:" value="#{newMapCache.proxyPort}"
+                                rendered="#{newMapCache.proxyRequired}"/>
+                  <af:objectSpacer width="10" height="12" rendered="#{newMapCache.customExternalLayer}"/>
+                  <af:inputText label="Adapter class:" rendered="#{newMapCache.customExternalLayer}"
+                                value="#{newMapCache.adapterClass}"/>
+                  <af:inputText label="Jar file location:" rendered="#{newMapCache.customExternalLayer}"
+                                value="#{newMapCache.adapterLocation}"
+                                tip="complete path to the adapter Jar file on the server"/>
+                  <af:objectSpacer width="10" height="8" rendered="#{newMapCache.customExternalLayer}"/>
+                  <af:selectBooleanCheckbox text="transparent" rendered="#{newMapCache.customExternalLayer}"
+                                            label="Background:"
+                                            tip="Specify whether the background of external map tiles are transparent."
+                                            value="#{newMapCache.extTileTransparent}"/>
+                  <af:objectSpacer width="10" height="15" rendered="#{newMapCache.customExternalLayer}"/>
+                  <af:selectBooleanCheckbox text="Adapter properties" rendered="#{newMapCache.customExternalLayer}"
+                                            id="mapSrcPropertiesID"
+                                            value="#{newMapCache.propertiesNeeded}"
+                                            autoSubmit="true"/>
+                  <af:objectSpacer width="10" height="10" rendered="#{newMapCache.customExternalLayer}"/>
+                  <af:panelLabelAndMessage rendered="#{newMapCache.propertiesNeeded and  newMapCache.numProperties==0}">
+                    <af:panelButtonBar >
+                      <af:commandButton text="Add"
+                                        action="#{newMapCache.addProperty}"/>
+                    </af:panelButtonBar>
+                  </af:panelLabelAndMessage>
+                  <af:panelLabelAndMessage label="Properties:"
+                                           rendered="#{newMapCache.propertiesNeeded}"
+                                           partialTriggers="mapSrcPropertiesID">
+                    <af:panelGroup layout="vertical">
+                      <af:table emptyText="No property specified" rows="5"
+                                binding="#{newMapCache.ptable}"
+                                value="#{newMapCache.properties}" var="row">
+                        <af:column sortable="false" headerText="name">
+                          <af:inputText value="#{row.name}"/>
+                        </af:column>
+                        <af:column sortable="false" headerText="value">
+                          <af:inputText value="#{row.value}"/>
+                        </af:column>
+                        <f:facet name="selection">
+                          <af:tableSelectOne text="Select and ">
+                            <af:commandButton text="Add"
+                                          action="#{newMapCache.addProperty}"/>
+                            <af:commandButton text="Delete"
+                                              action="#{newMapCache.deleteProperty}"/>
+                          </af:tableSelectOne>
+                        </f:facet>
+                      </af:table>
+                    </af:panelGroup>
+                  </af:panelLabelAndMessage>
+                  <af:objectSeparator/>
+                  <af:inputText label="Tile storage:" rendered="#{newMapCache.customExternalLayer}"
+                                tip="Specify the root directory for tile image files."
+                                value="#{newMapCache.cacheStorage}"/>
+                  <af:objectSpacer width="10" height="10" rendered="#{newMapCache.customExternalLayer}"/>
+                  <af:inputText label="SRID:" readOnly="#{!newMapCache.customExternalLayer}"
+                                tip="Maps will be displayed in this SRID"
+                                value="#{newMapCache.srid}"/>
+                  <af:objectSpacer width="10" height="8"/>
+                  <af:inputText label="Min X:" value="#{newMapCache.minX}" readOnly="#{!newMapCache.customExternalLayer}"/>
+                  <af:inputText label="Max X:" value="#{newMapCache.maxX}" readOnly="#{!newMapCache.customExternalLayer}"/>
+                  <af:inputText label="Min Y:" value="#{newMapCache.minY}" readOnly="#{!newMapCache.customExternalLayer}"/>
+                  <af:inputText label="Max Y:" value="#{newMapCache.maxY}" readOnly="#{!newMapCache.customExternalLayer}"/>
+                  <af:objectSpacer width="10" height="12" rendered="#{newMapCache.customExternalLayer}"/>
+                  <af:inputText label="Tile width (pixels):" rendered="#{newMapCache.customExternalLayer}"
+                                value="#{newMapCache.tileWidth}"/>
+                  <af:inputText label="Tile height (pixels):" rendered="#{newMapCache.customExternalLayer}"
+                                value="#{newMapCache.tileHeight}"/>
+                  <af:selectOneChoice label="Tile format:" rendered="#{newMapCache.customExternalLayer}"
+                                      value="#{newMapCache.tileFormat}">
+                    <af:selectItem label="PNG" value="PNG"/>
+                    <af:selectItem label="GIF" value="GIF"/>
+                    <af:selectItem label="JPEG" value="JPEG"/>
+                  </af:selectOneChoice>
+                  <af:objectSpacer width="10" height="10"/>
+                  <af:inputText label="# Zoom Levels:"
+                                readOnly="#{!newMapCache.customExternalLayer}"
+                                value="#{newMapCache.numZoomLevels}"/>
+                  <af:inputText label="Minimum Map Scale:" rendered="#{newMapCache.customExternalLayer}"
+                                tip="use ratio format. e.g., enter 1000 for a scale of 1:1000"
+                                value="#{newMapCache.minScale}"/>
+                  <af:inputText label="Maximum Map Scale:" rendered="#{newMapCache.customExternalLayer}"
+                                tip="the scale when viewing all areas of your data"
+                                value="#{newMapCache.maxScale}"/>
+                  <af:objectSpacer width="10" height="12"/>
+                </af:panelForm>
+              </af:panelBox>
+            </af:panelGroup>
+            <f:facet name="messages">
+              <af:messages/>
+            </f:facet>
+          </af:panelPage>
+        </h:form>
+      </afh:body>
+    </afh:html>
+  </f:view>
+</jsp:root>

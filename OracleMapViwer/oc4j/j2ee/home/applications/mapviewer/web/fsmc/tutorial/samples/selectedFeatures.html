@@ -1,0 +1,467 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Map Cache Server/Map Client</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+<script language=javascript>
+  var mapview;
+  var rectangleTool=null;
+  var theme1=null;
+  var theme2=null;
+  var theme3=null;
+  var status=0;
+  var type="";
+  var count1 = 0;
+  var count2 = 0;
+  function showMap()
+  { 
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var centerPoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    
+    mapview = new MVMapView(document.getElementById("map"), baseURL);           
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+    mapview.setCenter(centerPoint);   
+    mapview.setZoomLevel(mapZoom);
+    
+    var md=new MVMapDecoration( "<input type='radio' id='t1' name='type' value='report' checked onclick='change()'/>report attributes<br><input type='radio' id='t2' name='type' value='highlight' onclick='change()'/>hightlight<br><input type='button' id='select' value='select' onclick='rectangleTool.init()'><input type='button' id='clear' value='clear' onclick='clearFOI()'>",0, 0,200,20);    
+    mapview.addMapDecoration(md);
+    
+    theme1 = new MVThemeBasedFOI('theme1','mvdemo.customers');
+    theme1.attachEventListener(MVEvent.AFTER_REFRESH,refreshedTheme1);
+    mapview.addThemeBasedFOI(theme1);
+    
+    
+    mapview.display();        
+    
+    rectangleTool = new MVRectangleTool("mvdemo.L.MAJOR STREET", null, true);
+    mapview.addRectangleTool(rectangleTool);
+    rectangleTool.attachEventListener(MVEvent.FINISH,searchFOI);
+  }
+  function refreshingTheme1()
+  {
+    var button1 = document.getElementById("clear");
+    if (button1)
+      button1.disabled = true;
+    var button2 = document.getElementById("select");
+    if (button2)
+      button2.disabled = true;
+  }
+  function refreshingTheme()
+  {
+    var button1 = document.getElementById("clear");
+    button1.disabled = true;
+    var button2 = document.getElementById("select");
+    button2.disabled = true;
+    var radio1 = document.getElementById("t1");
+    radio1.disabled = true;
+    var radio2 = document.getElementById("t2");
+    radio2.disabled = true;
+    count1 = 0;
+    count2 = 0;
+  }
+  function refreshedTheme1()
+  {
+    var button1 = document.getElementById("clear");
+    button1.disabled = true;
+    var button2 = document.getElementById("select");
+    button2.disabled = false;
+  }
+  function refreshedTheme2()
+  {
+    count1++;
+    if (count1 == 1 && count2 == 1)
+    {
+      var button1 = document.getElementById("clear");
+      button1.disabled = false;
+      var button2 = document.getElementById("select");
+      button2.disabled = false;
+      var radio1 = document.getElementById("t1");
+      radio1.disabled = false;
+      var radio2 = document.getElementById("t2");
+      radio2.disabled = false;
+    }
+  }
+  
+  function refreshedTheme3()
+  {
+    count2++;
+    if (count1 == 1 && count2 == 1)
+    {
+      var button1 = document.getElementById("clear");
+      button1.disabled = false;
+      var button2 = document.getElementById("select");
+      button2.disabled = false;
+      var radio1 = document.getElementById("t1");
+      radio1.disabled = false;
+      var radio2 = document.getElementById("t2");
+      radio2.disabled = false;
+    }
+  }
+  function change()
+  {
+    if(status==1)
+    {
+      if (document.getElementById("t1").checked)
+        newType=document.getElementById("t1").value;
+      else if (document.getElementById("t2").checked)
+        newType=document.getElementById("t2").value;
+      else
+        return;
+      
+      if (type==newType)
+        return;
+      type=newType
+      if (type == 'report')
+      {
+        mapview.getThemeBasedFOI("theme2").setRenderingStyle('M.SMALL CIRCLE');
+        mapview.getThemeBasedFOI("theme2").attachEventListener(MVEvent.AFTER_REFRESH,refreshtable);
+        mapview.getThemeBasedFOI("theme2").attachEventListener(MVEvent.BEFORE_REFRESH,refreshingTheme);
+      }
+      else if(type == 'highlight')
+      {
+        cleartable();
+        mapview.getThemeBasedFOI("theme2").setRenderingStyle('M.STAR');
+      }
+      mapview.refreshThemeBasedFOIs(true);
+    }
+  }
+  function clearFOI()
+  {
+    status=0;
+    rectangleTool.clear();
+    mapview.removeThemeBasedFOI(mapview.getThemeBasedFOI('theme2'));
+    mapview.removeThemeBasedFOI(mapview.getThemeBasedFOI('theme3'));
+    cleartable();
+    
+    if (mapview.getThemeBasedFOI("theme1")==null)
+    {
+      theme1 = new MVThemeBasedFOI('theme1','mvdemo.customers');
+      theme1.attachEventListener(MVEvent.AFTER_REFRESH,refreshedTheme1);
+      theme1.attachEventListener(MVEvent.BEFORE_REFRESH,refreshingTheme1);
+      mapview.addThemeBasedFOI(theme1);
+    }
+    
+  }
+  function searchFOI()
+  {
+    status=1
+    if (document.getElementById("t1").checked)
+      type=document.getElementById("t1").value;
+    else if (document.getElementById("t2").checked)
+      type=document.getElementById("t2").value;
+    else
+      return;
+    var rect=rectangleTool.getRectangle();
+    if (rect==null)
+      return;
+    theme2=new MVThemeBasedFOI('theme2',"mvdemo.CUSTOMERSIN");
+    theme2.attachEventListener(MVEvent.BEFORE_REFRESH,refreshingTheme);
+    theme3=new MVThemeBasedFOI('theme3',"mvdemo.CUSTOMERSOUT");
+    theme3.attachEventListener(MVEvent.AFTER_REFRESH,refreshedTheme3);
+    theme3.attachEventListener(MVEvent.BEFORE_REFRESH,refreshingTheme);
+    theme2.setQueryParameters(rect);
+    theme3.setQueryParameters(rect);
+    
+    if (type == 'report')
+    {
+      theme2.attachEventListener(MVEvent.AFTER_REFRESH,refreshtable);
+      theme2.attachEventListener(MVEvent.BEFORE_REFRESH,refreshingTheme);
+    }
+    else if(type == 'highlight'){
+      cleartable();
+      theme2.setRenderingStyle('M.STAR');
+      theme2.attachEventListener(MVEvent.AFTER_REFRESH,refreshedTheme2);
+    }
+    
+    if (mapview.getThemeBasedFOI('theme1'))
+    {
+      mapview.removeThemeBasedFOI(theme1);
+    }
+    else
+    {  
+      mapview.removeThemeBasedFOI(mapview.getThemeBasedFOI('theme2'));
+      mapview.removeThemeBasedFOI(mapview.getThemeBasedFOI('theme3'));
+    }
+    mapview.addThemeBasedFOI(theme2);
+    mapview.addThemeBasedFOI(theme3);
+    var group = mapview.getAllThemeBasedFOIs();
+  }
+  
+  function refreshtable()
+  {
+    refreshedTheme2();
+    if (type!="report")
+      return;
+    var result="";
+    var theme=mapview.getThemeBasedFOI("theme2");
+    if (theme!=null && theme.isVisible())
+    {
+      var foiarray=theme.getFOIData();
+      if (foiarray!==null)
+        for(var i=0;i<foiarray.length;i++)
+        {
+          result=result+"<tr><td>"+foiarray[i].name+"</td><td>"+foiarray[i].attrs[0]+"</td><td><a href='javascript:onclick=mapview.setCenterAndZoomLevel(MVSdoGeometry.createPoint("+foiarray[i].x+","+foiarray[i].y+",8307));'>move</a></td></tr>";  
+        }
+    }
+    if (result!="")
+    {
+       result="<table border='1' width='100%' cellspacing='0' cellpadding='2'><tr><td>Name</td><td>Sales</td><td>Move</td></tr>"+result+"</table>";
+    }
+    var div=document.getElementById("table");
+    div.innerHTML=result;
+  }
+  function cleartable()
+  {
+    var div=document.getElementById("table");
+    div.innerHTML="";
+  }
+</script>
+</head>
+
+<body onload=javascript:showMap();>
+<h3>Oracle Maps example - selected features</h3>
+  <div id="table" style="position:absolute; left:68%; top:50px; width:28%; height:100%">        
+       
+  </div>
+      
+  <div id="map" style="position:absolute; left:10px; top:50px; width:65%; height:75%"></div>
+<div style="position:absolute;top:85%; left:10px;width:98%" class="noprint">
+<hr/>
+<H3>Instructions</H3>
+The demo shows you how to search foi with rectangle tool
+<h3>Source code</h3>
+The JavaScript code for this demo is listed below.
+<blockquote>
+<pre>
+  var mapview;
+  var rectangleTool=null;
+  var theme1=null;
+  var theme2=null;
+  var theme3=null;
+  var status=0;
+  var type="";
+  var count1 = 0;
+  var count2 = 0;
+  function showMap()
+  { 
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var centerPoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    
+    mapview = new MVMapView(document.getElementById("map"), baseURL);           
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+    mapview.setCenter(centerPoint);   
+    mapview.setZoomLevel(mapZoom);
+    
+    var md=new MVMapDecoration( "&lt;input type='radio' id='t1' name='type' value='report' checked onclick='change()'/&gt;report attributes&lt;br>&lt;input type='radio' id='t2' name='type' value='highlight' onclick='change()'/&gt;hightlight&lt;br&gt;&lt;input type='button' id='select' value='select' onclick='rectangleTool.init()'&gt;&lt;input type='button' id='clear' value='clear' onclick='clearFOI()'&gt;",0, 0,200,20);    
+    mapview.addMapDecoration(md);
+    
+    theme1 = new MVThemeBasedFOI('theme1','mvdemo.customers');
+    theme1.attachEventListener(MVEvent.AFTER_REFRESH,refreshedTheme1);
+    mapview.addThemeBasedFOI(theme1);
+    
+    
+    mapview.display();        
+    
+    rectangleTool = new MVRectangleTool("mvdemo.L.MAJOR STREET", null, true);
+    mapview.addRectangleTool(rectangleTool);
+    rectangleTool.attachEventListener(MVEvent.FINISH,searchFOI);
+  }
+  function refreshingTheme1()
+  {
+    var button1 = document.getElementById("clear");
+    if (button1)
+      button1.disabled = true;
+    var button2 = document.getElementById("select");
+    if (button2)
+      button2.disabled = true;
+  }
+  function refreshingTheme()
+  {
+    var button1 = document.getElementById("clear");
+    button1.disabled = true;
+    var button2 = document.getElementById("select");
+    button2.disabled = true;
+    var radio1 = document.getElementById("t1");
+    radio1.disabled = true;
+    var radio2 = document.getElementById("t2");
+    radio2.disabled = true;
+    count1 = 0;
+    count2 = 0;
+  }
+  function refreshedTheme1()
+  {
+    var button1 = document.getElementById("clear");
+    button1.disabled = true;
+    var button2 = document.getElementById("select");
+    button2.disabled = false;
+  }
+  function refreshedTheme2()
+  {
+    count1++;
+    if (count1 == 1 && count2 == 1)
+    {
+      var button1 = document.getElementById("clear");
+      button1.disabled = false;
+      var button2 = document.getElementById("select");
+      button2.disabled = false;
+      var radio1 = document.getElementById("t1");
+      radio1.disabled = false;
+      var radio2 = document.getElementById("t2");
+      radio2.disabled = false;
+    }
+  }
+  
+  function refreshedTheme3()
+  {
+    count2++;
+    if (count1 == 1 && count2 == 1)
+    {
+      var button1 = document.getElementById("clear");
+      button1.disabled = false;
+      var button2 = document.getElementById("select");
+      button2.disabled = false;
+      var radio1 = document.getElementById("t1");
+      radio1.disabled = false;
+      var radio2 = document.getElementById("t2");
+      radio2.disabled = false;
+    }
+  }
+  function change()
+  {
+    if(status==1)
+    {
+      if (document.getElementById("t1").checked)
+        newType=document.getElementById("t1").value;
+      else if (document.getElementById("t2").checked)
+        newType=document.getElementById("t2").value;
+      else
+        return;
+      
+      if (type==newType)
+        return;
+      type=newType
+      if (type == 'report')
+      {
+        mapview.getThemeBasedFOI("theme2").setRenderingStyle('M.SMALL CIRCLE');
+        mapview.getThemeBasedFOI("theme2").attachEventListener(MVEvent.AFTER_REFRESH,refreshtable);
+        mapview.getThemeBasedFOI("theme2").attachEventListener(MVEvent.BEFORE_REFRESH,refreshingTheme);
+      }
+      else if(type == 'highlight')
+      {
+        cleartable();
+        mapview.getThemeBasedFOI("theme2").setRenderingStyle('M.STAR');
+      }
+      mapview.refreshThemeBasedFOIs(true);
+    }
+  }
+  function clearFOI()
+  {
+    status=0;
+    rectangleTool.clear();
+    mapview.removeThemeBasedFOI(mapview.getThemeBasedFOI('theme2'));
+    mapview.removeThemeBasedFOI(mapview.getThemeBasedFOI('theme3'));
+    cleartable();
+    
+    if (mapview.getThemeBasedFOI("theme1")==null)
+    {
+      theme1 = new MVThemeBasedFOI('theme1','mvdemo.customers');
+      theme1.attachEventListener(MVEvent.AFTER_REFRESH,refreshedTheme1);
+      theme1.attachEventListener(MVEvent.BEFORE_REFRESH,refreshingTheme1);
+      mapview.addThemeBasedFOI(theme1);
+    }
+    
+  }
+  <font color="#ff0000">
+  function searchFOI()
+  {
+    status=1
+    if (document.getElementById("t1").checked)
+      type=document.getElementById("t1").value;
+    else if (document.getElementById("t2").checked)
+      type=document.getElementById("t2").value;
+    else
+      return;
+    var rect=rectangleTool.getRectangle();
+    if (rect==null)
+      return;
+    theme2=new MVThemeBasedFOI('theme2',"mvdemo.CUSTOMERSIN");
+    theme2.attachEventListener(MVEvent.BEFORE_REFRESH,refreshingTheme);
+    theme3=new MVThemeBasedFOI('theme3',"mvdemo.CUSTOMERSOUT");
+    theme3.attachEventListener(MVEvent.AFTER_REFRESH,refreshedTheme3);
+    theme3.attachEventListener(MVEvent.BEFORE_REFRESH,refreshingTheme);
+    theme2.setQueryParameters(rect);
+    theme3.setQueryParameters(rect);
+    
+    if (type == 'report')
+    {
+      theme2.attachEventListener(MVEvent.AFTER_REFRESH,refreshtable);
+      theme2.attachEventListener(MVEvent.BEFORE_REFRESH,refreshingTheme);
+    }
+    else if(type == 'highlight'){
+      cleartable();
+      theme2.setRenderingStyle('M.STAR');
+      theme2.attachEventListener(MVEvent.AFTER_REFRESH,refreshedTheme2);
+    }
+    
+    if (mapview.getThemeBasedFOI('theme1'))
+    {
+      mapview.removeThemeBasedFOI(theme1);
+    }
+    else
+    {  
+      mapview.removeThemeBasedFOI(mapview.getThemeBasedFOI('theme2'));
+      mapview.removeThemeBasedFOI(mapview.getThemeBasedFOI('theme3'));
+    }
+    mapview.addThemeBasedFOI(theme2);
+    mapview.addThemeBasedFOI(theme3);
+    var group = mapview.getAllThemeBasedFOIs();
+  </font>
+  function refreshtable()
+  {
+    refreshedTheme2();
+    if (type!="report")
+      return;
+    var result="";
+    var theme=mapview.getThemeBasedFOI("theme2");
+    if (theme!=null && theme.isVisible())
+    {
+      var foiarray=theme.getFOIData();
+      if (foiarray!==null)
+        for(var i=0;i&lt;foiarray.length;i++)
+        {
+          result=result+"&lt;tr&gt;&lt;td&gt;"+foiarray[i].name+"&lt;/td&gt;&lt;td&gt;"+foiarray[i].attrs[0]+"&lt;/td&gt;&lt;td&gt;&lt;a href='javascript:onclick=mapview.setCenterAndZoomLevel(MVSdoGeometry.createPoint("+foiarray[i].x+","+foiarray[i].y+",8307));'&gt;move&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;";  
+        }
+    }
+    if (result!="")
+    {
+       result="&lt;table border='1' width='100%' cellspacing='0' cellpadding='2'&gt;&lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;Sales&lt;/td&gt;&lt;td&gt;Move&lt;/td&gt;&lt;/tr&gt;"+result+"&lt;/table&gt;";
+    }
+    var div=document.getElementById("table");
+    div.innerHTML=result;
+  }
+  function cleartable()
+  {
+    var div=document.getElementById("table");
+    div.innerHTML="";
+  }
+</pre>
+</blockquote>
+The onLoad function of the page body invokes the on_load_mapview() method above, which
+initializes the map.
+<blockquote>
+<pre>
+&lt;BODY onload= javascript:showMap()&gt;
+</pre>
+</blockquote>
+</body>
+  
+</html>
+
+

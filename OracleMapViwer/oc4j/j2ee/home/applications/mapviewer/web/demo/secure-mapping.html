@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META content="text/html; charset=UTF-8" http-equiv=Content-Type>
+<BODY bgcolor="FFFFFF">
+
+
+<span style="width:100%">
+<table cellpadding="0" cellspacing="0" border="0" width="100%" summary="">
+<tr><td>
+    <table cellpadding="0" cellspacing="2" border="0" width="100%" summary="">
+                <tr><td valign="top"><img src="/mapviewer/myicons/oracle_logo.gif" border="0" ALT="oracle logo"> </td></tr>
+                <tr><td valign="bottom"><img src="/mapviewer/myicons/mapviewer.gif" border="0" ALT="map viewer logo"> <FONT color="
+#449922" size="+2"><b>Secure Map Rendering demo</b></FONT></td>
+        <td valign="bottom"><A HREF="admin.html"><img src="/mapviewer/myicons/logon_logo.gif" border="0" ALT="admin" align="middle"
+>Admin</A></td>
+    </tr>
+    </table>
+</tr>
+<tr><td valign="top">
+    <table cellpadding="0" cellspacing="0" border="0" summary="">
+         <tr><td align="center"><img src="/mapviewer/myicons/t.gif" border="0" ALT="empty image"></td></tr>
+    </table>
+</tr>
+</table>
+</span>
+
+
+<H3>Sample Map Request:</H3>
+<FORM action=/mapviewer/omserver method=post><TEXTAREA cols=80 name=xml_request rows=25>&lt;?xml version="1.0" standalone="yes"?>
+&lt;map_request
+             title="Oracle LBS MAP"
+			 basemap="demo_map"
+             datasource = "mvdemo"
+             format="PNG_STREAM">
+  &lt;center size="2">
+     &lt;geoFeature render_style="m.star"
+                       radius="1600,4800"
+                        label="A Place"
+                   text_style="t.Street Name" >
+         &lt;geometricProperty typeName="center">
+             &lt;Point>
+                 &lt;coordinates>-122.1615, 37.5266&lt;/coordinates>
+             &lt;/Point>
+         &lt;/geometricProperty>
+     &lt;/geoFeature>
+  &lt;/center>
+  &lt;themes>
+    &lt;theme name="mycustomers" />
+  &lt;/themes>
+&lt;/map_request>
+</TEXTAREA> <BR><INPUT type=submit value=Submit> </FORM>
+
+<h3>Sample Oracle Maps demo:</h3>
+<A href="/mapviewer/fsmc/tutorial/samples/secure-customers.html">Secure Customer FOIs</A>

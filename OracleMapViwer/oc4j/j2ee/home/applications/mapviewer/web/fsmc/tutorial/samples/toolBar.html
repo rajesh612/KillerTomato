@@ -1,0 +1,153 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Map Cache Server/Map Client</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language="Javascript">
+var mapdiv;
+var toolbar ;
+
+function showMap()
+{
+  var baseURL  = "http://"+document.location.host+"/mapviewer";
+  var mapZoom = 4;
+  mapview = new MVMapView(document.getElementById("map"), baseURL);
+  mapview.addBaseMapLayer(new MVBaseMap('mvdemo.demo_map'));
+  var mpoint = MVSdoGeometry.createPoint(-122.42,37.6706,8307);
+  mapview.setCenter(mpoint);
+  mapview.setZoomLevel(mapZoom);
+  createToolBar();
+  mapview.display();
+}
+
+function createToolBar()
+{
+  // Create a tool bar that shows all builtin tool buttons.
+  toolbar = new MVToolBar("toolbar1",[MVToolBar.BUILTIN_ALL]);
+  toolbar.setPosition(0.45,0.05);
+  mapview.addToolBar(toolbar);
+  
+  // Add event handlers to the builtin tools.
+  var circleTool = toolbar.getBuiltInTool(MVToolBar.BUILTIN_CIRCLE) ;
+  circleTool.attachEventListener(MVEvent.FINISH, function(){alert("Circle tool is finished!");})
+  var rectangleTool = toolbar.getBuiltInTool(MVToolBar.BUILTIN_RECTANGLE) ;
+  rectangleTool.attachEventListener(MVEvent.FINISH, function(){alert("Rectangle tool is finished!");})
+  var redlineTool = toolbar.getBuiltInTool(MVToolBar.BUILTIN_REDLINE) ;
+  redlineTool.attachEventListener(MVEvent.FINISH, function(){alert("Redline tool is finished!");})
+  var distanceTool = toolbar.getBuiltInTool(MVToolBar.BUILTIN_DISTANCE) ;
+  distanceTool.attachEventListener(MVEvent.FINISH, function(){alert("Distance tool is finished!");})
+  
+  // Add a button group with two custom buttons.
+  var bt1 = new MVToolButton("bt1",MVToolButton.TOGGLE,
+                             "/mapviewer/fsmc/images/tbicons/area.gif","/mapviewer/fsmc/images/tbicons/p_area.gif");
+  var bt2 = new MVToolButton("bt2",MVToolButton.TOGGLE,
+                             "/mapviewer/fsmc/images/tbicons/length.gif","/mapviewer/fsmc/images/tbicons/p_length.gif");
+  bt1.setToolTip("custom tool 1");
+  bt2.setToolTip("custom tool 2");
+  bt1.attachEventListener(MVEvent.BUTTON_DOWN,btSelected);
+  bt1.attachEventListener(MVEvent.BUTTON_UP,btUnSelected);
+  bt2.attachEventListener(MVEvent.BUTTON_DOWN,btSelected);
+  bt2.attachEventListener(MVEvent.BUTTON_UP,btUnSelected);
+  
+  var group = new MVButtonGroup() ;
+  group.addSeparator("sp1");
+  group.add(bt1) ;
+  group.add(bt2) ;
+  toolbar.addButtonGroup(group) ;
+}
+
+function btSelected(btID)
+{
+  alert("custom tool " + btID +" selected!");
+}
+
+function btUnSelected(btID)
+{
+  alert("custom tool " + btID +" unselected!");
+}
+
+function toggleToolBar()
+{
+  toolbar.setVisible(!toolbar.isVisible()) ;
+}
+
+function removeButton()
+{
+  toolbar.removeButton(toolbar.getButton(document.getElementById("button_id").value)) ;
+}
+</script>
+</head>
+
+<body onload="javascript:showMap()">
+<h3>Oracle Maps example - Toolbar</h3>
+<table width="100%">
+	<tr>
+		<td width="60%" height="400px">
+			<div id="map" style="left:0px; top:0px; width:100%; height:100%"></div>
+		</td>
+		<td width="40%" valign="top">
+      <UL>
+			  <LI><a href="javascript: toggleToolBar()">Toggle tool bar</a>
+        <LI><a href="javascript: removeButton()">Remove button with id</a>
+      <input id="button_id" type="text" value="bt1"/>
+      </UL>
+		</td>
+	</tr>
+</table>
+
+<HR/>
+<H3>Instructions</H3>
+This demo shows how to use class MVToolBar to create and display a tool bar on the map. 
+The tool bar contains multiple buttons, each of which starts of ends a builtin tool or 
+a custom action. All or some of the following builtin tools may be included in the tool 
+bar: Circle tool, Rectangle tool, Redline tool, Distance Measurement tool and Marquee Zoom tool. 
+You can also add your own custom buttons that invoke your own event handlers. 
+<h3>Source code</h3>
+The JavaScript code for this demo is listed below.
+<blockquote>
+<pre>
+	
+function createToolBar()
+{
+  // Create a tool bar that shows all builtin tool buttons.
+  toolbar = new MVToolBar("toolbar1",[MVToolBar.BUILTIN_ALL]);
+  toolbar.setPosition(0.45,0.05);
+  mapview.addToolBar(toolbar);
+  
+  // Add event handlers to the builtin tools.
+  var circleTool = toolbar.getBuiltInTool(MVToolBar.BUILTIN_CIRCLE) ;
+  circleTool.attachEventListener(MVEvent.FINISH, function(){alert("Circle tool is finished!");})
+  var rectangleTool = toolbar.getBuiltInTool(MVToolBar.BUILTIN_RECTANGLE) ;
+  rectangleTool.attachEventListener(MVEvent.FINISH, function(){alert("Rectangle tool is finished!");})
+  var redlineTool = toolbar.getBuiltInTool(MVToolBar.BUILTIN_REDLINE) ;
+  redlineTool.attachEventListener(MVEvent.FINISH, function(){alert("Redline tool is finished!");})
+  var distanceTool = toolbar.getBuiltInTool(MVToolBar.BUILTIN_DISTANCE) ;
+  distanceTool.attachEventListener(MVEvent.FINISH, function(){alert("Distance tool is finished!");})
+  
+  // Add a button group with two custom buttons.
+  var bt1 = new MVToolButton("bt1",MVToolButton.TOGGLE,
+                             "/mapviewer/fsmc/images/tbicons/area.gif","/mapviewer/fsmc/images/tbicons/p_area.gif");
+  var bt2 = new MVToolButton("bt2",MVToolButton.TOGGLE,
+                             "/mapviewer/fsmc/images/tbicons/length.gif","/mapviewer/fsmc/images/tbicons/p_length.gif");
+  bt1.setToolTip("custom tool 1");
+  bt2.setToolTip("custom tool 2");
+  bt1.attachEventListener(MVEvent.BUTTON_DOWN,btSelected);
+  bt1.attachEventListener(MVEvent.BUTTON_UP,btUnSelected);
+  bt2.attachEventListener(MVEvent.BUTTON_DOWN,btSelected);
+  bt2.attachEventListener(MVEvent.BUTTON_UP,btUnSelected);
+  
+  var group = new MVButtonGroup() ;
+  group.addSeparator("sp1");
+  group.add(bt1) ;
+  group.add(bt2) ;
+  toolbar.addButtonGroup(group) ;
+}
+</font>
+</pre>
+</blockquote>
+</body>
+	
+</html>

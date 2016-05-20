@@ -1,0 +1,55 @@
+.header {
+    margin: -8px 2px 0 2px;
+    height: 98px;
+}
+
+.header-image {
+    top: 12px;
+    left: 16px;
+}
+
+.result {
+    height: 400px;
+}
+
+
+.menu-bar {
+    margin: 2px 2px 2px 2px;
+    padding: 2px 4px 2px 4px;
+}
+
+#text {
+    position: relative;
+    width: 487px;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: normal;
+    height: 22px;
+}
+
+#submit {
+    height: 22px;
+    width: 34px;
+    font-size: 12px;
+}
+
+.menu ul li:hover ul,
+.menu ul a:hover ul {
+    visibility:visible;
+}
+
+.menu table {
+    position:absolute;
+    border-collapse:collapse;
+    z-index:80;
+    left:-1px;
+    top: 21px;
+}
+
+.tree input, textarea, select {
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: normal;
+}

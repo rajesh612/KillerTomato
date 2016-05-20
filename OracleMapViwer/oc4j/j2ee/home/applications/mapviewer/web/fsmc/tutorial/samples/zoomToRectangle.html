@@ -1,0 +1,96 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Map Cache Server/Map Client</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+  var mapview = null;
+  
+  function showMap()
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);    
+    mapview.display();  			
+  }
+  
+  function zoomToRectangle()
+  {
+        var rect = "new MVSdoGeometry(2003, 8307, [1,1003,1],["+document.getElementById("rectangleArea").value+"])";
+  	var sdoGeo=eval(rect);
+        
+  	mapview.zoomToRectangle(sdoGeo);
+  }
+</script>
+    
+</head>
+
+<body onload="javascript:showMap();">
+<h3>Oracle Maps example - zoom to a specified rectangle</h3>
+      
+  <div id="map" style="left:0px; top:6px; width:60%; height:60%"></div>
+  <form>
+  <ol>
+     <li>Specify the rectangle here: <input type="text" id="rectangleArea" value="-122.5,37.8,-122.4,37.8,-122.4,37.7,-122.5,37.7,-122.5,37.8" size="60" />
+     </li>
+     <li><a href="javascript:zoomToRectangle()">Then click here to zoom the map to the above rectangle</a></li>
+  </ol>
+  </form>
+  
+<h3>Instructions></h3>
+This demo shows how to supply a rectangle whose coordinates represent a target
+area. The map can then be zoomed to cover an area that is as close to (but no 
+smaller than) the target area as possible. Note that due to zoom-level 
+definitions it may not be able to match the target rectangle exactly.
+
+<h3>Source code</h3>
+
+<blockquote>
+<pre>
+  var mapview = null;
+  
+  function showMap()
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);    
+    mapview.display();  			
+  }
+  
+  <font color="#ff0000">
+  function zoomToRectangle()
+  {
+        var rect = "new MVSdoGeometry(2003, 8307, [1,1003,1],["+document.getElementById("rectangleArea").value+"])";
+  	var sdoGeo=eval(rect);
+        
+  	mapview.zoomToRectangle(sdoGeo);
+  }
+  </font>
+</pre>
+</blockquote>
+
+And here is how the zoomToRectangle function is invoked:
+
+<blockquote>
+<pre>
+  &lt;a href="javascript:zoomToRectangle()"&gt;Then click here to zoom the map to the above rectangle&lt;/a&gt;
+</pre>
+</blockquote>
+</body>
+</html>
+
+

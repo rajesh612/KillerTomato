@@ -1,0 +1,11 @@
+
+#oritatami ul.open{display:block}
+#oritatami ul.close{display:none}
+#oritatami li.open{width:90%;overflow:hidden;white-space:nowrap;list-style-image:url(../img/minus.gif);list-style-type:disc}
+#oritatami li.close{width:90%;overflow:hidden;white-space:nowrap;list-style-image:url(../img/plus.gif);list-style-type:circle}
+#oritatami li.nochild{list-style-image:url(IEico.gif);list-style-type:circle}
+#oritatami li{list-style-type:square;}
+
+a#lv0 { color: black;
+		font-weight: bold }
+a#lv1 { color: gray; }

@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META content="text/html; charset=UTF-8" http-equiv=Content-Type>
+<BODY bgcolor="FFFFFF">
+
+
+<span style="width:100%">
+<table cellpadding="0" cellspacing="0" border="0" width="100%" summary="">
+<tr><td>
+    <table cellpadding="0" cellspacing="2" border="0" width="100%" summary="">
+		<tr><td valign="top"><img src="../myicons/oracle_logo.gif" border="0" ALT="oracle logo"> </td></tr>
+		<tr><td valign="bottom"><img src="../myicons/mapviewer.gif" border="0" ALT="map viewer logo"> <FONT color="#449922" size="+2"><b>Map Cache Server</b></FONT></td>
+        <td valign="bottom"><A HREF="mcsadmin.html"><img src="../myicons/logon_logo.gif" border="0" ALT="admin" align="middle">Admin</A></td>
+    </tr>
+    </table>
+</tr>
+<tr><td valign="top">
+    <table cellpadding="0" cellspacing="0" border="0" summary="">
+         <tr><td align="center"><img src="../myicons/t.gif" border="0" ALT="empty image"></td></tr>
+    </table>
+</tr>
+</table>
+</span>
+
+<HR>
+
+<A NAME="tile_request">
+<FONT COLOR="#ff0000"><H2>Tile Requests</H2></FONT>
+<H3>Using mesh code</H3>
+<FORM action=/mapviewer/mcserver method=get>
+<input type="hidden" name="request" value="gettile"/>
+<table>
+<tr><td>Map source name :</td><td><input type="text" name="mapcache" value="mvdemo.demo_map"/></td></tr>
+<tr><td>Image format :</td><td><input type="text" name="format" value="PNG" /></td></tr>
+<tr><td>Zoom level :</td><td><input type="text" name="zoomlevel" value="0" /><td></tr>
+<tr><td>Mesh code X:</td><td><input type="text" name="mx" value="4"/></td></tr>
+<tr><td>Mesh code Y:</td><td><input type="text" name="my" value="12"/></td></tr>
+</table>
+<INPUT type=submit value=Submit /> 
+</FORM>
+<BR><BR>
+
+<H3>Using tile coordinates</H3>
+<FORM action=/mapviewer/mcserver method=get>
+<input type="hidden" name="request" value="gettile"/>
+<table>
+<tr><td>Map source name :</td><td><input type="text" name="mapcache" value="mvdemo.demo_map"/></td></tr>
+<tr><td>Image format :</td><td><input type="text" name="format" value="PNG" /></td></tr>
+<tr><td>Zoom level :</td><td><input type="text" name="zoomlevel" value="0" /></td></tr>
+<tr><td>Tile X :</td><td><input type="text" name="tx" value="-122" /></td></tr>
+<tr><td>Tile Y : </td><td><input type="text" name="ty" value="37.5" /></td></tr>
+</table>
+<INPUT type=submit value=Submit /> 
+</FORM>
+
+<HR>
+<A NAME="map_request">
+<FONT COLOR="#ff0000"><H2> Map Requests </H2> </FONT>
+
+<H3>Using map Center</H3>
+<FORM action=/mapviewer/mcserver method=get>
+<input type="hidden" name="request" value="getmap"/>
+<table>
+<tr><td>Map source name :</td><td><input type="text" name="mapcache" value="mvdemo.demo_map"/></td></tr>
+<tr><td>Image format :</td><td><input type="text" name="format" value="PNG" /></td></tr>
+<tr><td>Zoom level :</td><td><input type="text" name="zoomlevel" value="0" /></td></tr>
+<tr><td>Center X :</td><td><input type="text" name="cx" value="-122" /></td></tr>
+<tr><td>Center Y : </td><td><input type="text" name="cy" value="37.5" /></td></tr>
+<tr><td>Image Width : </td><td><input type="text" name="width" value="600"/></td></tr>
+<tr><td>Image Height :  </td><td><input type="text" name="height" value="480" /></td></tr>
+</table>
+<INPUT type=submit value=Submit /> 
+</FORM>
+</BODY></HTML>

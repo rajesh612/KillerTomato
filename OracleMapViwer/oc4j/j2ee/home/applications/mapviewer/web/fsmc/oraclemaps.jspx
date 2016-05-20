@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='US-ASCII'?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="1.2"
+          xmlns:h="http://java.sun.com/jsf/html"
+          xmlns:f="http://java.sun.com/jsf/core"
+          xmlns:af="http://xmlns.oracle.com/adf/faces"
+          xmlns:afh="http://xmlns.oracle.com/adf/faces/html">
+  <jsp:text>
+    <![CDATA[ <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> ]]>
+  </jsp:text>
+  <jsp:directive.page contentType="text/html;charset=US-ASCII"/>
+  <f:view>
+    <afh:html>
+      <afh:head title="Oracle Maps">
+        <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII"/>
+        <afh:script source="/fsmc/jslib/oraclemaps.js"/>
+        <afh:script text='var baseURL  = "http://"+document.location.host+"/mapviewer";
+                          var mapCenterLon = -122.45;     
+                          var mapCenterLat =  37.6706;     
+                          var mapZoom      =    4;     
+                          var mapview;
+                          var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307); 
+                          function on_load_mapview()     
+                          {         
+                            mapview = new MVMapView(document.getElementById("map"),baseURL);       
+                            var basemap  = new MVBaseMap("mvdemo.demo_map");       
+                            mapview.addBaseMapLayer(basemap);       
+                            mapview.setCenter(mpoint);       
+                            mapview.setZoomLevel(mapZoom);       
+                            mapview.addNavigationPanel("WEST");    
+                            var themebasedfoi1 = new MVThemeBasedFOI("customerfoi","mvdemo.customers");
+                            mapview.addThemeBasedFOI(themebasedfoi1);
+                            mapview.display();     
+                          } 
+                          
+                          function setVisible(item)
+                          {
+                            var themebasedfoi = mapview.getThemeBasedFOI(item);	  		
+                            themebasedfoi.setVisible(!themebasedfoi.isVisible());
+                          }                          
+                          '/>
+      </afh:head>
+      <afh:body onload="javascript:on_load_mapview()">
+        <h:form>
+          <af:panelHeader text="Oracle Maps - a demo"
+                          icon="../myicons/mapviewer.gif" messageType="none"/>
+          <af:objectSpacer width="10" height="15"/>
+          <af:panelGroup layout="vertical">
+            <af:panelTip>
+              <af:outputFormatted value="you can drag the map around, use the navigation controls to zoom in/out. Click on a red dot to see an associated info-window."
+                                  styleUsage="pageStamp"/>
+            </af:panelTip>
+            <af:objectSpacer width="10" height="10"/>
+            <af:panelGroup layout="horizontal">
+              <af:panelGroup layout="vertical">
+               <af:panelBox width="800" text="Free-scrolling map display"
+                           inlineStyle="margin:0.0pt; padding:0.0pt;"> 
+                <f:verbatim>
+                        <div id="map"
+                             style="width:780.0px; height:600.0px; background-color:rgb(255,255,255); border-width:thin; border-color:rgb(99,99,255); border-style:solid;" />                        
+                </f:verbatim>
+               </af:panelBox> 
+              </af:panelGroup>
+              <af:objectSpacer width="14" height="10"/>
+              <af:panelBox background="light" text="Theme control"
+                           width="200px">
+                <af:selectBooleanCheckbox text="Toggle Customers"
+                                          value="customerfoi"
+                                          selected="true"
+                                          onclick="setVisible('customerfoi')"/>
+              </af:panelBox>
+            </af:panelGroup>
+          </af:panelGroup>
+        </h:form>
+      </afh:body>
+    </afh:html>
+  </f:view>
+</jsp:root>
+        

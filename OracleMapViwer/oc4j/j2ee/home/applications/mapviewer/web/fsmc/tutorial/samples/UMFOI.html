@@ -1,0 +1,82 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html" charset=UTF-8">
+<TITLE>Map Cache Server/Map Client</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+<script language=javascript>
+  function showMap() 
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.7706;
+    var mapZoom      =    5;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    var mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+    mapview.setCenter(mpoint);   
+    mapview.setZoomLevel(mapZoom);    
+    mapview.display();
+           
+    var mpolygon1 = MVSdoGeometry.createPolygon([-122.5,37.8,-122.45,37.85,-122.41,37.83],8307);             
+    var foi1 = new MVFOI("1", mpolygon1, 'mvdemo.C.RED');
+            
+    //whether you can click the foi, defaule is true
+    foi1.setClickable(true);
+  
+    foi1.setInfoWindow("info&nbsp;window&nbsp;of&nbsp;FOI");
+    foi1.setInfoTip("infotip of FOI");
+    //foi1.enableInfoTip(false);
+    mapview.addFOI(foi1); 
+  }                     
+  </script>
+</head>
+
+<body onload="javascript:showMap()">
+<h3>Oracle Maps example - Misc. FOI utilities </h3>
+
+   <div id="map" style="left:0px; top:10px;width:100%; height:60%"></div> 
+   
+<HR/>
+<h3>Instructions</h3>
+This demo shows some of the utility methods of each FOI object, such as ones that
+let you customize an FOI's info window and tool tip.
+
+<h3>Source code</h3>
+
+<blockquote>
+<pre>
+  function showMap() 
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.7706;
+    var mapZoom      =    4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    var mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+    mapview.setCenter(mpoint);   
+    mapview.setZoomLevel(mapZoom);    
+    mapview.display();
+    
+    <font color="#ff0000">
+    var mpolygon1 = MVSdoGeometry.createPolygon([-122.5,37.8,-122.45,37.85,-122.41,37.83],8307);             
+    var foi1 = new MVFOI("1", mpolygon1, 'mvdemo.C.RED');
+            
+    //whether you can click the foi, defaule is true
+    foi1.setClickable(true);
+  
+    foi1.setInfoWindow("info&nbsp;window&nbsp;of&nbsp;FOI");
+    foi1.setInfoTip("infotip of FOI");
+    //foi1.enableInfoTip(false);
+    mapview.addFOI(foi1); 
+    </font>
+  }  
+</pre>
+</blockquote>
+</body>
+
+</html>
+
+

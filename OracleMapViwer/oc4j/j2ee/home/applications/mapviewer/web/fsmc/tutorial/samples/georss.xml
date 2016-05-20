@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" xmlns:omv="http://www.oracle.com/MapViewer/georss" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="C:\qian\work\MapViewer\docs\georss\mapviewer-georss.xsd">
+	<channel>
+		<title>Sample OracleFMW Mapviewer GeoRSS file</title>
+		<link><![CDATA[http://www.oracle.com]]></link>
+		<description>This is a sample georss feed for MapViewer.</description>
+		<omv:groups>
+			<omv:group name="group1" title="point features" description="For active sites only" default-style="M.CIRCLE"/>
+			<omv:group name="group2" title="linear/area features" description="For inactive sites" default-style="C.RED"/>
+		</omv:groups>	
+		<item>
+			<title>site 001</title>
+			<link><![CDATA[http://www.oracle.com/site3]]></link>
+			<description> Point (GeoRSS Simple)</description>
+			<georss:point>40 -75.0</georss:point>
+			<omv:group-name>group1</omv:group-name>
+		</item>
+		<item>
+			<title>site 002</title>
+			<link><![CDATA[http://www.oracle.com/site1]]></link>
+			<description>Point(W3C Geo)</description>
+			<geo:lat>40.4431</geo:lat>
+			<geo:long>-79.9549</geo:long>
+			<omv:group-name>group1</omv:group-name>
+		</item>
+		<item>
+			<title>site 003</title>
+			<link><![CDATA[http://www.oracle.com/site2]]></link>
+			<description>point (GML)</description>
+			<georss:where>
+				<gml:Point>
+					<gml:pos>44.256 -111.92</gml:pos>
+				</gml:Point>
+			</georss:where>
+			<omv:group-name>group1</omv:group-name>
+		</item>
+		<item>
+			<title>site 004</title>
+			<link><![CDATA[http://www.oracle.com/site42]]></link>
+			<description>Linestring (GML)</description>
+			<georss:where>
+				<gml:LineString>
+					<gml:posList>
+            37.256 -110.45 38.46 -108.48 43.84 -100.86
+         </gml:posList>
+				</gml:LineString>
+			</georss:where>			
+		</item>
+		<item>
+			<title>site 005</title>
+			<link><![CDATA[http://www.oracle.com/site5]]></link>
+			<description>Polygon (GML)</description>
+			<georss:where>
+				<gml:Polygon>
+					<gml:exterior>
+						<gml:LinearRing>
+							<gml:posList>
+            45.256 -110.45 46.46 -109.48 43.84 -109.86 45.256 -110.45
+               </gml:posList>
+						</gml:LinearRing>
+					</gml:exterior>
+				</gml:Polygon>
+			</georss:where>
+			<omv:group-name>group2</omv:group-name>
+		</item>			
+		<item>
+			<title>site 006</title>
+			<link><![CDATA[http://www.oracle.com/site5]]></link>
+			<description>Envlope (GML)</description>
+			<georss:where>
+				<gml:Envelope>
+					<gml:lowerCorner>42.943 -71.032</gml:lowerCorner>
+					<gml:upperCorner>43.039 -69.856</gml:upperCorner>
+				</gml:Envelope>
+			</georss:where>
+			<omv:group-name>group1</omv:group-name>
+		</item>
+	</channel>
+</rss>
+

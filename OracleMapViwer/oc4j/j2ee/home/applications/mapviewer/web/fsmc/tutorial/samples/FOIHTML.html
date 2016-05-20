@@ -1,0 +1,93 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Map Cache Server/Map Client</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+  var baseURL     = "http://"+document.location.host+"/mapviewer";
+  var mapview;
+  
+  function showMap()
+  {	
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);    
+    mapview.display();     
+    addFOI();
+  }
+  
+  function addFOI()
+  {	
+    var poiHtml1 = "<div style=\"height:20;width:60;background-color:yellow\">Ifame</div><div style=\"width:300px;height:150px;background-color:#ffffff\"><iframe src=\"http://www.oracle.com\"></div>";    			
+    var mpoint1 = MVSdoGeometry.createPoint( -122.58,37.85, 8307);
+    var mfoi1 = MVFOI.createHTMLFOI("1", mpoint1,poiHtml1,10,10);
+    mapview.addFOI(mfoi1);
+    
+    var poiHtml2 = "<div style=\"height:20;width:60;background-color:yellow\">Movie</div><object id=\"RP1\" classid=\"clsid:CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA\" width=\"240\" height=\"180\"><param name=\"SRC\" value=\"http://streaming.oracle.com/ebn/2005/4224345_100.rm?embed\"><param name=\"CONTROLS\" value=\"Imagewindow\"><param name=\"AUTOSTART\" value=\"TRUE\"><param name=\"NOLABELS\" value=\"TRUE\"><param name=\"RESET\" value=\"FALSE\"><param name=\"CONSOLE\" value=\"clip1\"><embed name=\"RP1\" TYPE=\"audio/x-pn-realaudio-plugin\" src=\"http://streaming.oracle.com/ebn/2005/4224345_100.rm?embed\" width=240 height=180 controls=ImageWindow maintainaspect=TRUE autostart=TRUE nologo=TRUE console=Clip1nolabels=TRUE></embed></object>";   
+    var mpoint2= MVSdoGeometry.createPoint( -122.5,37.7, 8307);
+    var mfoi2 = MVFOI.createHTMLFOI("2", mpoint2,poiHtml2,10,10);
+    mapview.addFOI(mfoi2);
+  }
+</script>
+  
+</head>
+
+<body onload="javascript:showMap();">
+<h3>Oracle Maps example - custom FOI contents</h3>
+    <div id="map" style="left:0px; top:10px; width:100%; height:60%"></div> 
+
+<HR/>
+<H3>Instructions</H3>
+This demo shows how to set arbitrary html contents for an FOI. Specifically, one FOI
+displays an iframe, while the other display a short video clip.
+
+<H3>Source code</H3>
+The javaScript code for this demo is shown below.
+<blockquote>
+<pre>
+  var mapview;
+  
+  function showMap()
+  {	
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);    
+    mapview.display();     
+    <font color="#ff0000">
+    addFOI();
+    </font>
+  }
+  <font color="#ff0000">
+  function addFOI()
+  {	
+    var poiHtml1 = "&lt;div style=\"height:20;width:60;background-color:yellow\"&gt;Ifame&lt;/div&gt;&lt;div style=\"width:300px;height:150px;background-color:#ffffff\"&gt;&lt;iframe src=\"http://www.oracle.com\"&gt;&lt;/div&gt;";    			
+    var mpoint1 = MVSdoGeometry.createPoint( -122.58,37.85, 8307);
+    var mfoi1 = MVFOI.createHTMLFOI("1", mpoint1,poiHtml1,10,10);
+    mapview.addFOI(mfoi1);
+    
+    var poiHtml2 = "&lt;div style=\"height:20;width:60;background-color:yellow\"&gt;Movie&lt;/div&gt;&lt;object id=\"RP1\" classid=\"clsid:CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA\" width=\"240\" height=\"180\"&gt;&lt;param name=\"SRC\" value=\"http://streaming.oracle.com/ebn/2005/4224345_100.rm?embed\"&gt;&lt;param name=\"CONTROLS\" value=\"Imagewindow\"&gt;&lt;param name=\"AUTOSTART\" value=\"TRUE\"&gt;&lt;param name=\"NOLABELS\" value=\"TRUE\"&gt;&lt;param name=\"RESET\" value=\"FALSE\"&gt;&lt;param name=\"CONSOLE\" value=\"clip1\"&gt;&lt;embed name=\"RP1\" TYPE=\"audio/x-pn-realaudio-plugin\" src=\"http://streaming.oracle.com/ebn/2005/4224345_100.rm?embed\" width=240 height=180 controls=ImageWindow maintainaspect=TRUE autostart=TRUE nologo=TRUE console=Clip1nolabels=TRUE&gt;&lt;/embed&gt;&lt;/object&gt;";   
+    var mpoint2= MVSdoGeometry.createPoint( -122.5,37.7, 8307);
+    var mfoi2 = MVFOI.createHTMLFOI("2", mpoint2,poiHtml2,10,10);
+    mapview.addFOI(mfoi2);
+  }
+  </font>
+</pre>
+</blockquote>
+</body>
+	
+</html>
+
+

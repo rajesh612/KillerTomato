@@ -1,0 +1,99 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Map Cache Server/Map Client</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+  function showMap()
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  3;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    var mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);    
+
+    // Create a marker FOI with a dynamic marker style
+    var markerStyle = new MVStyleMarker("my_vector_icon", "vector");
+    markerStyle.setStrokeColor("ff0000");
+    markerStyle.setFillColor("00ff00");    
+    markerStyle.setVectorShape("c:50");
+    var marker = new MVFOI("markerfoi", mpoint, markerStyle, null, 20, 20) ;
+    mapview.addFOI(marker);
+    
+    // Create a rectangle FOI with a dynamic color style
+    var colorStyle = new MVStyleColor("my_color_style", "ff0000", "0000FF");    
+    var polygon = MVSdoGeometry.createRectangle(-122.90, 37.80, -122.60, 38, 8307) ;
+    var rect = new MVFOI("rectfoi", polygon, colorStyle) ;
+    mapview.addFOI(rect);
+    
+    mapview.addNavigationPanel("WEST");
+    
+    mapview.display();  			
+  }
+  
+</script>
+    
+</head>
+
+<body onload=javascript:showMap();>
+<h3>Oracle Maps example - creating styles on the fly</h3>
+  <div id="map" style="left:0px; top:0px; width:60%; height:60%"></div>
+<h3>Instructions</h3>
+This demo shows how to create temporary MapViewer styles in the JavaScript 
+client and use it to display user defined FOIs.
+
+<BR></BR>
+In this specific example, the user defined FOIs are rendered by the server
+using dynamic styles created in the client side using the JavaScript API.
+
+<h3>Source code</h3>
+<blockquote>
+<pre>
+  function showMap()
+  { 
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  3;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    var mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);    
+
+    // Create a marker FOI with a dynamic marker style
+    <font color="#ff0000">
+    var markerStyle = new MVStyleMarker("my_vector_icon", "vector");
+    markerStyle.setStrokeColor("ff0000");
+    markerStyle.setFillColor("00ff00");    
+    markerStyle.setVectorShape("c:50");
+    </font>    
+    var marker = new MVFOI("markerfoi", mpoint, markerStyle, null, 20, 20) ;
+    mapview.addFOI(marker);
+    
+    // Create a rectangle FOI with a dynamic color style
+    <font color="#ff0000">
+    var colorStyle = new MVStyleColor("my_color_style", "ff0000", "0000FF");    
+    </font>    
+    var polygon = MVSdoGeometry.createRectangle(-122.80, 37.60, -122.50, 37.80,8307) ;
+    var rect = new MVFOI("rectfoi", polygon, colorStyle) ;
+    mapview.addFOI(rect);
+    
+    mapview.addNavigationPanel("WEST");
+    
+    mapview.display();        
+  }
+  
+</pre>
+</blockquote>
+</body>
+</html>
+
+

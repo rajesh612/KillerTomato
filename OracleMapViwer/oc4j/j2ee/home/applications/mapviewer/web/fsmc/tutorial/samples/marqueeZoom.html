@@ -1,0 +1,153 @@
+﻿<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Map Cache Server/Map Client</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+  var mapview = null;
+  var mode = "prompt" ;
+  function showMap()
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);   
+    mapview.addNavigationPanel("WEST");  
+    mapview.display();
+    document.getElementById("promptbutton").checked = true ;
+  }
+
+  function marqueeZoom()
+  {
+    mapview.stopMarqueeZoom();
+    mapview.startMarqueeZoom(mode, new Object());
+  }
+  
+  function noMarqueeZoom()
+  {
+    mapview.stopMarqueeZoom();
+  }
+
+  function setMode(button)
+  {
+    mode = button.value ;
+    mapview.startMarqueeZoom(mode);
+  }
+
+  function marqueeZoomCustomStyle()
+  {
+    var rectStyle = new Object() ;
+    rectStyle.borderColor = "#0000FF" ;
+    rectStyle.borderWidth = 2 ;
+    rectStyle.borderDashed = false ;
+    rectStyle.fillColor = "#FF0000" ;
+    rectStyle.fillOpacity = 0.5 ;
+    mapview.stopMarqueeZoom();
+    mapview.startMarqueeZoom(mode, rectStyle);
+  }
+</script>
+    
+</head>
+
+<body onload=javascript:showMap();>
+<h3>Oracle Maps example - marquee zoom</h3>
+<table>
+<tr>
+<td width="750px">
+  <div id="map" style="left:0px; top:6px; width:100%; height:600px"></div>
+</td>
+<td>  
+  <p><a href="javascript:marqueeZoom()">Click here to enter one of the following marquee zoom modes:</a></p>
+  <input type="radio" name="zoommode" value="prompt" id="promptbutton" checked onclick="setMode(this)">Prompt</input>
+<blockquote style="background: white">The map is zoomed after you finish drawing the rectangle and click on the rectangle. The rectangle disappears and the map is not zoomed if you click on any other part of the map. The marquee zoom tool remains active until you stop it.</blockquote>
+  <input type="radio" name="zoommode" value="continuous" onclick="setMode(this)">Continuous</input>
+<blockquote style="background: white">The map is zoomed as soon as you finish drawing the rectangle. The marquee zoom tool remains active until you stop it.</blockquote>
+  <input type="radio" name="zoommode" value="one_time" onclick="setMode(this)">One time</input>
+<blockquote style="background: white">The map is zoomed as soon as you finish drawing the rectangle. Marquee zoom tool becomes inactive aftwards.</blockquote>
+  <p><a href="javascript:marqueeZoomCustomStyle()">Click here to enter marquee zoom mode with custom rectangle style</a></p>
+  <p><a href="javascript:noMarqueeZoom()">Click here to exit marquee zoom mode</a></p>
+</td>         
+</tr>
+</table>
+
+<h3>Instructions</h3>
+This demo shows how to use the built-in rectangle tool to perform marquee zoom.
+Once you enter the marquee zoom mode, you can start dragging a rectangle on
+the map. As soon as you release the mouse the map will be zoomed to the rectangle
+area.
+<BR></BR>
+To resume normal map dragging, you must exit the marquee zoom mode.
+
+<h3>Source code</h3>
+<blockquote>
+<pre>
+  var mapview = null;
+  var mode = "prompt" ;
+  function showMap()
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);   
+    mapview.addNavigationPanel("WEST");  
+    mapview.display();
+    document.getElementById("promptbutton").checked = true ;
+  }
+
+  <font color="#ff0000">
+  function marqueeZoom()
+  {
+    mapview.stopMarqueeZoom();
+    mapview.startMarqueeZoom(mode, new Object());
+  }
+  
+  function noMarqueeZoom()
+  {
+    mapview.stopMarqueeZoom();
+  }
+
+  function setMode(button)
+  {
+    mode = button.value ;
+    mapview.startMarqueeZoom(mode);
+  }
+
+  function marqueeZoomCustomStyle()
+  {
+    var rectStyle = new Object() ;
+    rectStyle.borderColor = "#0000FF" ;
+    rectStyle.borderWidth = 2 ;
+    rectStyle.borderDashed = false ;
+    rectStyle.fillColor = "#FF0000" ;
+    rectStyle.fillOpacity = 0.5 ;
+    mapview.stopMarqueeZoom();
+    mapview.startMarqueeZoom(mode, rectStyle);
+  }
+  </font>
+
+</pre>
+</blockquote>
+
+And here is how the marqueeZoom mode is controlled.
+<blockquote>
+<pre>
+  &lt;a href="javascript:marqueeZoom()"&gt;Click here to enter one of the following marquee zoom modes:&lt;/a&gt;
+  &lt;a href="javascript:noMarqueeZoom()"&gt;Click here to exit marquee zoom mode&lt;/a&gt;
+</pre>
+</blockquote>
+</body>
+</html>
+
+

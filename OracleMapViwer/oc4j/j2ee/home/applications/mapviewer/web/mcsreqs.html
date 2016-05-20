@@ -1,0 +1,69 @@
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=US-ASCII"></meta>
+    <title>mcsreqs</title>
+  </head>
+  <body>
+  
+<A NAME="tile_request">
+<FONT COLOR="#ff0000"><H2>Tile Requests</H2></FONT>
+<H3>Using mesh code</H3>
+<FORM action=mcserver method=get>
+<input type="hidden" name="request" value="gettile"/>
+<table>
+<tr><td>Map cache name :</td><td><input type="text" name="mapcache" value="mvdemo.demo_map"/></td></tr>
+<tr><td>Image format :</td><td><input type="text" name="format" value="PNG" /></td></tr>
+<tr><td>Zoom level :</td><td><input type="text" name="zoomlevel" value="0" /></td></tr>
+<tr><td>Mesh code X:</td><td><input type="text" name="mx" value="4"/></td></tr>
+<tr><td>Mesh code Y:</td><td><input type="text" name="my" value="12"/></td></tr>
+</table>
+<INPUT type=submit value=Submit /> 
+</FORM>
+<BR><BR>
+
+<H3>Using tile coordinates</H3>
+<FORM action=mcserver method=get>
+<input type="hidden" name="request" value="gettile"/>
+<table>
+<tr><td>Map cache name :</td><td><input type="text" name="mapcache" value="mvdemo.demo_map"/></td></tr>
+<tr><td>Image format :</td><td><input type="text" name="format" value="PNG" /></td></tr>
+<tr><td>Zoom level :</td><td><input type="text" name="zoomlevel" value="0" /></td></tr>
+<tr><td>Tile X :</td><td><input type="text" name="tx" value="-122" /></td></tr>
+<tr><td>Tile Y : </td><td><input type="text" name="ty" value="37.5" /></td></tr>
+</table>
+<INPUT type=submit value=Submit /> 
+</FORM>
+
+<HR>
+<A NAME="map_request">
+<FONT COLOR="#ff0000"><H2> Map Requests </H2> </FONT>
+
+<H3>Using map Center</H3>
+<FORM action=mcserver method=get>
+<input type="hidden" name="request" value="getmap"/>
+<table>
+<tr><td>Map cache name :</td><td><input type="text" name="mapcache" value="mvdemo.demo_map"/></td></tr>
+<tr><td>Image format :</td><td><input type="text" name="format" value="PNG" /></td></tr>
+<tr><td>Zoom level :</td><td><input type="text" name="zoomlevel" value="0" /></td></tr>
+<tr><td>Center X :</td><td><input type="text" name="cx" value="-122" /></td></tr>
+<tr><td>Center Y : </td><td><input type="text" name="cy" value="37.5" /></td></tr>
+<tr><td>Image Width : </td><td><input type="text" name="width" value="600"/></td></tr>
+<tr><td>Image Height :  </td><td><input type="text" name="height" value="480" /></td></tr>
+</table>
+<INPUT type=submit value=Submit /> 
+</FORM>
+<BR><BR>
+<H3>Using map Bounding Box</H3>
+<FORM action=mcserver method=get>
+<input type="hidden" name="request" value="getmap"/>
+<table>
+<tr><td>Map cache name :</td><td><input type="text" name="mapcache" value="mvdemo.demo_map"/></td></tr>
+<tr><td>Image format :</td><td><input type="text" name="format" value="PNG" /></td></tr>
+<tr><td>Zoom level :</td><td><input type="text" name="zoomlevel" value="6" /></td></tr>
+<tr><td>Bounding box: </td><td><input type="text" name="bbox" value="-122.1,38,-122,38.1" /> <br></td></tr>
+</table>
+<INPUT type=submit value=Submit /> 
+</FORM>
+
+</body>
+</html>

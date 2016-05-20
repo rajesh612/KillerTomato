@@ -1,0 +1,63 @@
+<html>
+<HEAD>
+  <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+  <META NAME="GENERATOR" CONTENT="JDBC Demo">
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+<SCRIPT TYPE="text/javascript">
+  var mapview;
+  var orientedtheme;
+  var baseQuery;
+  var baseURL  = "http://"+document.location.host+"/mapviewer";
+  var mapCenterLon = -122.49;
+  var mapCenterLat =  37.5106;
+  var mapZoom      =  3;  
+  var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);     
+  function on_load_mapview() 
+  {
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    var basemap = new MVMapTileLayer("mvdemo.demo_map");
+    mapview.addMapTileLayer(basemap);   
+    mapview.setCenter(mpoint);   
+    mapview.setZoomLevel(mapZoom);  
+	
+    orientedtheme= createOrientedTheme();
+    
+    mapview.addThemeBasedFOI(orientedtheme);
+	
+	var nav = new MVNavigationPanel() ;
+    var navPan = new MVMapDecoration(nav,0,0,null,null,4,4) ;
+    mapview.addMapDecoration(navPan) ;
+
+    mapview.display();
+  }
+ 
+  var pinMarker = "M.CYAN PIN" ;
+  
+  function createOrientedTheme()
+  {
+    baseQuery= "select shape from oriented_points";
+    var theme = "<themes><theme name='a_dynamic_theme' >" +
+                "<jdbc_query asis='true' spatial_column='shape' jdbc_srid='8307' " +
+                "render_style='"+pinMarker+"' datasource='mvdemo'>" + baseQuery +
+                "</jdbc_query></theme></themes>" ; 
+    var theme = new MVThemeBasedFOI('oriented-theme',theme);    
+    theme.setBringToTopOnMouseOver(true);
+	return theme;
+  }
+  
+</SCRIPT>
+</HEAD>
+
+<BODY onload= javascript:on_load_mapview()>
+<h3>Displaying oriented points</h3>
+<div id="map" style=" width: 90%; height: 75%;">
+<hr/>
+<H3>Instructions</H3>
+The demo shows you how to display oriented points stored in the database as FOIs. We create a JDBC theme that selects all the data points from the "oriented_points" table that comes with the MVDEMO data set.  In fact displaying oriented points is not much different from displaying your regular points or geometries. The only visual difference is that each marker style will be oriented according to the angle specifed by each point it represents.<p>
+
+<p> Note that for this demo to work, the MVDEMO data source must enable JDBC theme.</p>
+
+</BODY>
+</html>

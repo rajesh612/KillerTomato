@@ -1,0 +1,187 @@
+﻿<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Oracle Maps Tutorial - theme highlighting</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+  var themebasedfoi;
+  var mapview;
+  
+  function showMap()
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -100;
+    var mapCenterLat =  35.5;
+    var mapZoom      =  0;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);    
+
+    createThemeFOI();
+
+    setupNsdp(themebasedfoi);
+
+    mapview.addNavigationPanel("EAST") ;
+
+    mapview.display();  			
+    
+  }
+
+  function createThemeFOI()
+  {
+    var baseQuery= "select geom, state from states";
+    var theme = "<themes><theme name='MY_JDBC_THEME' >" +
+                "<jdbc_query spatial_column='geom' jdbc_srid='8307' " +
+                "render_style='C.COUNTIES' datasource='mvdemo'>" + baseQuery +
+                "</jdbc_query></theme></themes>" ; 
+    themebasedfoi = new MVThemeBasedFOI('ajdbctheme',theme);    
+    themebasedfoi.setBringToTopOnMouseOver(true);
+    mapview.addThemeBasedFOI(themebasedfoi); 
+  }
+  
+  function setupNsdp(themebasedfoi)
+  {
+    var nsdpInfo = new MVNSDP("defaultNSDP");
+    nsdpInfo.setTheme("MY_JDBC_THEME");
+    nsdpInfo.setKeyColumn("state");
+
+    var xml_data = "<nsdp_xml>"+
+  "<table>"+
+	"<tr><th>State</th><th>Revenue (M)</th></tr>"+
+	"<tr><td>Oregon</td><td>120.0</td></tr>"+ 
+	"<tr><td>California</td><td>124.0</td></tr>"+
+	"<tr><td>Nevada</td><td>70.0</td></tr>"+
+	"<tr><td>Arizona</td><td>100.0</td></tr>"+
+	"<tr><td>Texas</td><td>175.0</td></tr>"+
+	"<tr><td>Colorado</td><td>169.0</td></tr>"+
+	"<tr><td>Idaho</td><td>50.0</td></tr>"+
+	"<tr><td>Iowa</td><td>40.0</td></tr>"+
+	"<tr><td>Ohio</td><td>165.0</td></tr>"+
+	"<tr><td>Michigan</td><td>180.0</td></tr>"+
+	"<tr><td>North Dakota</td><td>60.0</td></tr>"+
+	"<tr><td>New Mexico</td><td>19.0</td></tr>"+
+	"<tr><td>Oklahoma</td><td>45.0</td></tr>"+
+	"<tr><td>Utah</td><td>110.0</td></tr>"+
+	"<tr><td>Wisconsin</td><td>50.0</td></tr>"+
+	"<tr><td>Alabama</td><td>40.0</td></tr>"+
+  "</table>"+
+"</nsdp_xml>";
+
+    var ps = new Object();
+    ps["xml"] = xml_data;
+    nsdpInfo.setParameters(ps);
+    themebasedfoi.setNSDP(nsdpInfo);  
+    themebasedfoi.setRenderingStyle("V.WHITE SCHEME");
+  }
+  
+
+</script>
+    
+</head>
+
+<body onload=javascript:showMap();>
+<h3>Oracle Maps example - Dynamic BI data and dynamic (JDBC) theme </h3>
+
+  <div id="map" style="left:0px; top:0px; width:60%; height:60%"></div>
+
+<HR/>
+<H3>Warning</H3>
+  If you see an alert dialog with an error message that reads like "JDBC theme is not supported on this data source", then you need to add the
+allow_jdbc_theme_based_foi="true" attribute to the 'mvdemo' data source definition in the MapViewer's mapViewerConfig.xml config file (can be done from the MapViewer admin web console under Management then Confgiuration), then restart MapViewer.
+
+<H3>Instructions</H3>
+This demo shows  how to draw a choropleth map using dynamically generated XML BI data on top of a dynamically created theme. For each state that has associated business data, it is displayed using a color that corresponds to its revenue number.  You can click on such a state to display an info-tip window listing the actual revenue data for that state.
+
+<br>
+It uses MapViewer's concept of Non-Spatial Data Provider, which is a custom library that is installed on MapViewer server side. It also uses the notion of dynamic (sometimes also known as JDBC) themes of MapViewer, which basically means instead of using a pre-defined theme, you supply the actual SQL query and styling rules on the fly for such a theme. The dynamic theme in this case simply queries and fetches a geometry and an attribute (state name) column from the STATES table in the MVDEMO data set.
+<br>
+
+
+<br>
+In this particular demo, we used the default Non-Spatial Data Proiver that comes with MapViewer. This provider accepts business data in a simple CSV or XML format. The XML format data can be saved on a web server and accessible through a URL by MapViewer, or  can be generated in your JavaScript code and sent to MapViewer as part of a Theme-Based FOI layer request. This demo shows how to generate and send XML data from the JavaScript application directly.
+
+<br>
+This demo uses a pre-defined advanced style named "V.WHITE SCHEME" to render the states with revenue data. It is defined as a black-white color series for the numeric range of 0 to 200.
+
+<h3>Source code</h3>
+There main pieces of code that are of interest are listed below. 
+<br>
+
+The following code creates a dynamic (JDBC) theme and add it to the client as an interactive theme-based FOI layer.
+<blockquote>
+<pre>
+    function createThemeFOI()
+  {
+    var baseQuery= "select geom, state from states";
+    var theme = "&lt;themes&gt;&lt;theme name='<font color='#ff0000'>MY_JDBC_THEME</font>' &gt;" +
+                "&lt;jdbc_query spatial_column='geom' jdbc_srid='8307' " +
+                "render_style='C.COUNTIES' datasource='mvdemo'&gt;" + baseQuery +
+                "&lt;/jdbc_query&gt;&lt;/theme&gt;&lt;/themes&gt;" ; 
+    themebasedfoi = new MVThemeBasedFOI('ajdbctheme',theme);    
+    themebasedfoi.setBringToTopOnMouseOver(true);
+    mapview.addThemeBasedFOI(themebasedfoi); 
+  }
+</pre>
+</blockquote>
+
+As you can see in the above code, when createing a dynamic theme, you need to supply the theme's actual XML definition, including
+the SQL query and styling rule (which default rendering style to use et al). 
+<p>
+
+The following code sets up the actual BI data and the NSDP that will be attached to the theme.
+<blockquote>
+<pre>
+  function setupNsdp(themebasedfoi)
+  {
+    var nsdpInfo = new MVNSDP("defaultNSDP");
+    nsdpInfo.setTheme("<font color='#ff0000'>MY_JDBC_THEME</font>");
+    nsdpInfo.setKeyColumn("state");
+
+    var xml_data = "&lt;nsdp_xml&gt;"+
+  "&lt;table&gt;"+
+	"&lt;tr&gt;&lt;th&gt;State&lt;/th&gt;           &lt;th&gt;Revenue (M)&lt;/th&gt;&lt;/tr&gt;"+
+	"&lt;tr&gt;&lt;td&gt;Oregon&lt;/td&gt;          &lt;td&gt;120.0&lt;/td&gt;&lt;/tr&gt;"+ 
+	"&lt;tr&gt;&lt;td&gt;California&lt;/td&gt;      &lt;td&gt;124.0&lt;/td&gt;&lt;/tr&gt;"+
+	"&lt;tr&gt;&lt;td&gt;Nevada&lt;/td&gt;          &lt;td&gt;70.0&lt;/td&gt;&lt;/tr&gt;"+
+	"&lt;tr&gt;&lt;td&gt;Arizona&lt;/td&gt;         &lt;td&gt;100.0&lt;/td&gt;&lt;/tr&gt;"+
+	"&lt;tr&gt;&lt;td&gt;Texas&lt;/td&gt;           &lt;td&gt;175.0&lt;/td&gt;&lt;/tr&gt;"+
+	"&lt;tr&gt;&lt;td&gt;Colorado&lt;/td&gt;        &lt;td&gt;169.0&lt;/td&gt;&lt;/tr&gt;"+
+	"&lt;tr&gt;&lt;td&gt;Idaho&lt;/td&gt;           &lt;td&gt;50.0&lt;/td&gt;&lt;/tr&gt;"+
+	"&lt;tr&gt;&lt;td&gt;Iowa&lt;/td&gt;            &lt;td&gt;40.0&lt;/td&gt;&lt;/tr&gt;"+
+	"&lt;tr&gt;&lt;td&gt;Ohio&lt;/td&gt;            &lt;td&gt;165.0&lt;/td&gt;&lt;/tr&gt;"+
+	"&lt;tr&gt;&lt;td&gt;Michigan&lt;/td&gt;        &lt;td&gt;180.0&lt;/td&gt;&lt;/tr&gt;"+
+	"&lt;tr&gt;&lt;td&gt;North Dakota&lt;/td&gt;    &lt;td&gt;60.0&lt;/td&gt;&lt;/tr&gt;"+
+	"&lt;tr&gt;&lt;td&gt;New Mexico&lt;/td&gt;      &lt;td&gt;19.0&lt;/td&gt;&lt;/tr&gt;"+
+	"&lt;tr&gt;&lt;td&gt;Oklahoma&lt;/td&gt;        &lt;td&gt;45.0&lt;/td&gt;&lt;/tr&gt;"+
+	"&lt;tr&gt;&lt;td&gt;Utah&lt;/td&gt;            &lt;td&gt;110.0&lt;/td&gt;&lt;/tr&gt;"+
+	"&lt;tr&gt;&lt;td&gt;Wisconsin&lt;/td&gt;       &lt;td&gt;50.0&lt;/td&gt;&lt;/tr&gt;"+
+	"&lt;tr&gt;&lt;td&gt;Alabama&lt;/td&gt;         &lt;td&gt;40.0&lt;/td&gt;&lt;/tr&gt;"+
+  "&lt;/table&gt;"+
+"&lt;/nsdp_xml&gt;";
+
+    var ps = new Object();
+    ps["xml"] = xml_data;
+    nsdpInfo.setParameters(ps);
+    themebasedfoi.setNSDP(nsdpInfo);  
+    themebasedfoi.setRenderingStyle("V.WHITE SCHEME");
+  }
+</pre>
+</blockquote>
+
+
+In the above code, we first create a NSDP object (using the Oracle Maps API), tell it the name of the MapViewer dynamic theme that should be joined with the business data (<b>my_jdbc_theme</b> in this case). You must also specify a key column from the base table of the theme, so that MapViewer can fetch the join key values from the theme's base table. In this case the "state" column will be used to match the business data provided by the Non-Spatial Data Provider.<br>
+Next we stuff the actual business data into a JavaScript string variable. The data is in a very simple XML format that follows the HTML Table syntax. Each &lt;tr/&gt; tag corresponds to one business record, in this case it is the sales number for five product items for a particular state. The first &lt;tr&gt; tag however is used to specify the column heading for the business data, which are displayed in the info-window when you click on any pie chart on the map.  Note each state record also contains the name of that state. This is the value that MapViewer will use to "join" with the actual state boundary data stored in Oracle Spatial through its "state" table column. <br>
+
+The next step in the above code sets the XML data into the Non-Spatial Data Provider object as the value of the built-in 'xml' parameter. If you store the XML data in a file and make it accessible through a URL, then you should set the URL as the value of a different bult-in parameter named 'xml_url'. <br>
+The final step is associating the Non-Spatial Data Provider with the theme-based FOI object, and setting the rendering style to "V.WHITE SCHEME" (a style that comes with the MVDEMO data set).
+
+
+</body>
+</html>      
+
+

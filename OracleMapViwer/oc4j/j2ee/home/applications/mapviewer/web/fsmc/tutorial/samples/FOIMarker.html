@@ -1,0 +1,103 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Map Cache Server/Map Client</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+  var baseURL = "http://"+document.location.host+"/mapviewer";
+  var mapview;
+  
+  function showMap()
+  {	
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);    
+    mapview.display();                                        
+    
+    addFOI();
+  }
+  
+  function addFOI()
+  {	
+    var mpoint1 = MVSdoGeometry.createPoint( -122.58,37.8, 8307);
+    var mfoi1 = MVFOI.createMarkerFOI("1", mpoint1, "images/circle.gif", 62, 61);
+    mfoi1.setHTMLElement("#1",20,20);
+    mapview.addFOI(mfoi1);
+    
+    var mpoint2 = MVSdoGeometry.createPoint(-122.34,37.7,8307);
+    var mfoi2 = MVFOI.createMarkerFOI("2",mpoint2,"images/baseball.gif",28,28);
+    mfoi2.setInfoWindow("<img src=\"http://www.oracle.com/admin/images/ocom/oralogo_small.gif\"></p>oracle",300, 150); 
+    mfoi2.enableInfoTip(false);
+    mapview.addFOI(mfoi2);
+    
+    var mpoint3 = MVSdoGeometry.createPoint(-122.54,37.78,8307);
+    var mfoi3 = MVFOI.createMarkerFOI("3",mpoint3,"images/small_circle.png",10,10);  
+    mapview.addFOI(mfoi3);
+  }
+</script>
+</head>
+
+<body onload="javascript:showMap();">
+<h3>Oracle Maps example - custom FOI marker image</h3>
+      <div id="map" style="left:0px; top:10px; width:100%; height:60%"></div> 
+ 
+<HR/>
+<H3>Instructions</H3>
+This demo shows how to set any image as the representation of a point-type FOI.
+
+<H3>Source code</H3>
+The javaScript code for this demo is shown below.
+<blockquote>
+<pre>
+  var mapview;
+  
+  function showMap()
+  {	
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.75;
+    var mapZoom      =  4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);    
+    mapview.display();              
+    <font color="#ff0000">
+    addFOI();
+    </font>
+  }
+  
+  <font color="#ff0000">
+  function addFOI()
+  {	
+    var mpoint1 = MVSdoGeometry.createPoint( -122.58,37.8, 8307);
+    var mfoi1 = MVFOI.createMarkerFOI("1", mpoint1, "images/circle.gif", 62, 61);
+    mfoi1.setHTMLElement("#1",20,20);
+    mapview.addFOI(mfoi1);
+    
+    var mpoint2 = MVSdoGeometry.createPoint(-122.34,37.7,8307);
+    var mfoi2 = MVFOI.createMarkerFOI("2",mpoint2,"images/baseball.gif",28,28);
+    mfoi2.setInfoWindow("&lt;img src=\"http://www.oracle.com/admin/images/ocom/oralogo_small.gif\"&gt;&lt;/p&gt;oracle",300, 150); 
+    mfoi2.enableInfoTip(false);
+    mapview.addFOI(mfoi2);
+    
+    var mpoint3 = MVSdoGeometry.createPoint(-122.54,37.78,8307);
+    var mfoi3 = MVFOI.createMarkerFOI("3",mpoint3,"images/small_circle.png",10,10);  
+    mapview.addFOI(mfoi3);
+  }	
+  </font>
+</pre>
+</blockquote>
+</body>
+
+</html>
+
+

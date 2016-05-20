@@ -1,0 +1,146 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="1.2"
+          xmlns:h="http://java.sun.com/jsf/html"
+          xmlns:f="http://java.sun.com/jsf/core"
+          xmlns:af="http://xmlns.oracle.com/adf/faces"
+          xmlns:afh="http://xmlns.oracle.com/adf/faces/html">
+  <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+  <f:view>
+    <afh:html>
+      <afh:head title="OracleAS MapViewer Home">
+        <meta http-equiv="Content-Type"
+              content="text/html; charset=windows-1252"/>
+      </afh:head>
+      <afh:body>
+        <h:form>
+          <af:panelPage title="Managing Map Tile Layers">
+            <f:facet name="menu1">
+              <af:menuTabs id="menuTabsArea" value="#{menuModel.model}"
+                           var="menuTab">
+                <f:facet name="nodeStamp">
+                  <af:commandMenuItem text="#{menuTab.label}"
+                                      action="#{menuTab.getOutcome}"
+                                      type="default"
+                                      rendered="#{menuTab.shown and                                                    menuTab.type=='default'}"/>
+                </f:facet>
+              </af:menuTabs>
+            </f:facet>
+            <f:facet name="menuGlobal">
+              <af:menuButtons var="menuButton" id="menuButtsArea"
+                              value="#{menuModel.model}">
+                <f:facet name="nodeStamp">
+                  <af:commandMenuItem text="#{menuButton.label}"
+                                      action="#{menuButton.getOutcome}"
+                                      icon="#{menuButton.icon}"
+                                      rendered="#{menuButton.type=='global'}"
+                                      type="global"/>
+                </f:facet>
+              </af:menuButtons>
+            </f:facet>
+            <f:facet name="branding">
+              <af:objectImage source="/myicons/oracle_logo.gif"/>
+            </f:facet>
+            <f:facet name="brandingApp">
+              <af:objectImage source="/myicons/mapviewer_admin.gif"/>
+            </f:facet>
+            <f:facet name="appCopyright">
+              <af:outputText value="#{mvbundle.copyright}"/>
+            </f:facet>
+            <f:facet name="appPrivacy"/>
+            <f:facet name="appAbout"/>
+            <f:facet name="brandingAppContextual">
+              <af:outputFormatted value="#{mvbundle.loclocloc}"
+                                  styleUsage="inContextBranding"/>
+            </f:facet>
+            <f:facet name="menu2">
+              <af:menuBar var="menuSubTab" id="menuSubTabsArea" startDepth="1"
+                          value="#{menuModel.model}">
+                <f:facet name="nodeStamp">
+                  <af:commandMenuItem text="#{menuSubTab.label}"
+                                      action="#{menuSubTab.getOutcome}"/>
+                </f:facet>
+              </af:menuBar>
+            </f:facet>
+            <f:facet name="menu3">
+              <af:menuList id="menuListArea" var="menuListItem" startDepth="2"
+                           value="#{menuModel.model}">
+                <f:facet name="nodeStamp">
+                  <af:commandMenuItem text="#{menuListItem.label}"
+                                      action="#{menuListItem.getOutcome}"/>
+                </f:facet>
+              </af:menuList>
+            </f:facet>
+            <af:panelGroup layout="vertical">
+              <af:objectSpacer height="12" width="10"/>
+              <af:commandButton text="#{mvbundle.refresh}"
+                                action="#{adminMCIs.refresh}"/>
+              <af:objectSpacer height="10" width="10"/>
+              <af:panelBox text="Existing map tile layers" width="100%">
+                <af:table value="#{adminMCIs.cacheViews}" var="row"
+                          emptyText="No items were found" banding="row"
+                          bandingInterval="1" width="100%"
+                          binding="#{adminMCIs.uiTable}"
+                          selectionListener="#{adminMCIs.markCurrentRow}">
+                  <af:column sortable="false" headerText="Name"
+                             formatType="text">
+                    <af:outputText value="#{row.mapSourceName}"/>
+                  </af:column>
+                  <af:column sortable="false" headerText="Data Source"
+                             formatType="text">
+                    <af:outputText value="#{row.dataSource}"/>
+                  </af:column>
+                  <af:column sortable="false" headerText="Base map"
+                             formatType="text">
+                    <af:outputText value="#{row.baseMap}"/>
+                  </af:column>
+                  <af:column sortable="false" headerText="Zoom levels"
+                             formatType="text">
+                    <af:outputText value="#{row.numZoomLevels}"/>
+                  </af:column>
+                  <af:column sortable="false" headerText="Internal"
+                             formatType="text">
+                    <af:outputText value="#{row.isInternal}"/>
+                  </af:column>
+                  <af:column sortable="false" headerText="Tile width"
+                             formatType="number">
+                    <af:outputText value="#{row.tileImageWidth}"/>
+                  </af:column>
+                  <af:column sortable="false" headerText="Tile height"
+                             formatType="number">
+                    <af:outputText value="#{row.tileImageHeight}"/>
+                  </af:column>               
+                  <af:column sortable="false" headerText="Online"
+                             formatType="text">
+                    <af:outputText value="#{row.isOnLine}"/>
+                  </af:column>                  
+                  <f:facet name="selection">
+                    <af:tableSelectOne text="Select a map tile layer and ">
+                      <af:commandButton text="Edit / View details"
+                                        action="#{adminMCIs.editCacheInstance}"/>
+                      <af:commandButton text="View map / Manage tiles"
+                                        action="#{adminMCIs.viewMap}"/>
+                      <af:commandButton text="Bring online"
+                                        action="#{adminMCIs.bringOnline}"/>
+                      <af:commandButton text="Take offline"
+                                        action="#{adminMCIs.takeOffline}"/>
+                      <af:commandButton text="Delete"
+                                        action="dialog:deleteWarnMCI"
+                                        launchListener="#{adminMCIs.handleDialogLaunch}"
+                                        returnListener="#{adminMCIs.handleDialogReturn}"
+                                        useWindow="true" windowHeight="220"
+                                        windowWidth="400"/>
+                    </af:tableSelectOne>
+                  </f:facet>
+                </af:table>
+                <af:objectSpacer width="10" height="10"/>
+              </af:panelBox>
+            </af:panelGroup>
+            <f:facet name="messages">
+              <af:messages/>
+            </f:facet>
+          </af:panelPage>
+        </h:form>
+      </afh:body>
+    </afh:html>
+  </f:view>
+</jsp:root>

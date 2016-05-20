@@ -1,0 +1,184 @@
+﻿<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Oracle Maps Tutorial - theme highlighting</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+  var themebasedfoi;
+  var mapview;
+  var highlightStates;
+  var jdbcTheme;
+  
+  function showMap()
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -100;
+    var mapCenterLat =  35.5;
+    var mapZoom      =  0;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);    
+
+    createThemeFOI();
+    
+    mapview.addNavigationPanel("EAST") ;
+
+    mapview.display();  			
+    
+  }
+
+  function createThemeFOI()
+  {
+    var baseQuery= "select geom, state from states";
+    jdbcTheme = "<themes><theme name='MY_JDBC_THEME' >" +
+                "<jdbc_query spatial_column='geom' jdbc_srid='8307' " +
+                "render_style='C.COUNTIES' datasource='mvdemo'>" + baseQuery +
+                "</jdbc_query>"+
+                "</theme></themes>" ; 
+    themebasedfoi = new MVThemeBasedFOI('ajdbctheme',jdbcTheme);    
+    themebasedfoi.setBringToTopOnMouseOver(true);
+    mapview.addThemeBasedFOI(themebasedfoi); 
+  }
+  
+  //this function hilights only the states that interact with the
+  //provided filtering geometry.
+  function highlightTheme(geom)
+  {
+    var ordsArray = geom.getOrdinates();
+    
+    var baseQuery2 = "select geom, state from states "+
+                    "where sdo_filter(geom, sdo_geometry(2003, 8307, null,"+
+                    "sdo_elem_info_array(1,1003,1), "+
+                    "sdo_ordinate_array("+ordsArray.toString()+"))) = 'TRUE'";
+                  
+    var jdbcTheme2 = "<themes><theme name='MY_JDBC_THEME' >" +
+                "<jdbc_query asis='true' spatial_column='geom' jdbc_srid='8307' " +
+                "render_style='C.COUNTIES' datasource='mvdemo'>" + baseQuery2 +
+                "</jdbc_query>"+
+                "</theme></themes>" ;               
+    highlightStates = new MVThemeBasedFOI('highlightedst',jdbcTheme2);
+    
+    highlightStates.setRenderingStyle("C.RED"); //set red color as the highlight style
+
+    mapview.addThemeBasedFOI(highlightStates);
+  }
+  
+  function clearHighlights()
+  {
+    mapview.removeThemeBasedFOI(highlightStates);
+    redline.clear();
+  }
+  
+  function redlineInit()
+  {
+    redline = new MVRedlineTool("black_line", "black_line");
+    mapview.addRedLineTool(redline);
+    redline.init();
+  }
+
+  function redlineDone()
+  {
+    redline.generateArea();
+    var geom = redline.getPolygon();  //this will be our filtering geom
+    //alert("ordinates:"  + geom.getOrdinates().toString());
+    highlightTheme(geom);    
+  }
+  
+  
+
+</script>
+    
+</head>
+
+<body onload=javascript:showMap();>
+<h3>Oracle Maps example - highlight JDBC theme features using a polygon</h3>
+<table>
+<tr><td width="60%" height="400px">
+<div id="map" style="left:0px; top:0px; width:100%; height:100%"></div>
+</td>
+<td width="40%">
+<div id="demo" style="left:10px; top:0px; width: 90%; height: 100%">        
+         Follow the steps below. 
+         
+         <OL>
+            <LI><a href="javascript:redlineInit();">Click here to enter polygon creation mode</a>, then click on the map to define polygon vertices</LI>
+            <LI>When done, <a href="javascript:redlineDone();">click here to close the polygon and highlight customers within it</a></LI>
+            <LI><a href="javascript:clearHighlights();">Click here to remove the highlighted features and the polygon</a></LI>
+            <LI>Please go back to step 1 if you would like to start over.
+         </OL>
+         
+</div>      
+</td>
+</tr>
+</table>
+<HR/>
+<h3>Instructions</h3>
+  This demo adds a dynamic query-based FOI layer to the map. The FOI layer displays states. You can then draw a polygon on the map using
+  the red line tool, and the client will highlight all the states that interact with the polygon.  <br>
+  
+  The highlighted states are displayed as another dynamic query-based FOI layer. This FOI layer is the same as the original FOI layer 
+  except two differences. First, it applies a sdo_filter clause to the original query. The coordinates of redline polygon is used as the
+  filtering geometry. Second, it uses a different color style to "highlight" the states interacting with the polygon.
+  the polygon <br>
+  
+  Note that for pre-defined theme based FOI, you can use the built-in methods MVThemeBasedFOI.setHighlightOnly() and 
+  MVThemeBasedFOI.setFilteringGeom() to highlight features. This is shown in <A href="themeHighlight.html">tutorial no. 43</A>. 
+  These methods have no effect on JDBC theme-based FOI layers.
+
+<h3> Source code </h3>
+
+The key JavaScript code for the above map is listed below. The first function, redlineDone(), is invoked as soon as you finish
+drawing the polygon on the map. The second function highlightTheme() is used to display the highlighted states using a 
+JDBC theme-based FOI layer. The third function is used to clear the highlighted states.
+
+<blockquote>
+	<pre>
+  function redlineDone()
+  {
+    redline.generateArea();
+    var geom = redline.getPolygon();  //this will be our filtering geom
+    //alert("ordinates:"  + geom.getOrdinates().toString());
+    highlightTheme(geom);    
+  }
+  
+   //this function hilights only the states that interact with the
+  //provided filtering geometry.
+  function highlightTheme(geom)
+  {
+    var ordsArray = geom.getOrdinates();
+    
+    var baseQuery2 = "select geom, state from states "+
+                    "where sdo_filter(geom, sdo_geometry(2003, 8307, null,"+
+                    "sdo_elem_info_array(1,1003,1), "+
+                    "sdo_ordinate_array("+ordsArray.toString()+"))) = 'TRUE'";
+                  
+    var jdbcTheme2 = "<themes><theme name='MY_JDBC_THEME' >" +
+                "<jdbc_query asis='true' spatial_column='geom' jdbc_srid='8307' key_column='state' " +
+                "render_style='C.COUNTIES' datasource='mvdemo'>" + baseQuery2 +
+                "</jdbc_query>"+
+                "</theme></themes>" ;               
+    highlightStates = new MVThemeBasedFOI('highlightedst',jdbcTheme2);
+    
+    highlightStates.setRenderingStyle("C.RED"); //set red color as the highlight style
+
+    mapview.addThemeBasedFOI(highlightStates);
+  }
+  
+  function clearHighlights()
+  {
+    mapview.removeThemeBasedFOI(highlightStates);
+    redline.clear();
+  }
+	</pre>
+
+
+</blockquote>
+</body>
+</html>      
+
+

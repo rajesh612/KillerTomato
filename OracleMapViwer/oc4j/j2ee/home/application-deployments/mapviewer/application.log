@@ -1,0 +1,148 @@
+16/05/07 13:49:49.984 10.1.3.5.0 Started
+16/05/07 13:49:55.169 web: 10.1.3.5.0 Started
+16/05/07 13:53:49.981 web: Servlet error
+javax.servlet.jsp.JspException: Error while saving state in 'client': 'An established connection was aborted by the software in your host machine'.
+	at com.sun.faces.taglib.jsf_core.ViewTag.doAfterBody(ViewTag.java:206)
+	at _home_jspx._jspService(_home_jspx.java:564)
+	at com.orionserver[Oracle Containers for J2EE 10g (10.1.3.5.0) ].http.OrionHttpJspPage.service(OrionHttpJspPage.java:59)
+	at oracle.jsp.runtimev2.JspPageTable.compileAndServe(JspPageTable.java:735)
+	at oracle.jsp.runtimev2.JspPageTable.service(JspPageTable.java:425)
+	at oracle.jsp.runtimev2.JspServlet.internalService(JspServlet.java:594)
+	at oracle.jsp.runtimev2.JspServlet.service(JspServlet.java:518)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:856)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.ServletRequestDispatcher.invoke(ServletRequestDispatcher.java:734)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.ServletRequestDispatcher.forwardInternal(ServletRequestDispatcher.java:391)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.ServletRequestDispatcher.unprivileged_forward(ServletRequestDispatcher.java:308)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.ServletRequestDispatcher.access$100(ServletRequestDispatcher.java:68)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.ServletRequestDispatcher$2.oc4jRun(ServletRequestDispatcher.java:214)
+	at oracle.oc4j.security.OC4JSecurity.doPrivileged(OC4JSecurity.java:284)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.ServletRequestDispatcher.forward(ServletRequestDispatcher.java:219)
+	at com.sun.faces.context.ExternalContextImpl.dispatch(ExternalContextImpl.java:322)
+	at com.sun.faces.application.ViewHandlerImpl.renderView(ViewHandlerImpl.java:130)
+	at oracle.adfinternal.view.faces.application.ViewHandlerImpl.renderView(ViewHandlerImpl.java:157)
+	at com.sun.faces.lifecycle.RenderResponsePhase.execute(RenderResponsePhase.java:87)
+	at com.sun.faces.lifecycle.LifecycleImpl.phase(LifecycleImpl.java:200)
+	at com.sun.faces.lifecycle.LifecycleImpl.render(LifecycleImpl.java:117)
+	at javax.faces.webapp.FacesServlet.service(FacesServlet.java:198)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.ResourceFilterChain.doFilter(ResourceFilterChain.java:64)
+	at oracle.adfinternal.view.faces.webapp.AdfFacesFilterImpl._invokeDoFilter(AdfFacesFilterImpl.java:367)
+	at oracle.adfinternal.view.faces.webapp.AdfFacesFilterImpl._doFilterImpl(AdfFacesFilterImpl.java:336)
+	at oracle.adfinternal.view.faces.webapp.AdfFacesFilterImpl.doFilter(AdfFacesFilterImpl.java:196)
+	at oracle.adf.view.faces.webapp.AdfFacesFilter.doFilter(AdfFacesFilter.java:87)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.ServletRequestDispatcher.invoke(ServletRequestDispatcher.java:644)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.ServletRequestDispatcher.forwardInternal(ServletRequestDispatcher.java:391)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.HttpRequestHandler.doProcessRequest(HttpRequestHandler.java:908)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.HttpRequestHandler.processRequest(HttpRequestHandler.java:458)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.HttpRequestHandler.serveOneRequest(HttpRequestHandler.java:226)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.HttpRequestHandler.run(HttpRequestHandler.java:127)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.HttpRequestHandler.run(HttpRequestHandler.java:116)
+	at oracle.oc4j.network.ServerSocketReadHandler$SafeRunnable.run(ServerSocketReadHandler.java:260)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].util.ReleasableResourcePooledExecutor$MyWorker.run(ReleasableResourcePooledExecutor.java:303)
+	at java.lang.Thread.run(Thread.java:595)
+16/05/07 13:53:49.986 web: An established connection was aborted by the software in your host machine
+16/05/07 13:53:49.987 web: An established connection was aborted by the software in your host machine
+16/05/07 14:02:48.231 web: An established connection was aborted by the software in your host machine
+16/05/07 14:02:48.231 web: An established connection was aborted by the software in your host machine
+16/05/07 14:02:48.231 web: An established connection was aborted by the software in your host machine
+16/05/07 14:02:48.231 web: An established connection was aborted by the software in your host machine
+16/05/07 14:20:10.602 web: Servlet error
+java.lang.IllegalStateException: Response has already been committed
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.EvermindHttpServletResponse.resetBuffer(EvermindHttpServletResponse.java:2075)
+	at javax.servlet.ServletResponseWrapper.resetBuffer(ServletResponseWrapper.java:237)
+	at javax.servlet.ServletResponseWrapper.resetBuffer(ServletResponseWrapper.java:237)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.ServletRequestDispatcher.unprivileged_forward(ServletRequestDispatcher.java:306)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.ServletRequestDispatcher.access$100(ServletRequestDispatcher.java:68)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.ServletRequestDispatcher$2.oc4jRun(ServletRequestDispatcher.java:214)
+	at oracle.oc4j.security.OC4JSecurity.doPrivileged(OC4JSecurity.java:284)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.ServletRequestDispatcher.forward(ServletRequestDispatcher.java:219)
+	at com.sun.faces.context.ExternalContextImpl.dispatch(ExternalContextImpl.java:322)
+	at com.sun.faces.application.ViewHandlerImpl.renderView(ViewHandlerImpl.java:130)
+	at oracle.adfinternal.view.faces.application.ViewHandlerImpl.renderView(ViewHandlerImpl.java:157)
+	at com.sun.faces.lifecycle.RenderResponsePhase.execute(RenderResponsePhase.java:87)
+	at com.sun.faces.lifecycle.LifecycleImpl.phase(LifecycleImpl.java:200)
+	at com.sun.faces.lifecycle.LifecycleImpl.render(LifecycleImpl.java:117)
+	at javax.faces.webapp.FacesServlet.service(FacesServlet.java:198)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.ResourceFilterChain.doFilter(ResourceFilterChain.java:64)
+	at oracle.adfinternal.view.faces.webapp.AdfFacesFilterImpl._invokeDoFilter(AdfFacesFilterImpl.java:367)
+	at oracle.adfinternal.view.faces.webapp.AdfFacesFilterImpl._doFilterImpl(AdfFacesFilterImpl.java:336)
+	at oracle.adfinternal.view.faces.webapp.AdfFacesFilterImpl.doFilter(AdfFacesFilterImpl.java:196)
+	at oracle.adf.view.faces.webapp.AdfFacesFilter.doFilter(AdfFacesFilter.java:87)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.ServletRequestDispatcher.invoke(ServletRequestDispatcher.java:644)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.ServletRequestDispatcher.forwardInternal(ServletRequestDispatcher.java:391)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.HttpRequestHandler.doProcessRequest(HttpRequestHandler.java:908)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.HttpRequestHandler.processRequest(HttpRequestHandler.java:458)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.HttpRequestHandler.serveOneRequest(HttpRequestHandler.java:226)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.HttpRequestHandler.run(HttpRequestHandler.java:127)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.HttpRequestHandler.run(HttpRequestHandler.java:116)
+	at oracle.oc4j.network.ServerSocketReadHandler$SafeRunnable.run(ServerSocketReadHandler.java:260)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].util.ReleasableResourcePooledExecutor$MyWorker.run(ReleasableResourcePooledExecutor.java:303)
+	at java.lang.Thread.run(Thread.java:595)
+16/05/07 15:07:26.923 10.1.3.5.0 Started
+16/05/07 15:07:29.700 web: 10.1.3.5.0 Started
+16/05/07 16:44:50.814 10.1.3.5.0 Started
+16/05/07 16:44:53.854 web: 10.1.3.5.0 Started
+16/05/07 18:37:30.661 web: Servlet error
+java.lang.Exception: MapViewer cannot process your map request. Check MapViewer log for details.
+	at oracle.lbs.mapclient.MapViewer.processImgURL(MapViewer.java:7234)
+	at oracle.lbs.mapclient.MapViewer.run(MapViewer.java:6663)
+	at oracle.lbs.mapclient.MapViewer.pan(MapViewer.java:5453)
+	at _demo._jview._jspService(_jview.java:149)
+	at com.orionserver[Oracle Containers for J2EE 10g (10.1.3.5.0) ].http.OrionHttpJspPage.service(OrionHttpJspPage.java:59)
+	at oracle.jsp.runtimev2.JspPageTable.service(JspPageTable.java:473)
+	at oracle.jsp.runtimev2.JspServlet.internalService(JspServlet.java:594)
+	at oracle.jsp.runtimev2.JspServlet.service(JspServlet.java:518)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:856)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.ServletRequestDispatcher.invoke(ServletRequestDispatcher.java:734)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.ServletRequestDispatcher.forwardInternal(ServletRequestDispatcher.java:391)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.HttpRequestHandler.doProcessRequest(HttpRequestHandler.java:908)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.HttpRequestHandler.processRequest(HttpRequestHandler.java:458)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.HttpRequestHandler.serveOneRequest(HttpRequestHandler.java:226)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.HttpRequestHandler.run(HttpRequestHandler.java:127)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.HttpRequestHandler.run(HttpRequestHandler.java:116)
+	at oracle.oc4j.network.ServerSocketReadHandler$SafeRunnable.run(ServerSocketReadHandler.java:260)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].util.ReleasableResourcePooledExecutor$MyWorker.run(ReleasableResourcePooledExecutor.java:303)
+	at java.lang.Thread.run(Thread.java:595)
+16/05/08 18:34:38.989 10.1.3.5.0 Started
+16/05/08 18:34:44.951 web: 10.1.3.5.0 Started
+16/05/12 22:14:03.612 10.1.3.5.0 Started
+16/05/12 22:14:09.322 web: 10.1.3.5.0 Started
+16/05/13 14:43:04.220 10.1.3.5.0 Started
+16/05/13 14:43:09.465 web: 10.1.3.5.0 Started
+16/05/13 20:14:30.395 web: Servlet error
+java.lang.IllegalStateException: Response has already been committed
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.EvermindHttpServletResponse.resetBuffer(EvermindHttpServletResponse.java:2075)
+	at javax.servlet.ServletResponseWrapper.resetBuffer(ServletResponseWrapper.java:237)
+	at javax.servlet.ServletResponseWrapper.resetBuffer(ServletResponseWrapper.java:237)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.ServletRequestDispatcher.unprivileged_forward(ServletRequestDispatcher.java:306)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.ServletRequestDispatcher.access$100(ServletRequestDispatcher.java:68)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.ServletRequestDispatcher$2.oc4jRun(ServletRequestDispatcher.java:214)
+	at oracle.oc4j.security.OC4JSecurity.doPrivileged(OC4JSecurity.java:284)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.ServletRequestDispatcher.forward(ServletRequestDispatcher.java:219)
+	at com.sun.faces.context.ExternalContextImpl.dispatch(ExternalContextImpl.java:322)
+	at com.sun.faces.application.ViewHandlerImpl.renderView(ViewHandlerImpl.java:130)
+	at oracle.adfinternal.view.faces.application.ViewHandlerImpl.renderView(ViewHandlerImpl.java:157)
+	at com.sun.faces.lifecycle.RenderResponsePhase.execute(RenderResponsePhase.java:87)
+	at com.sun.faces.lifecycle.LifecycleImpl.phase(LifecycleImpl.java:200)
+	at com.sun.faces.lifecycle.LifecycleImpl.render(LifecycleImpl.java:117)
+	at javax.faces.webapp.FacesServlet.service(FacesServlet.java:198)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.ResourceFilterChain.doFilter(ResourceFilterChain.java:64)
+	at oracle.adfinternal.view.faces.webapp.AdfFacesFilterImpl._invokeDoFilter(AdfFacesFilterImpl.java:367)
+	at oracle.adfinternal.view.faces.webapp.AdfFacesFilterImpl._doFilterImpl(AdfFacesFilterImpl.java:336)
+	at oracle.adfinternal.view.faces.webapp.AdfFacesFilterImpl.doFilter(AdfFacesFilterImpl.java:196)
+	at oracle.adf.view.faces.webapp.AdfFacesFilter.doFilter(AdfFacesFilter.java:87)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.ServletRequestDispatcher.invoke(ServletRequestDispatcher.java:644)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.ServletRequestDispatcher.forwardInternal(ServletRequestDispatcher.java:391)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.HttpRequestHandler.doProcessRequest(HttpRequestHandler.java:908)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.HttpRequestHandler.processRequest(HttpRequestHandler.java:458)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.HttpRequestHandler.serveOneRequest(HttpRequestHandler.java:226)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.HttpRequestHandler.run(HttpRequestHandler.java:127)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].server.http.HttpRequestHandler.run(HttpRequestHandler.java:116)
+	at oracle.oc4j.network.ServerSocketReadHandler$SafeRunnable.run(ServerSocketReadHandler.java:260)
+	at com.evermind[Oracle Containers for J2EE 10g (10.1.3.5.0) ].util.ReleasableResourcePooledExecutor$MyWorker.run(ReleasableResourcePooledExecutor.java:303)
+	at java.lang.Thread.run(Thread.java:595)
+16/05/16 00:18:19.674 10.1.3.5.0 Started
+16/05/16 00:18:25.782 web: 10.1.3.5.0 Started
+16/05/19 21:14:23.719 10.1.3.5.0 Started
+16/05/19 21:14:29.240 web: 10.1.3.5.0 Started
+16/05/19 21:34:24.343 web: An established connection was aborted by the software in your host machine
+16/05/19 21:34:33.546 web: An established connection was aborted by the software in your host machine

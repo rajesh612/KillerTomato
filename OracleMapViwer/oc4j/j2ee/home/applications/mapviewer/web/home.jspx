@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
+          xmlns:h="http://java.sun.com/jsf/html"
+          xmlns:f="http://java.sun.com/jsf/core"
+          xmlns:af="http://xmlns.oracle.com/adf/faces"
+          xmlns:afh="http://xmlns.oracle.com/adf/faces/html">
+  <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+  <f:view>
+    <afh:html>
+      <afh:head title="OracleAS MapViewer Home">
+        <meta http-equiv="Content-Type"
+              content="text/html; charset=windows-1252"/>
+      </afh:head>
+      <afh:body inlineStyle="background-image:url(myicons/bgearth.gif);">
+        <h:form>
+          <af:panelPage title="Welcome!">
+            <f:facet name="menu1">
+              <af:menuTabs id="menuTabsArea" value="#{menuModel.model}"
+                           var="menuTab">
+                <f:facet name="nodeStamp">
+                  <af:commandMenuItem text="#{menuTab.label}"
+                                      action="#{menuTab.getOutcome}"
+                                      type="default" 
+                                      rendered="#{menuTab.shown and 
+                                                  menuTab.type=='default'
+                                                  }"/>
+                </f:facet>
+              </af:menuTabs>
+            </f:facet>
+            <f:facet name="menuGlobal">
+              <af:menuButtons var="menuButton" id="menuButtsArea"
+                              value="#{menuModel.model}">
+                <f:facet name="nodeStamp">
+                  <af:commandMenuItem text="#{menuButton.label}"
+                                      action="#{menuButton.getOutcome}"
+                                      icon="#{menuButton.icon}" 
+                                      rendered="#{menuButton.type=='global'}"
+                                      type="global"/>
+                </f:facet>
+              </af:menuButtons>
+            </f:facet>
+            <f:facet name="branding">
+              <af:objectImage source="/myicons/oracle_logo.gif"/>
+            </f:facet>
+            <f:facet name="brandingApp">
+              <af:objectImage source="/myicons/mapviewer.gif"/>
+            </f:facet>
+            <f:facet name="appCopyright">
+              <af:outputText value="#{mvbundle.copyright}"/>
+            </f:facet>
+            <f:facet name="appPrivacy"/>
+            <f:facet name="appAbout">
+              <af:outputFormatted value="OracleAS MapViewer Version: #{mvconfig.version}"
+                                  styleUsage="inContextBranding"/>
+            </f:facet>
+            <f:facet name="brandingAppContextual">
+              <af:outputFormatted value="#{mvbundle.loclocloc}"
+                                  styleUsage="inContextBranding"/>
+            </f:facet>
+            <af:panelGroup layout="vertical">
+              <af:panelGroup layout="vertical">
+                <af:outputFormatted value="Your MapViewer server is now running and you can start viewing your Oracle Spatial managed data."/>
+                <af:outputFormatted value="MapViewer is a component of Oracle Application Server."/>
+                <f:facet name="separator"/>
+                <af:outputFormatted value="It provides powerful geospatial data visualization services."/>
+              </af:panelGroup>
+              <af:objectSpacer width="100%" height="10"/>
+              <af:panelGroup>
+                <af:panelBox text="Getting started" width="60%">
+                  <af:outputText value="Here are a few things that can get you started."/>
+                  <af:panelList maxColumns="1">
+                    <af:outputText value="Use MapBuilder to import some spatial data into an Oracle database that you have access to."
+                                   truncateAt="0" rendered="true"/>
+                    <af:outputText value="Create a data source so that MapViewer can connect to the database. Please log into the Admin page to do so."/>
+                    <af:outputText value="Use the JView demo to quickly view your spatial data. You can find it under the Demos tab."/>
+                    <af:outputText value="Start developing your first MapViewer applications."/>
+                  </af:panelList>
+                </af:panelBox>
+                <af:objectSpacer width="10" height="15"/>
+                <af:panelBox width="60%" text="What is Oracle Maps">
+                  <af:outputText value="Oracle Maps is a new feature of MapViewer.
+                  It consists of a free scrolling AJAX-based web mapping interface, 
+                  a flexible and open JavaScript API, a server-side map image 
+                  caching engine and a Feature of Interest (FOI) server."/>
+                  <f:verbatim>
+                    <UL> 
+                    <LI>
+                    <a href="/mapviewer/fsmc/tutorial/index.html" target="_blank">
+                      Oracle Maps Tutorial
+                    </a> </LI>
+                    <LI>
+                    <a href="/mapviewer/fsmc/apidoc/index.html" target="_blank">
+                      Oracle Maps API Reference
+                    </a>                    
+                    </LI>
+                    </UL>
+                  </f:verbatim>                  
+                </af:panelBox>
+              </af:panelGroup>
+            </af:panelGroup>
+          </af:panelPage>
+        </h:form>
+      </afh:body>
+    </afh:html>
+  </f:view>
+</jsp:root>

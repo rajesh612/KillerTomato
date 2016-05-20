@@ -1,0 +1,192 @@
+﻿<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Oracle Maps Tutorial - theme highlighting</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+  function showMap()
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -100;
+    var mapCenterLat =  35.5;
+    var mapZoom      =  0;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    var mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);    
+
+    var themebasedfoi = new MVThemeBasedFOI('themebasedfoi1','mvdemo.theme_demo_states');
+    themebasedfoi.setBringToTopOnMouseOver(true);
+
+    setupNsdp(themebasedfoi);
+    setupDynamicPieChartStyle(themebasedfoi);
+
+    mapview.addThemeBasedFOI(themebasedfoi);
+
+    mapview.addNavigationPanel("EAST") ;
+
+    mapview.display();  			
+    
+    //themebasedfoi.zoomToTheme();
+  }
+
+  function setupNsdp(themebasedfoi)
+  {
+    var nsdpInfo = new MVNSDP("defaultNSDP");
+    nsdpInfo.setTheme("theme_demo_states");
+    nsdpInfo.setKeyColumn("state");
+
+    var xml_data = "<nsdp_xml>"+
+  "<table>"+
+	"<tr><th>State</th><th>Item 1</th><th>Item 2</th><th>Item 3</th><th>Item 4</th><th>Item 5</th></tr>"+
+	"<tr><td>Oregon</td><td>500.0</td><td>200.0</td><td>1000.0</td><td>345.0</td><td>700.0</td></tr>"+
+	"<tr><td>California</td><td>624.0</td><td>275.0</td><td>800.0</td><td>154.0</td><td>200.0</td></tr>"+
+	"<tr><td>Nevada</td><td>200.0</td><td>396.0</td><td>900.0</td><td>347.0</td><td>400.0</td></tr>"+
+	"<tr><td>Arizona</td><td>100.0</td><td>458.0</td><td>10.0</td><td>369.0</td><td>70.0</td></tr>"+
+	"<tr><td>Texas</td><td>375.0</td><td>10.0</td><td>800.0</td><td>245.0</td><td>501.0</td></tr>"+
+	"<tr><td>Colorado</td><td>469.0</td><td>999.0</td><td>60.0</td><td>545.0</td><td>350.0</td></tr>"+
+	"<tr><td>Idaho</td><td>50.0</td><td>167.0</td><td>200.0</td><td>45.0</td><td>842.0</td></tr>"+
+	"<tr><td>Iowa</td><td>400.0</td><td>234.0</td><td>1500.0</td><td>845.0</td><td>696.0</td></tr>"+
+	"<tr><td>Ohio</td><td>100.0</td><td>555.0</td><td>100.0</td><td>35.0</td><td>444.0</td></tr>"+
+	"<tr><td>Michigan</td><td>800.0</td><td>473.0</td><td>300.0</td><td>30.0</td><td>1200.0</td></tr>"+
+	"<tr><td>North Dakota</td><td>260.0</td><td>609.0</td><td>50.0</td><td>90.0</td><td>340.0</td></tr>"+
+	"<tr><td>New Mexico</td><td>900.0</td><td>108.0</td><td>1000.0</td><td>1345.0</td><td>70.0</td></tr>"+
+	"<tr><td>Oklahoma</td><td>1050.0</td><td>168.0</td><td>1500.0</td><td>124.0</td><td>750.0</td></tr>"+
+	"<tr><td>Utah</td><td>10.0</td><td>1200.0</td><td>1040.0</td><td>34.0</td><td>600.0</td></tr>"+
+	"<tr><td>Wisconsin</td><td>650.0</td><td>500.0</td><td>880.0</td><td>2450.0</td><td>800.0</td></tr>"+
+	"<tr><td>Alabama</td><td>440.0</td><td>10.0</td><td>900.0</td><td>34.0</td><td>700.0</td></tr>"+
+  "</table>"+
+"</nsdp_xml>";
+
+    var ps = new Object();
+    ps["xml"] = xml_data;
+    nsdpInfo.setParameters(ps);
+    themebasedfoi.setNSDP(nsdpInfo);  
+  }
+  
+  function setupDynamicPieChartStyle(themebasedfoi)
+  {
+    var slices = new Array(5);
+    slices[0] = new MVPieSlice("Item 1", "2a00ff");
+    slices[1] = new MVPieSlice("Item 2", "00ffcb");
+    slices[2] = new MVPieSlice("Item 3", "00ff21");
+    slices[3] = new MVPieSlice("Item 4", "ccff00");
+    slices[4] = new MVPieSlice("Item 5", "ff9900");
+
+    var piechart = new MVPieChartStyle("mypc", 25, slices);
+
+    //now add the piechart style
+    themebasedfoi.addStyle(piechart);
+
+    themebasedfoi.setRenderingStyle("mypc");
+
+
+  }
+
+</script>
+    
+</head>
+
+<body onload=javascript:showMap();>
+<h3>Oracle Maps example - Displaying dynamic BI data as pie charts</h3>
+
+  <div id="map" style="left:0px; top:0px; width:60%; height:60%"></div>
+
+<HR/>
+<H3>Instructions</H3>
+This demo shows  how to draw pie charts on top of the states using
+dynamically generated XML BI data. For each state that has associated business data, a pie chart is drawn on top of it.  You can click on each pie chart to display an info-tip window listing the actual business data for that state. 
+
+<br>
+It uses MapViewer's concept of Non-Spatial Data Provider, which is a custom library that is installed on MapViewer server side. A custom data provider basically feeds any business (Non-Spatial) data to MapViewer, which then joins such data with the Oracle Spatial managed geographic boundary data (such as countries, states et al).  In other words, you do not need to store the business specific data in a table in order to render theme as thematic maps using MapViewer. Note that if you do have the business data already stored in the database, then doing thematic mapping can be even easier using MapViewer's built-in thematic mapping support.
+
+<br>
+In this particular demo, we used the default Non-Spatial Data Proiver that comes with MapViewer. This provider accepts business data in a simple CSV or XML format. The XML format data can be saved on a web server and accessible through a URL by MapViewer, or  can be generated in your JavaScript code and sent to MapViewer as part of a Theme-Based FOI layer request. This demo shows how to generate and send XML data from the JavaScript application directly.
+
+<br>
+This demo also shows how to dynamically define a Pie Chart style for MapViewer to use. You can specify its overall size, number of slices it contains, and the color for each pie slice.
+
+<h3>Source code</h3>
+There are 2 main pieces of code that are of interest in this demo. 
+<br>
+<b>1. Setup the dynamic Pie Chart style</b>
+<blockquote>
+<pre>
+  function setupDynamicPieChartStyle(themebasedfoi)
+  {
+    var slices = new Array(5);
+    slices[0] = new MVPieSlice("Item 1", "2a00ff");
+    slices[1] = new MVPieSlice("Item 2", "00ffcb");
+    slices[2] = new MVPieSlice("Item 3", "00ff21");
+    slices[3] = new MVPieSlice("Item 4", "ccff00");
+    slices[4] = new MVPieSlice("Item 5", "ff9900");
+
+    var piechart = new MVPieChartStyle("mypc", 25, slices);
+
+    //now add the piechart style
+    themebasedfoi.addStyle(piechart);
+
+    themebasedfoi.setRenderingStyle("mypc");
+
+
+  }
+</pre>
+</blockquote>
+In the above code, after creating the Pie Chart style using the Oracle Maps API, it is set on the target theme-based FOI layer as the rendering style.
+
+<br> <p>
+<b>2. Setup a Non-Spaial Data Provider and the actual XML business data on the theme</b>
+<blockquote>
+<pre>
+  function setupNsdp(themebasedfoi)
+  {
+    var nsdpInfo = new MVNSDP("defaultNSDP");
+    nsdpInfo.setTheme("theme_demo_states");
+    nsdpInfo.setKeyColumn("state");
+
+    var xml_data = "&lt;nsdp_xml&gt;"+
+  "&lt;table&gt;"+
+	"&lt;tr&gt;&lt;th&gt;State&lt;/th&gt;&lt;th&gt;Item 1&lt;/th&gt;&lt;th&gt;Item 2&lt;/th&gt;&lt;th&gt;Item 3&lt;/th&gt;&lt;th&gt;Item 4&lt;/th&gt;&lt;th&gt;Item 5&lt;/th&gt;&lt;/tr&gt;"+
+	"&lt;tr&gt;&lt;td&gt;Oregon&lt;/td&gt;&lt;td&gt;500.0&lt;/td&gt;&lt;td&gt;200.0&lt;/td&gt;&lt;td&gt;1000.0&lt;/td&gt;&lt;td&gt;345.0&lt;/td&gt;&lt;td&gt;700.0&lt;/td&gt;&lt;/tr&gt;"+
+	"&lt;tr&gt;&lt;td&gt;California&lt;/td&gt;&lt;td&gt;624.0&lt;/td&gt;&lt;td&gt;275.0&lt;/td&gt;&lt;td&gt;800.0&lt;/td&gt;&lt;td&gt;154.0&lt;/td&gt;&lt;td&gt;200.0&lt;/td&gt;&lt;/tr&gt;"+
+	"&lt;tr&gt;&lt;td&gt;Nevada&lt;/td&gt;&lt;td&gt;200.0&lt;/td&gt;&lt;td&gt;396.0&lt;/td&gt;&lt;td&gt;900.0&lt;/td&gt;&lt;td&gt;347.0&lt;/td&gt;&lt;td&gt;400.0&lt;/td&gt;&lt;/tr&gt;"+
+	"&lt;tr&gt;&lt;td&gt;Arizona&lt;/td&gt;&lt;td&gt;100.0&lt;/td&gt;&lt;td&gt;458.0&lt;/td&gt;&lt;td&gt;10.0&lt;/td&gt;&lt;td&gt;369.0&lt;/td&gt;&lt;td&gt;70.0&lt;/td&gt;&lt;/tr&gt;"+
+	"&lt;tr&gt;&lt;td&gt;Texas&lt;/td&gt;&lt;td&gt;375.0&lt;/td&gt;&lt;td&gt;10.0&lt;/td&gt;&lt;td&gt;800.0&lt;/td&gt;&lt;td&gt;245.0&lt;/td&gt;&lt;td&gt;501.0&lt;/td&gt;&lt;/tr&gt;"+
+	"&lt;tr&gt;&lt;td&gt;Colorado&lt;/td&gt;&lt;td&gt;469.0&lt;/td&gt;&lt;td&gt;999.0&lt;/td&gt;&lt;td&gt;60.0&lt;/td&gt;&lt;td&gt;545.0&lt;/td&gt;&lt;td&gt;350.0&lt;/td&gt;&lt;/tr&gt;"+
+	"&lt;tr&gt;&lt;td&gt;Idaho&lt;/td&gt;&lt;td&gt;50.0&lt;/td&gt;&lt;td&gt;167.0&lt;/td&gt;&lt;td&gt;200.0&lt;/td&gt;&lt;td&gt;45.0&lt;/td&gt;&lt;td&gt;842.0&lt;/td&gt;&lt;/tr&gt;"+
+	"&lt;tr&gt;&lt;td&gt;Iowa&lt;/td&gt;&lt;td&gt;400.0&lt;/td&gt;&lt;td&gt;234.0&lt;/td&gt;&lt;td&gt;1500.0&lt;/td&gt;&lt;td&gt;845.0&lt;/td&gt;&lt;td&gt;696.0&lt;/td&gt;&lt;/tr&gt;"+
+	"&lt;tr&gt;&lt;td&gt;Ohio&lt;/td&gt;&lt;td&gt;100.0&lt;/td&gt;&lt;td&gt;555.0&lt;/td&gt;&lt;td&gt;100.0&lt;/td&gt;&lt;td&gt;35.0&lt;/td&gt;&lt;td&gt;444.0&lt;/td&gt;&lt;/tr&gt;"+
+	"&lt;tr&gt;&lt;td&gt;Michigan&lt;/td&gt;&lt;td&gt;800.0&lt;/td&gt;&lt;td&gt;473.0&lt;/td&gt;&lt;td&gt;300.0&lt;/td&gt;&lt;td&gt;30.0&lt;/td&gt;&lt;td&gt;1200.0&lt;/td&gt;&lt;/tr&gt;"+
+	"&lt;tr&gt;&lt;td&gt;North Dakota&lt;/td&gt;&lt;td&gt;260.0&lt;/td&gt;&lt;td&gt;609.0&lt;/td&gt;&lt;td&gt;50.0&lt;/td&gt;&lt;td&gt;90.0&lt;/td&gt;&lt;td&gt;340.0&lt;/td&gt;&lt;/tr&gt;"+
+	"&lt;tr&gt;&lt;td&gt;New Mexico&lt;/td&gt;&lt;td&gt;900.0&lt;/td&gt;&lt;td&gt;108.0&lt;/td&gt;&lt;td&gt;1000.0&lt;/td&gt;&lt;td&gt;1345.0&lt;/td&gt;&lt;td&gt;70.0&lt;/td&gt;&lt;/tr&gt;"+
+	"&lt;tr&gt;&lt;td&gt;Oklahoma&lt;/td&gt;&lt;td&gt;1050.0&lt;/td&gt;&lt;td&gt;168.0&lt;/td&gt;&lt;td&gt;1500.0&lt;/td&gt;&lt;td&gt;124.0&lt;/td&gt;&lt;td&gt;750.0&lt;/td&gt;&lt;/tr&gt;"+
+	"&lt;tr&gt;&lt;td&gt;Utah&lt;/td&gt;&lt;td&gt;10.0&lt;/td&gt;&lt;td&gt;1200.0&lt;/td&gt;&lt;td&gt;1040.0&lt;/td&gt;&lt;td&gt;34.0&lt;/td&gt;&lt;td&gt;600.0&lt;/td&gt;&lt;/tr&gt;"+
+	"&lt;tr&gt;&lt;td&gt;Wisconsin&lt;/td&gt;&lt;td&gt;650.0&lt;/td&gt;&lt;td&gt;500.0&lt;/td&gt;&lt;td&gt;880.0&lt;/td&gt;&lt;td&gt;2450.0&lt;/td&gt;&lt;td&gt;800.0&lt;/td&gt;&lt;/tr&gt;"+
+	"&lt;tr&gt;&lt;td&gt;Alabama&lt;/td&gt;&lt;td&gt;440.0&lt;/td&gt;&lt;td&gt;10.0&lt;/td&gt;&lt;td&gt;900.0&lt;/td&gt;&lt;td&gt;34.0&lt;/td&gt;&lt;td&gt;700.0&lt;/td&gt;&lt;/tr&gt;"+
+  "&lt;/table&gt;"+
+"&lt;/nsdp_xml&gt;";
+
+    var ps = new Object();
+    ps["xml"] = xml_data;
+    nsdpInfo.setParameters(ps);
+    themebasedfoi.setNSDP(nsdpInfo);  
+  }
+</pre>
+</blockquote>
+Note that the xml data only provide business data for some of the states, and only these have a pie chart displayed.
+
+In the above code, we first create a NSDP object (using the Oracle Maps API), tell it the name of the MapViewer pre-defined theme that should be joined with the business data (<b>theme_demo_states</b> in this case). You must also specify a key column from the base table of the pre-defined theme, so that MapViewer can fetch the join key values from the theme's base table. In this case the "state" column will be used to match the business data provided by the Non-Spatial Data Provider.<br>
+Next we stuff the actual business data into a JavaScript string variable. The data is in a very simple XML format that follows the HTML Table syntax. Each &lt;tr/&gt; tag corresponds to one business record, in this case it is the sales number for five product items for a particular state. The first &lt;tr&gt; tag however is used to specify the column heading for the business data, which are displayed in the info-window when you click on any pie chart on the map.  Note each state record also contains the name of that state. This is the value that MapViewer will use to "join" with the actual state boundary data stored in Oracle Spatial through its "state" table column. <br>
+
+The next step in the above code sets the XML data into the Non-Spatial Data Provider object as the value of the built-in 'xml' parameter. If you store the XML data in a file and make it accessible through a URL, then you should set the URL as the value of a different bult-in parameter named 'xml_url'. <br>
+The final step is associating the Non-Spatial Data Provider with the theme-based FOI object, which is performed by the last statement in the above code.
+
+
+</body>
+</html>      
+
+

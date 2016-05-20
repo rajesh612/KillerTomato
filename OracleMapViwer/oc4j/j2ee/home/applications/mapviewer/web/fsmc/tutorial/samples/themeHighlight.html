@@ -1,0 +1,191 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Oracle Maps Tutorial - theme highlighting</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+  
+<script language=javascript>
+  var mapview;
+  var redline;
+  var hilitedCustomers;
+
+  function showMap()
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  3;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);     			
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+    var themebasedfoi = new MVThemeBasedFOI('themebasedfoi1','mvdemo.customers');    
+    themebasedfoi.setBringToTopOnMouseOver(true);
+    mapview.addThemeBasedFOI(themebasedfoi);
+    
+    mapview.setCenter(mpoint);   
+    mapview.setZoomLevel(mapZoom);
+
+    mapview.display(); 				
+  }
+  
+  function redlineInit()
+  {
+    redline = new MVRedlineTool("black_line", "black_line");
+    mapview.addRedLineTool(redline);
+    redline.init();
+  }
+
+  function redlineDone()
+  {
+    redline.generateArea();
+    var geom = redline.getPolygon();  //this will be our filtering geom
+    
+    highlightCustomers(geom);    
+  }
+  
+  //this function hilights only the customer sites that are within the
+  //provided filtering geometry.
+  function highlightCustomers(geom)
+  {
+    hilitedCustomers = new MVThemeBasedFOI('highlightedcst','mvdemo.customers');
+    
+    hilitedCustomers.setBringToTopOnMouseOver(true);
+    
+    //these 3 lines do the theme high-lighting work
+    hilitedCustomers.setHighlightOnly(true);  
+    hilitedCustomers.setFilteringGeom(geom);
+    hilitedCustomers.setRenderingStyle("M.CYAN PIN"); //set the pin symbol as the highlight style
+
+    mapview.addThemeBasedFOI(hilitedCustomers);
+  }
+  
+  function clearHighlights()
+  {
+    mapview.removeThemeBasedFOI(hilitedCustomers);
+    redline.clear();
+  }
+  
+
+
+</script>
+</head>
+
+<body onload="javascript:showMap()">
+<h3>Oracle Maps example - highlight theme features using a polygon</h3>
+<table>
+<tr><td width="60%" height="400px">
+<div id="map" style="left:0px; top:0px; width:100%; height:100%"></div>
+</td>
+<td width="40%">
+<div id="demo" style="left:10px; top:0px; width: 90%; height: 100%">        
+         Follow the steps below. 
+         
+         <OL>
+            <LI><a href="javascript:redlineInit();">Click here to enter polygon creation mode</a>, then click on the map to define polygon vertices</LI>
+            <LI>When done, <a href="javascript:redlineDone();">click here to close the polygon and highlight customers within it</a></LI>
+            <LI><a href="javascript:clearHighlights();">Click here to remove the highlighted features and the polygon</a></LI>
+            <LI>Please go back to step 1 if you would like to start over.
+         </OL>
+         
+</div>      
+</td>
+</tr>
+</table>
+
+<HR/>
+<H3>Instructions</H3>
+This demo shows you how to draw a polygon on the map and highlight all 
+the customer sites that fall within this polygon.
+
+<h3>Source code</h3>
+The JavaScript code for this demo is listed below.
+<blockquote>
+<pre>
+  var mapview;
+  var redline;
+  var hilitedCustomers;
+
+  function showMap()
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  3;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);     			
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+    var themebasedfoi = new MVThemeBasedFOI('themebasedfoi1','mvdemo.customers');    
+    themebasedfoi.setBringToTopOnMouseOver(true);
+    mapview.addThemeBasedFOI(themebasedfoi);
+    
+    mapview.setCenter(mpoint);   
+    mapview.setZoomLevel(mapZoom);
+
+    mapview.display(); 				
+  }
+  
+  function redlineInit()
+  {
+    redline = new MVRedlineTool("black_line", "black_line");
+    mapview.addRedLineTool(redline);
+    redline.init();
+  }
+
+  function redlineDone()
+  {
+    redline.generateArea();
+    var geom = redline.getPolygon();  //this will be our filtering geom
+    
+    highlightCustomers(geom);    
+  }
+  
+  //this function hilights only the customer sites that are within the
+  //provided filtering geometry.
+  function highlightCustomers(geom)
+  {
+    hilitedCustomers = new MVThemeBasedFOI('highlightedcst','mvdemo.customers');
+    
+    hilitedCustomers.setBringToTopOnMouseOver(true);
+  
+    <font color="#ff0000">  
+    //these 3 lines do the theme high-lighting work
+    hilitedCustomers.setHighlightOnly(true);  
+    hilitedCustomers.setFilteringGeom(geom);
+    hilitedCustomers.setRenderingStyle("M.CYAN PIN"); //set the pin symbol as the highlight style
+    </font>
+    mapview.addThemeBasedFOI(hilitedCustomers);
+  }
+  
+  function clearHighlights()
+  {
+    mapview.removeThemeBasedFOI(hilitedCustomers);
+    redline.clear();
+  }
+  
+</pre>
+</blockquote>
+
+<H3>Theme highlighting explained</H3>
+ To highlight a theme's features, you need to create a regular
+ theme-based FOI layer, then set a few highlighting related attributes on it, 
+ as illustrated in the above red-text statements.  The theme must be pre-defined
+ (stored in the user_sdo_themes database table) and without binding variables in 
+ its definitions. It is currently only applicable on geometry themes.
+ <br>
+ You must also provide a filtering geometry (a MVSdoGeometry object), in this tutorial
+ it is obtained through a Redline tool. This geometry is then used by the
+ MapViewer server to select the theme's features that are within or interacts with it. 
+ Only these selected features will be rendered (high-lighted). <br>
+ You can set a highlight style on a pre-defined theme using Map Builder, or you can
+ specify the style name at the run time on the theme-based FOI object using its
+ setRenderingStyle() method. In this tutorial, the pin marker symbol "M.CYAN PIN"
+ is used to highlight all the selected customer sites.
+ 
+</body>
+	
+</html>
+
+
+

@@ -1,0 +1,168 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
+          xmlns:h="http://java.sun.com/jsf/html"
+          xmlns:f="http://java.sun.com/jsf/core"
+          xmlns:af="http://xmlns.oracle.com/adf/faces"
+          xmlns:afh="http://xmlns.oracle.com/adf/faces/html">
+  <jsp:directive.page contentType="text/html;charset=windows-1252"/>
+  <f:view>
+    <afh:html>
+      <afh:head title="OracleAS MapViewer Home">
+        <meta http-equiv="Content-Type"
+              content="text/html; charset=windows-1252"/>
+      </afh:head>
+      <afh:body>
+        <h:form>
+          <af:panelPage title="Demos">
+            <f:facet name="menu1">
+              <af:menuTabs var="menuTab" id="menuTabsArea"
+                           value="#{menuModel.model}">
+                <f:facet name="nodeStamp">
+                  <af:commandMenuItem text="#{menuTab.label}"
+                                      action="#{menuTab.getOutcome}"
+                                      rendered="#{menuTab.shown and 
+                                                  menuTab.type=='default'}"/>
+                </f:facet>
+              </af:menuTabs>
+            </f:facet>
+            <f:facet name="menuGlobal">
+              <af:menuButtons var="menuButton" id="menuButtsArea"
+                              value="#{menuModel.model}">
+                <f:facet name="nodeStamp">
+                  <af:commandMenuItem text="#{menuButton.label}"
+                                      action="#{menuButton.getOutcome}"
+                                      icon="#{menuButton.icon}"
+                                      rendered="#{menuButton.type=='global'}"
+                                      type="global"/>
+                </f:facet>
+              </af:menuButtons>
+            </f:facet>
+            <f:facet name="branding">
+              <af:objectImage source="/myicons/oracle_logo.gif"/>
+            </f:facet>
+            <f:facet name="brandingApp">
+              <af:objectImage source="/myicons/mapviewer.gif"/>
+            </f:facet>
+            <f:facet name="appCopyright">
+              <af:outputText value="#{mvbundle.copyright}"/>
+            </f:facet>
+            <f:facet name="appPrivacy"/>
+            <f:facet name="appAbout"/>
+            <f:facet name="brandingAppContextual">
+              <af:outputFormatted value="#{mvbundle.loclocloc}"
+                                  styleUsage="inContextBranding"/>
+            </f:facet>
+            <af:panelBox width="90%">
+              <f:verbatim>
+                <table cellspacing="2" cellpadding="3" border="1" align="default"
+                       width="100%">
+                  <tr>
+                    <th>
+                       Demo
+                    </th>
+                    <th>
+                       Source code
+                    </th>
+                    <th>
+                       Description
+                    </th>
+                  </tr>
+                  <tr>
+                    <td>
+                      <a href="/mapviewer/demo/jview.jsp" target="_blank">JView</a>
+                    </td>
+                    <td>                       
+                      <a href="/mapviewer/demo/jview.jsp.txt" target="_blank">
+                        view
+                      </a>
+                    </td>
+                    <td>A simple SQL geometry viewer. Write a SQL query, display its result on a map.</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <a href="/mapviewer/fsmc/omaps.jsp" target="_blank">OMaps</a>
+                    </td>
+                    <td>                       
+                    </td>
+                    <td>A simple viewer for testing/previewing your base map cache instances. </td>
+                  </tr>                   
+                  <tr>
+                    <td>                     
+                      <a href="/mapviewer/demo/mapclient.jsp">mapclient</a>
+                    </td>
+                    <td> </td>
+                    <td>A simple JSP demo that uses a Java bean. This demo
+                        works with any Oracle Spatial dataset as long as you
+                        have defined a datasource for it.</td>
+                  </tr>
+                  <tr>
+                    <td>                   
+                      <a href="/mapviewer/demo/mapinit.jsp">mapinit</a>
+                    </td>
+                    <td>                  
+                      <a href="/mapviewer/demo/mapinit.jsp.txt">view</a>
+                    </td>
+                    <td>A JSP demo using the MapViewer Java client API. This demo
+                      works only if you have imported the demo dataset and
+                      defined a datasource named "mvdemo".
+                      <font color="#ff0000">
+                        SVG in action!
+                      </font>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>                     
+                      <a href="/mapviewer/demo/tagmap.jsp">tagmap</a>
+                    </td>
+                    <td>                   
+                      <a href="/mapviewer/demo/tagmap.jsp.txt">
+                        view
+                      </a>
+                    </td>
+                    <td>A demo using MapViewer JSP tags and the Java client
+                        API. This demo works only if you have imported the demo
+                        dataset and defined a datasource named "mvdemo".</td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <a href="/mapviewer/faces/fsmc/oraclemaps.jspx">maps and faces</a>
+                    </td>
+                    <td> </td>
+                    <td>A demo using the new Oracle Maps JavaScript API and the
+                        Oracle ADF Faces technology. You must have performed the Oracle Maps tutorial setup before running this demo. 
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td><a href="/mapviewer/demo/terrinit.jsp">region manager</a></td>
+                    <td> </td>
+                    <td> A powerful &amp; interactive Region Management demo using MapViewer's SVG capabilities (requires 10g database)</td>
+                  </tr>
+                  <tr>
+                    <td><a href="/mapviewer/demo/topology.jsp">topology</a></td>
+                    <td> </td>
+                    <td> A simple JSP demo that you can use to view Oracle Spatial 10g Topology data</td>
+                  </tr>
+                  <tr>
+                    <td><a href="/mapviewer/demo/network.jsp">network</a></td>
+                    <td> </td>
+                    <td> A simple JSP demo that you can use to view any Oracle Spatial Network Data Model data</td>
+                  </tr>
+                  <tr>
+                    <td><a href="/mapviewer/demo/georaster.jsp">georaster</a></td>
+                    <td> </td>
+                    <td> A simple JSP demo that you can use to view any Oracle Spatial GeoRaster data </td>
+                  </tr>
+                </table>
+              </f:verbatim>
+              <af:goLink text="Oracle Maps tutorial"
+                         destination="/fsmc/tutorial/index.html"/>
+            </af:panelBox>
+            <af:objectSpacer width="10" height="10"/>
+          </af:panelPage>
+        </h:form>
+      </afh:body>
+    </afh:html>
+  </f:view>
+</jsp:root>

@@ -1,0 +1,108 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html" charset="UTF-8">
+<TITLE>Map Cache Server/Map Client/infoWindow</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+  var mapview;
+  
+  function showMap()
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+    mapview.setCenter(mpoint);   
+    mapview.setZoomLevel(mapZoom);
+    
+    var theme1=new MVThemeBasedFOI('themebasedfoi1','mvdemo.customers');
+    var themeStyleParameters = 
+      {bodyStyle:"border:2px;border-color:#FF0033;background-color:#FFFFFF"};
+    theme1.setInfoWindowStyle("MVInfoWindowStyle1", themeStyleParameters);
+    theme1.setInfoWindowTitle("Customer Details");
+    mapview.addThemeBasedFOI(theme1);
+    var defaultStyleParameters = 
+      {closeButtonImageURL:"/mapviewer/fsmc/images/infoicons/close.gif",
+       bodyStyle:"border:2px;border-color:#666666;background-color:#f5fffa",
+       titleBarStyle:"color:#ffffff;background-color:#483D8B;font-weight:bold;font-family:Aria;font-size:14",
+       coneStyle:"background-color:#838b83;opacity:30",
+       offset:20};
+    mapview.setDefaultInfoWindowStyle("MVInfoWindowStyle1", defaultStyleParameters) ;
+    mapview.display();
+    
+    displayInfoWindow();
+  }
+  
+  function displayInfoWindow() 
+  {	
+    var mpoint = MVSdoGeometry.createPoint (-122.4, 37.68,8301);
+    var mpoint1 = mapview.transformGeom(mpoint, mapview.getSrid());
+    mapview.displayInfoWindow(mpoint1, "<img src=\"http://www.oracle.com/admin/images/ocom/oralogo_small.gif\">",null,null,null,"Info Window"); 
+  }                     
+</script>
+</head>
+<body onload="javascript:showMap();">
+<h3>Oracle Maps example - alternative info window style</h3>
+   <div id="map" style="left:10px; top:10px;width: 700px; height: 500px"></div> 
+<h3>Instructions</h3>
+This demo shows how to use a different skin style for the info-tip windows.
+
+<h3>Source code</h3>
+<blockquote>
+<pre>
+  var mapview;
+  
+  function showMap()
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+    mapview.setCenter(mpoint);   
+    mapview.setZoomLevel(mapZoom);
+    
+    var theme1=new MVThemeBasedFOI('themebasedfoi1','mvdemo.customers');
+    /* Use a custom info window style for theme info windows */
+    <font color="#ff0000">
+    var themeStyleParameters = 
+      {bodyStyle:"border:2px;border-color:#FFFF00;background-color:#FFFFFF"};
+    theme1.setInfoWindowStyle("MVInfoWindowStyle1", themeStyleParameters);
+    </font>
+    mapview.addThemeBasedFOI(theme1);
+    /* Change the default info window style */
+    <font color="#ff0000">
+    var defaultStyleParameters = 
+      {closeButtonImageURL:"/mapviewer/fsmc/images/infoicons/close.gif",
+       bodyStyle:"border:2px;border-color:#666666;background-color:#f5fffa",
+       titleBarStyle:"color:#ffffff;background-color:#483D8B;font-weight:bold;font-family:Aria;font-size:14",
+       coneStyle:"background-color:#838b83;opacity:30",
+       offset:20};
+    mapview.setDefaultInfoWindowStyle("MVInfoWindowStyle1", defaultStyleParameters) ;
+    </font>
+    mapview.display();  		
+    
+    displayInfoWindow();
+  }
+  
+  function displayInfoWindow() 
+  {	
+    var mpoint = MVSdoGeometry.createPoint (-122.4, 37.68,8301);
+    var mpoint1 = mapview.transformGeom(mpoint, mapview.getSrid());
+    mapview.displayInfoWindow(mpoint1, "&lt;img src=\"http://www.oracle.com/admin/images/ocom/oralogo_small.gif\"&gt;",220,100,null,"Info Window"); 
+  }                     
+</pre>
+</blockquote>
+</body>
+
+</html>
+
+

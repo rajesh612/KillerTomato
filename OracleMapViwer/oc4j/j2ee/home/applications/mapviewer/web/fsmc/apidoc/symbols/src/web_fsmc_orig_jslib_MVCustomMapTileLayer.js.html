@@ -1,0 +1,85 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/* $Header: lbs/ship/ear/web/fsmc/orig_jslib/MVCustomMapTileLayer.js /main/2 2009/02/01 14:33:38 jxyang Exp $ */</span><span class="WHIT">
+<span class='line'>  2</span> </span><span class="COMM">/* Copyright (c) 2001, 2009, Oracle and/or its affiliates.
+<span class='line'>  3</span> All rights reserved. */</span><span class="WHIT">
+<span class='line'>  4</span> </span><span class="COMM">/*
+<span class='line'>  5</span>    DESCRIPTION
+<span class='line'>  6</span>      Custom base map
+<span class='line'>  7</span> 
+<span class='line'>  8</span>    PRIVATE CLASSES
+<span class='line'>  9</span>     &lt;list of private classes defined - with one-line descriptions>
+<span class='line'> 10</span> 
+<span class='line'> 11</span>    NOTES
+<span class='line'> 12</span>     &lt;other useful comments, qualifications, etc.>
+<span class='line'> 13</span> 
+<span class='line'> 14</span>    MODIFIED    (MM/DD/YY)
+<span class='line'> 15</span>     jxyang     01/28/09 - add clone
+<span class='line'> 16</span>     jxyang     09/26/07 - rename to MVCustomMapTileLayer.js
+<span class='line'> 17</span>     jxyang     03/26/07 - created
+<span class='line'> 18</span> */</span><span class="WHIT">
+<span class='line'> 19</span> </span><span class="COMM">/**
+<span class='line'> 20</span>    @class MVCustomMapTileLayer defines a custom map tile layer, which assembles and 
+<span class='line'> 21</span>    displays map image tiles served directly by a web based map tile server, which  
+<span class='line'> 22</span>    accepts HTTP GET map tile requests. MVCustomMapTileLayer extends class MVMapTileLayer
+<span class='line'> 23</span>    and all methods defined in MVMapTileLayer are also available in MVCustomMapTileLayer.  
+<span class='line'> 24</span>    
+<span class='line'> 25</span>    &lt;p>In order to let the javascript map client know how to assemble and display
+<span class='line'> 26</span>    map tiles, you must provide the map tile layer definition object that defines map 
+<span class='line'> 27</span>    coordinate system, zoom levels and tiling rules. Please refer to {@link #MVMapView.addMapTileLayerDefinition} 
+<span class='line'> 28</span>    for more information regarding the map tile layer definition object.&lt;/p>
+<span class='line'> 29</span>    
+<span class='line'> 30</span>    &lt;p>Using the map tile layer definition information, the Oracle Maps client
+<span class='line'> 31</span>    calls tileURLProvider to get the URLs of the map tiles that it needs to display
+<span class='line'> 32</span>    to map. tileURLProvider is a user defined javascript function that returns
+<span class='line'> 33</span>    the URL of the map tile image specified by the tile bounding box and zoom level.
+<span class='line'> 34</span>    It accepts five parameters provided by the javascript map client:
+<span class='line'> 35</span>    &lt;/p> 
+<span class='line'> 36</span>    &lt;UL>
+<span class='line'> 37</span>      &lt;LI>X coordinate of the left-lower corner of the tile in map 
+<span class='line'> 38</span>      coordinate system&lt;/LI> 
+<span class='line'> 39</span>      &lt;LI>Y coordinate of the left-lower corner of the tile in map 
+<span class='line'> 40</span>      coordinate system&lt;/LI> 
+<span class='line'> 41</span>      &lt;LI>Tile width in map coordinate system&lt;/LI> 
+<span class='line'> 42</span>      &lt;LI>Tile height in map coordinate system&lt;/LI> 
+<span class='line'> 43</span>      &lt;LI>Map zoom level&lt;/LI>
+<span class='line'> 44</span>    &lt;/UL>   
+<span class='line'> 45</span>     
+<span class='line'> 46</span>    @constructor
+<span class='line'> 47</span>     @param {Object} layerDefinition layerDefinition is an object that specifies the map tile layer definition. 
+<span class='line'> 48</span>     @param {Function} tileURLProvider tileURLProvider is a function that returns the
+<span class='line'> 49</span>                     URL of the map tile image specified by tile coordinates 
+<span class='line'> 50</span>                     and zoom level.  
+<span class='line'> 51</span>    @returns        The newly created MVCustomMapTileLayer object.
+<span class='line'> 52</span>    @type           object
+<span class='line'> 53</span> */</span><span class="WHIT">
+<span class='line'> 54</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">MVCustomMapTileLayer</span><span class="PUNC">(</span><span class="NAME">layerDefinition</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">tileURLProvider</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'> 55</span> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 56</span> </span><span class="WHIT">  </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">layerName</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">layerDefinition.dataSource</span><span class="WHIT"> </span><span class="PUNC">?</span><span class="WHIT"> </span><span class="NAME">layerDefinition.dataSource</span><span class="PUNC">+</span><span class="STRN">"."</span><span class="PUNC">+</span><span class="NAME">layerDefinition.mapTileLayer</span><span class="PUNC">:</span><span class="NAME">layerDefinition.mapTileLayer</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 57</span> </span><span class="WHIT">  </span><span class="NAME">MVMapView.addMapTileLayerDefinition</span><span class="PUNC">(</span><span class="NAME">layerDefinition</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 58</span> </span><span class="WHIT">  </span><span class="COMM">/**@private*/</span><span class="WHIT">
+<span class='line'> 59</span> </span><span class="WHIT">  </span><span class="NAME">this.layerDefinition</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">layerDefinition</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 60</span> </span><span class="WHIT">  </span><span class="COMM">/**@private*/</span><span class="WHIT">
+<span class='line'> 61</span> </span><span class="WHIT">  </span><span class="NAME">this.baseClass</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">MVMapTileLayer</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 62</span> </span><span class="WHIT">  </span><span class="COMM">/**@private*/</span><span class="WHIT">
+<span class='line'> 63</span> </span><span class="WHIT">  </span><span class="NAME">this.baseClass</span><span class="PUNC">(</span><span class="NAME">layerName</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 64</span> </span><span class="WHIT">  </span><span class="COMM">/**@private*/</span><span class="WHIT">
+<span class='line'> 65</span> </span><span class="WHIT">  </span><span class="NAME">this.tileURLProvider</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">tileURLProvider</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 66</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 67</span> </span><span class="NAME">MVCustomMapTileLayer.prototype</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">MVMapTileLayer</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 68</span> </span><span class="COMM">/**@private*/</span><span class="WHIT"> 
+<span class='line'> 69</span> </span><span class="NAME">MVCustomMapTileLayer.prototype.getType</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'> 70</span> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 71</span> </span><span class="WHIT">	</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="STRN">"MVCustomMapTileLayer"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 72</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 73</span> </span><span class="COMM">/**@private*/</span><span class="WHIT"> 
+<span class='line'> 74</span> </span><span class="NAME">MVCustomMapTileLayer.prototype.clone</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'> 75</span> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 76</span> </span><span class="WHIT">  </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">MVCustomMapTileLayer</span><span class="PUNC">(</span><span class="NAME">this.layerDefinition</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">this.tileURLProvider</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 77</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 78</span> </span></pre></body></html>

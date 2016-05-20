@@ -1,0 +1,118 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
+          xmlns:af="http://xmlns.oracle.com/adf/faces"
+          xmlns:afh="http://xmlns.oracle.com/adf/faces/html"
+          xmlns:f="http://java.sun.com/jsf/core"
+          xmlns:h="http://java.sun.com/jsf/html">
+  <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+  <f:view>
+    <afh:html>
+      <afh:head title="OracleAS MapViewer Admin">
+        <meta http-equiv="Content-Type"
+              content="text/html; charset=windows-1252"/>
+      </afh:head>
+      <afh:body>
+      <h:form>
+        <af:panelPage title="Manage in-memory geometry cache">
+          <f:facet name="menu1">
+            <af:menuTabs id="menuTabsArea" value="#{menuModel.model}"
+                         var="menuTab">
+              <f:facet name="nodeStamp">
+                <af:commandMenuItem text="#{menuTab.label}"
+                                    action="#{menuTab.getOutcome}"
+                                    type="default"
+                                    rendered="#{menuTab.shown and   
+                                    menuTab.type=='default'
+                                    }"/>
+              </f:facet>
+            </af:menuTabs>
+          </f:facet>
+          <f:facet name="menuGlobal">
+            <af:menuButtons var="menuButton" id="menuButtsArea"
+                            value="#{menuModel.model}">
+              <f:facet name="nodeStamp">
+                <af:commandMenuItem text="#{menuButton.label}"
+                                    action="#{menuButton.getOutcome}"
+                                    icon="#{menuButton.icon}"
+                                    rendered="#{menuButton.type=='global'}"
+                                    type="global"/>
+              </f:facet>
+            </af:menuButtons>
+          </f:facet>
+          <f:facet name="branding">
+            <af:objectImage source="/myicons/oracle_logo.gif"/>
+          </f:facet>
+          <f:facet name="brandingApp">
+            <af:objectImage source="/myicons/mapviewer_admin.gif"/>
+          </f:facet>
+          <f:facet name="appCopyright">
+            <af:outputText value="#{mvbundle.copyright}"/>
+          </f:facet>
+          <f:facet name="appPrivacy"/>
+          <f:facet name="appAbout"/>
+          <f:facet name="brandingAppContextual">
+            <af:outputFormatted value="#{mvbundle.loclocloc}"
+                                styleUsage="inContextBranding"/>
+          </f:facet>
+          <f:facet name="menu2">
+            <af:menuBar var="menuSubTab" id="menuSubTabsArea" startDepth="1"
+                        value="#{menuModel.model}">
+              <f:facet name="nodeStamp">
+                <af:commandMenuItem text="#{menuSubTab.label}"
+                                    action="#{menuSubTab.getOutcome}"/>
+              </f:facet>
+            </af:menuBar>
+          </f:facet>
+            <f:facet name="menu3">
+              <af:menuList id="menuListArea" var="menuListItem" startDepth="2"
+                           value="#{menuModel.model}">
+                <f:facet name="nodeStamp">
+                  <af:commandMenuItem text="#{menuListItem.label}"
+                                      action="#{menuListItem.getOutcome}"/>
+                </f:facet>
+              </af:menuList>
+            </f:facet>
+            <af:panelGroup layout="vertical">
+              <af:objectSpacer width="10" height="15"/>
+              <af:panelHorizontal>
+                <af:outputLabel value="Current in-memory geometry cache size:"/>
+                <af:outputFormatted value="#{adminThemeCache.cacheSize}"/>
+              </af:panelHorizontal>
+              <af:objectSpacer width="10" height="12"/>
+              <af:panelBox width="100%" text="Purge cached geometries">
+                <af:panelForm width="100%">
+                  <f:facet name="footer">
+                    <af:panelButtonBar>
+                      <af:commandButton text="Purge selected theme"
+                                        action="#{adminThemeCache.purgeThemeCache}"/>
+                      <af:commandButton text="Purge all themes"
+                                        action="#{adminThemeCache.purgeAllThemesCache}"/>
+                    </af:panelButtonBar>
+                  </f:facet>
+                  <af:selectOneChoice label="Data source:"
+                                      value="#{adminThemeCache.selectedDataSrc}"
+                                      valueChangeListener="#{adminThemeCache.dataSrcSelectionChanged}"
+                                      autoSubmit="true" id="dSrcSelectId">
+                    <f:selectItems value="#{metadata.dsrcList}"/>
+                  </af:selectOneChoice>
+                  <af:selectOneChoice label="Theme:"
+                                      value="#{adminThemeCache.selectedTheme}"
+                                      partialTriggers="dSrcSelectId">
+                    <f:selectItems value="#{adminThemeCache.allThemes}"/>
+                  </af:selectOneChoice>
+                  <af:objectSpacer width="10" height="10"/>
+                </af:panelForm>
+                <af:panelTip>
+                  <af:outputText value="To delete the cached geometries for all the themes of the selected data source, click on the &quot;Purge all themes&quot; button."/>
+                </af:panelTip>
+              </af:panelBox>
+            </af:panelGroup>
+            <f:facet name="messages">
+              <af:messages/>
+            </f:facet>
+          </af:panelPage>
+        </h:form>
+      </afh:body>
+    </afh:html>
+  </f:view>
+</jsp:root>

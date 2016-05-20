@@ -1,0 +1,140 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Oracle Maps Tutorial - theme highlighting</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+  var themebasedfoi;
+  var mapview;
+  
+  function showMap()
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -100;
+    var mapCenterLat =  35.5;
+    var mapZoom      =  0;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);    
+
+    createThemeFOI();
+
+    buildDynamicStyle(themebasedfoi);
+    
+    mapview.addNavigationPanel("EAST") ;
+
+    mapview.display();  			
+    
+  }
+
+  function createThemeFOI()
+  {
+    var baseQuery= "select geom, state, WHITE, BLACK, ASIANPI, state_abrv, AMINDIAN, HISPANIC from states";
+    var theme = "<themes><theme name='MY_JDBC_THEME' >" +
+                "<jdbc_query label_column='state' spatial_column='geom' jdbc_srid='8307' key_column='state' " +
+                "render_style='C.COUNTIES' datasource='mvdemo'>" + baseQuery +
+                "<hidden_info>"+
+                "<field column=\"WHITE\"/>"+
+                "<field column=\"BLACK\"/>"+
+                "<field column=\"ASIANPI\"/>"+
+                "<field column=\"AMINDIAN\"/>"+
+                "<field column=\"HISPANIC\"/>"+
+                "</hidden_info>"+
+                "</jdbc_query>"+
+                "<rendering>"+
+                "   <style name='my_style' value_columns='white,black,asianpi,amindian,hispanic'/>"+
+                "</rendering>"+
+                "</theme></themes>" ; 
+    themebasedfoi = new MVThemeBasedFOI('ajdbctheme',theme);    
+    themebasedfoi.setBringToTopOnMouseOver(true);
+	themebasedfoi.enableImageCaching(false);
+    mapview.addThemeBasedFOI(themebasedfoi); 
+  }
+  
+  function buildDynamicStyle(themebasedfoi)
+  {
+      var xmlDef = '<AdvancedStyle>'+
+        '<PieChartStyle pieradius="20">'+
+        '        <PieSlice name="A" color="#ffff00" />'+
+        '        <PieSlice name="B" color="#000000" />'+
+        '        <PieSlice name="H" color="#ff00ff" />'+
+        '        <PieSlice name="I" color="#0000ff" />'+
+        '        <PieSlice name="W" color="#ffffff" />'+
+        '</PieChartStyle>'+
+        '</AdvancedStyle>';
+
+
+      var styleObj = new MVXMLStyle("my_style", xmlDef);
+
+      themebasedfoi.addStyle(styleObj);
+      themebasedfoi.setRenderingStyle("my_style");
+  }
+
+
+
+</script>
+    
+</head>
+
+<body onload=javascript:showMap();>
+<h3>Oracle Maps example - Dynamic (JDBC) theme, dynamic Piechart style and rendering rule</h3>
+
+  <div id="map" style="left:0px; top:0px; width:60%; height:60%"></div>
+
+<HR/>
+
+<h3>Instructions</h3>
+  This demo adds a dynamic query-based FOI layer to the map. It also creates a dynamic 5-slice Pie chart style to plot the population of five different races on each state.
+  The SQL query looks like the following: <br>
+  <blockquote>select geom, state, WHITE, BLACK, ASIANPI, state_abrv, AMINDIAN, HISPANIC from states</blockquote>
+  
+  As you can see, in the middle of the five population columns is one state_abrv (state's abbreviation name) column. So how do you tell the Pie chart style 
+  which 5 columns should be used to draw the pie charts (and ignore the state_abrv column)? This is where the new (11g only) custom rendering rule comes into play. <br>
+  
+  Basically, with MapViewer 11g you can explicitly define the association between the columns in the underlying query and the Advanced style that 
+  needs to consume the values from such columns. Such association is specified through what we call Custom Rendering rules. This is illustrated in 
+  the theme definition listed in the following section.
+  
+
+<h3> Source code </h3>
+
+The key JavaScript code for the above map is listed below.
+
+<blockquote>
+	<pre>
+  function createThemeFOI()
+  {
+    var baseQuery= "select geom, state, WHITE, BLACK, ASIANPI, state_abrv, AMINDIAN, HISPANIC from states";
+    var theme = "&lt;themes&gt;&lt;theme name='MY_JDBC_THEME' &gt;" +
+                "&lt;jdbc_query spatial_column='geom' jdbc_srid='8307' key_column='state' " +
+                "render_style='C.COUNTIES' datasource='mvdemo'&gt;" + baseQuery +
+                "&lt;/jdbc_query&gt;"+ <font color="#ff0000">
+                "&lt;rendering&gt;"+
+                "   &lt;style name='my_style' value_columns='white,black,asianpi,amindian,hispanic'/&gt;"+
+                "&lt;/rendering&gt;"+ </font>
+                "&lt;/theme&gt;&lt;/themes&gt;" ; 
+    themebasedfoi = new MVThemeBasedFOI('ajdbctheme',theme);    
+    themebasedfoi.setBringToTopOnMouseOver(true);
+	<font color="#ff0000">themebasedfoi.enableImageCaching(false);	</font>
+    mapview.addThemeBasedFOI(themebasedfoi); 
+  }
+	</pre>
+</blockquote>
+
+In the above, we are defining a JDBC theme-based FOI layer. Note the element &lt;rendering&gt; and its sub-elements. This is how we can
+explicitly specify which (value) columns should be used by which style. In this case, the 5 race columns are associated with the style
+named "my_style", which is a dynamically created pie chart style. This custom rendering rule will override the theme's existing
+rendering style(s), which is C.COUNTIES in this example. <br>
+
+Note also that in the above code we tell the MapViewer server to not cache any of the generated pie chart images, via the method
+enableImageCaching(false). This is usually a good idea when working with advanced styles and thematic mapping. If the server
+caches the pie chart images, you may not see a different pie chart even if you modify the population data in the underlying table.
+</body>
+</html>      
+
+

@@ -1,0 +1,223 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Map Cache Server/Map Client</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+<style type="text/css">
+@media screen
+{
+  .noscreen {display: none;}
+}
+
+@media print
+{
+  .noprint{display: none;}
+}
+</style>    
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+<script language=javascript>
+  var mapview;
+  var baseURL  = "http://"+document.location.host+"/mapviewer";
+  
+  function showMap()
+  { 
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    mapview = new MVMapView(document.getElementById("map"), baseURL);           
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));
+    var center=MVSdoGeometry.createPoint(mapCenterLon, mapCenterLat,8307)
+    mapview.setCenter(center);   
+    mapview.setZoomLevel(mapZoom);
+    mapview.addCopyRightNote("&#169;2006 powered by oracle&#8482;");                                       
+    mapview.addNavigationPanel("WEST");  
+    md1=new MVMapDecoration("Hello World",0.1, 0.2,null,null);
+    //the MapDecoration with "Hello World" could not be printed
+    md1.setPrintable(false);
+    mapview.addMapDecoration(md1);
+    md2=new MVMapDecoration("<img src=\"http://www.oracle.com/admin/images/ocom/oralogo_small.gif\">",0.2, 0.3,100,10);
+    //the MapDecoration with oracle logo could  be printed
+    md2.setPrintable(true);
+    mapview.addMapDecoration(md2);
+    addThemeBasedFOI();
+    mapview.display();
+    addIndFOI();
+    
+    mapview.addScaleBar();
+  }
+      
+  
+  function addThemeBasedFOI()
+  { 
+    var themebasedfoi = new MVThemeBasedFOI('themebasedfoi1','mvdemo.customers') ;
+    themebasedfoi.setBringToTopOnMouseOver(true);
+    mapview.addThemeBasedFOI(themebasedfoi);
+  }
+  
+  
+  function addIndFOI()
+  { 
+    var multi_polygon = new MVSdoGeometry(2007, 8307, [1,1003,1,7,1003,1], [-122.40, 37.73,-122.43, 37.69,-122.37, 37.71,-122.5 ,37.70, -122.5, 37.66, -122.52, 37.65]);
+    var foi1 = new MVFOI( "a1", multi_polygon, "mvdemo.C.RED");  
+    var mRectangle = MVSdoGeometry.createRectangle(-122.32, 37.75, -122.28, 37.78,8307);
+    var foi2 = new MVFOI( "a2", mRectangle, "mvdemo.C.BLUE"); 
+    foi2.setTopFlag(true);
+    var mcircle = MVSdoGeometry.createCircle(-122.30, 37.73, 0.03, 8307);
+    var foi3 = new MVFOI( "a3", mcircle, "mvdemo.C.RED" );   
+    mapview.addFOI(foi1);   
+    mapview.addFOI(foi2);
+    mapview.addFOI(foi3);
+  }
+
+  function mapPrint()
+  {
+    var a=document.getElementById("printmap");
+    mapview.print(a);
+  }       
+  
+  function getMapRequest()
+  {
+    document.getElementById("map_request").value = mapview.getMapAsXML("GIF_URL");
+  }       
+</script>
+    
+</head>
+
+<body onload=javascript:showMap()>
+<h3>Oracle Maps example - map printing function</h3>
+  <div id="map" style="position:absolute;top:50px; left:10px; width:600px; height:450px;border:0px"></div>   
+  <div id="printmap" class="noscreen"></div>
+  <div id="navigation" style="position:absolute;left:650px;top:50px;width:35%" class="noprint">
+    <p>Please click <a href="javascript:mapPrint()">here</a> to print map</p>
+    <p>Click <a href="javascript:getMapRequest()">here</a> to get the current map as XML map request. <p>
+    <textarea id="map_request" name=xml_request ROWS="15" COLS="40"></textarea>
+  </div>
+
+<div style="position:absolute;top:550px; left:10px;width:98%" class="noprint">
+<HR/>
+<H3>Instructions</H3>
+<p>This example shows how to print the map being displayed. </p>
+
+<p>If you use the browser's built-in print command, it may not print the map properly due 
+to how map contents are stacked using DIVs. Instead, you should use Oracle Maps' printing 
+function to print the map. </p> 
+
+You must define the following two CSS classes, "noprint" and "noscreen".
+<blockquote>
+<pre>
+&lt;style type="text/css">
+@media screen
+{
+  .noscreen {display: none;}
+}
+
+@media print
+{
+  .noprint{display: none;}
+}
+&lt;/style>
+</pre>
+</blockquote>
+
+<p>These two classes are used to determine which elements inside the web page are printed when
+the Oracle Maps' printing function is invoked.
+An HTML element with class "noscreen" will not be displayed inside the browser, 
+but will be printed when the Oracle Maps printing function is invoked. 
+An HTML element with class "noprint" will be displayed inside the browser, 
+but will not be printed when the Oracle Maps printing function is invoked. </p>
+
+<p>You must also define a DIV container with class "noscreen" for holding the map 
+when it is being printed. By setting the positioning parameter of this DIV, you can
+decide where the map should be printed on the page. <p>
+
+<blockquote>
+<pre>
+  &lt;div id="printmap" class="noscreen">&lt;/div>
+</pre>
+</blockquote>
+ 
+<h3>Source code</h3>
+The JavaScript code for this demo is listed below.
+<blockquote>
+<pre>
+  var mapview;
+  var baseURL  = "http://"+document.location.host+"/mapviewer";
+  
+  function showMap()
+  { 
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    mapview = new MVMapView(document.getElementById("map"), baseURL);           
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));
+    var center=MVSdoGeometry.createPoint(mapCenterLon, mapCenterLat,8307)
+    mapview.setCenter(center);   
+    mapview.setZoomLevel(mapZoom);
+    mapview.addCopyRightNote("&#169;2006 powered by oracle&#8482;");                                       
+    mapview.addNavigationPanel("WEST");  
+    md1=new MVMapDecoration("Hello World",0.1, 0.2,null,null);
+    <font color="#ff0000">
+    //the MapDecoration with "Hello World" will not be printed
+    md1.setPrintable(false);
+    </font>
+    mapview.addMapDecoration(md1);
+    md2=new MVMapDecoration("&lt;img src=\"http://www.oracle.com/admin/images/ocom/oralogo_small.gif\"&gt;",0.2, 0.3,100,10);
+    <font color="#ff0000">
+    //the MapDecoration with oracle logo will  be printed
+    md2.setPrintable(true);
+    </font>
+    mapview.addMapDecoration(md2);
+    addThemeBasedFOI();
+    mapview.display();
+    addIndFOI();
+    mapview.addScaleBar();
+  }
+      
+  function addThemeBasedFOI()
+  { 
+    var themebasedfoi = new MVThemeBasedFOI('themebasedfoi1','mvdemo.customers') ;
+    themebasedfoi.setBringToTopOnMouseOver(true);
+    mapview.addThemeBasedFOI(themebasedfoi);
+  }
+  
+  function addIndFOI()
+  { 
+    var multi_polygon = new MVSdoGeometry(2007, 8307,[1,1003,1,7,1003,1],
+    [-122.40, 37.73,-122.43, 37.69,-122.37, 37.71,-122.5 ,37.70, -122.5, 37.66, -122.52, 37.65]);
+    var foi1 = new MVFOI( "a1", multi_polygon, "mvdemo.C.RED");  
+    var mRectangle = MVSdoGeometry.createRectangle(-122.32, 37.75, -122.28, 37.78,8307);
+    var foi2 = new MVFOI( "a2", mRectangle, "mvdemo.C.BLUE"); 
+    foi2.setTopFlag(true);
+    var mcircle = MVSdoGeometry.createCircle(-122.30, 37.73, 0.03, 8307);
+    var foi3 = new MVFOI( "a3", mcircle, "mvdemo.C.RED" );   
+    mapview.addFOI(foi1);   
+    mapview.addFOI(foi2);
+    mapview.addFOI(foi3);
+  }
+
+  
+  <font color="#ff0000">
+  function mapPrint()
+  {
+    var a=document.getElementById("printmap");
+    mapview.print(a);
+  }
+  </font>   
+</pre>
+</blockquote> 
+
+
+The code below calls mapPrint which invokes the map print function.
+<pre>
+<blockquote>
+Please click &lt;a href="javascript:mapPrint()"&gt;here&lt;/a&gt; to print map
+</blockquote>
+</pre>
+
+</div>
+</body>
+
+</html>
+
+

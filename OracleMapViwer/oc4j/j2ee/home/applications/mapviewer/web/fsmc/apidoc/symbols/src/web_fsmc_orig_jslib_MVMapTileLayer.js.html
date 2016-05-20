@@ -1,0 +1,450 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/* $Header: lbs/ship/ear/web/fsmc/orig_jslib/MVMapTileLayer.js /st_lbs_11.1.1.x/5 2011/04/06 16:40:43 jxyang Exp $ */</span><span class="WHIT">
+<span class='line'>  2</span> </span><span class="COMM">/* Copyright (c) 2001, 2011, Oracle and/or its affiliates. 
+<span class='line'>  3</span> All rights reserved. */</span><span class="WHIT">
+<span class='line'>  4</span> </span><span class="COMM">/*
+<span class='line'>  5</span>    DESCRIPTION
+<span class='line'>  6</span>      Map Tile Layer
+<span class='line'>  7</span> 
+<span class='line'>  8</span>    PRIVATE CLASSES
+<span class='line'>  9</span>     &lt;list of private classes defined - with one-line descriptions>
+<span class='line'> 10</span> 
+<span class='line'> 11</span>    NOTES
+<span class='line'> 12</span>     &lt;other useful comments, qualifications, etc.>
+<span class='line'> 13</span> 
+<span class='line'> 14</span>    MODIFIED    (MM/DD/YY)
+<span class='line'> 15</span>     jxyang     04/04/11 - add getName
+<span class='line'> 16</span>     jxyang     09/30/10 - change mapType to 0
+<span class='line'> 17</span>     jxyang     09/17/10 - add setMapType
+<span class='line'> 18</span>     selina     06/17/10 - copy zIndex in clone method
+<span class='line'> 19</span>     selina     06/13/10 - change setOpacity: if tile layer is combined, remove it and add again.
+<span class='line'> 20</span>     selina     06/12/10 - add method setOpacity
+<span class='line'> 21</span>     jxyang     05/12/10 - setVisible: adjust copyright info
+<span class='line'> 22</span>     selina     07/27/09 - fix a bug in setVisibleZoomLevelRange
+<span class='line'> 23</span>     jxyang     07/15/09 - support instance specific error handling
+<span class='line'> 24</span>     selina     07/03/09 - fix a bug in refresh combined tiles
+<span class='line'> 25</span>     selina     06/03/09 - fix a bug in clone method 
+<span class='line'> 26</span>                           check combined layer visibility and transparent properties
+<span class='line'> 27</span>     jxyang     04/13/09 - support server side dynamic tile assembly
+<span class='line'> 28</span>     jxyang     03/19/09 - set tile layer control
+<span class='line'> 29</span>     jxyang     02/03/09 - check whether getType is null
+<span class='line'> 30</span>     jxyang     01/26/09 - support builtin map tile layers
+<span class='line'> 31</span>     jxyang     08/21/08 - initilize tile layer in refresh
+<span class='line'> 32</span>     jxyang     06/04/08 - add reload
+<span class='line'> 33</span>     jxyang     10/01/07 - doc changes
+<span class='line'> 34</span>     jxyang     09/26/07 - rename to MVMapTileLayer
+<span class='line'> 35</span>     selina     07/03/07 - created
+<span class='line'> 36</span> */</span><span class="WHIT">
+<span class='line'> 37</span> </span><span class="WHIT"> </span><span class="COMM">/**
+<span class='line'> 38</span>     @class MVMapTileLayer defines a map tile layer displayed on the client side. 
+<span class='line'> 39</span>     It assembles and displays pregenerated map image tiles that are rendered by 
+<span class='line'> 40</span>     the map tile server and belong to a pre-defined server side map tile layer.
+<span class='line'> 41</span>     
+<span class='line'> 42</span>     &lt;p>The map tile server is a servlet running as part of the MapViewer server. 
+<span class='line'> 43</span>     The typical map tile server URL is http://hostname:port/mapviewer/mcserver.&lt;/p>
+<span class='line'> 44</span>     
+<span class='line'> 45</span>     @constructor
+<span class='line'> 46</span>     @param {String} mapTileLayerName mapTileLayerName is a string that identifies the 
+<span class='line'> 47</span>                     map tile layer. It is defined in the form of data-source-name.map-tile-layer-name, 
+<span class='line'> 48</span>                     where map-tile-layer-name specifies the name of the map tile 
+<span class='line'> 49</span>                     layer that has been pre-defined on the server side and 
+<span class='line'> 50</span>                     data-source-name specifies the name of the MapViewer 
+<span class='line'> 51</span>                     data source in which the map tile layer is defined. 
+<span class='line'> 52</span>     @param {String} tileServerURL tileServerURL is a string that specifies the URL
+<span class='line'> 53</span>                     of the map tile server, which should be in the form
+<span class='line'> 54</span>                     http://host:port/mapviewer/mcserver. This is an optional parameter. When
+<span class='line'> 55</span>                     omitted, the map tile server URL is derived from the
+<span class='line'> 56</span>                     MapViewer base URL specified when creating the MVMapView 
+<span class='line'> 57</span>                     object. 
+<span class='line'> 58</span>     @returns        The newly created MVMapTileLayer object.
+<span class='line'> 59</span>     @type           object
+<span class='line'> 60</span>  */</span><span class="WHIT">
+<span class='line'> 61</span> </span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">MVMapTileLayer</span><span class="PUNC">(</span><span class="NAME">mapTileLayerName</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">tileServerURL</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'> 62</span> </span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 63</span> </span><span class="WHIT">   </span><span class="COMM">/**@private*/</span><span class="WHIT">
+<span class='line'> 64</span> </span><span class="WHIT">   </span><span class="NAME">this.mapSource</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">mapTileLayerName</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 65</span> </span><span class="WHIT">   </span><span class="COMM">/***@private*/</span><span class="WHIT">
+<span class='line'> 66</span> </span><span class="WHIT">   </span><span class="NAME">this.mcsURL</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">""</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 67</span> </span><span class="WHIT">   </span><span class="COMM">/**@private*/</span><span class="WHIT">
+<span class='line'> 68</span> </span><span class="WHIT">   </span><span class="NAME">this.mcscfgURL</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">""</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 69</span> </span><span class="WHIT">   </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">tileServerURL</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">tileServerURL</span><span class="PUNC">!=</span><span class="STRN">""</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'> 70</span> </span><span class="WHIT">   </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 71</span> </span><span class="WHIT">     </span><span class="NAME">this.mcsURL</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">tileServerURL</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 72</span> </span><span class="WHIT">     </span><span class="NAME">this.mcscfgURL</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">tileServerURL</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 73</span> </span><span class="WHIT">     </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">MVUtil.strEndWith</span><span class="PUNC">(</span><span class="NAME">tileServerURL</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">'/'</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'> 74</span> </span><span class="WHIT">     </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 75</span> </span><span class="WHIT">       </span><span class="NAME">this.mcsURL</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">tileServerURL.substring</span><span class="PUNC">(</span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">tileServerURL.length</span><span class="PUNC">-</span><span class="NUMB">1</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 76</span> </span><span class="WHIT">       </span><span class="NAME">this.mcscfgURL</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">tileServerURL.substring</span><span class="PUNC">(</span><span class="NUMB">0</span><span class="PUNC">,</span><span class="NAME">tileServerURL.length</span><span class="PUNC">-</span><span class="NUMB">1</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 77</span> </span><span class="WHIT">     </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 78</span> </span><span class="WHIT">   </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 79</span> 
+<span class='line'> 80</span> </span><span class="WHIT">   </span><span class="COMM">/**@private*/</span><span class="WHIT">
+<span class='line'> 81</span> </span><span class="WHIT">   </span><span class="NAME">this.parent</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">""</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 82</span> </span><span class="WHIT">   </span><span class="COMM">/**@private*/</span><span class="WHIT">
+<span class='line'> 83</span> </span><span class="WHIT">   </span><span class="NAME">this.isTransparent</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 84</span> </span><span class="WHIT">   </span><span class="COMM">/**@private*/</span><span class="WHIT">
+<span class='line'> 85</span> </span><span class="WHIT">   </span><span class="NAME">this.visible</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 86</span> </span><span class="WHIT">   </span><span class="COMM">/**@private*/</span><span class="WHIT">
+<span class='line'> 87</span> </span><span class="WHIT">   </span><span class="NAME">this.tileImageFormat</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">"PNG"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 88</span> </span><span class="WHIT">   </span><span class="COMM">/**@private*/</span><span class="WHIT">
+<span class='line'> 89</span> </span><span class="WHIT">   </span><span class="NAME">this.minVisibleLevel</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 90</span> </span><span class="WHIT">   </span><span class="COMM">/**@private*/</span><span class="WHIT">
+<span class='line'> 91</span> </span><span class="WHIT">   </span><span class="NAME">this.maxVisibleLevel</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 92</span> </span><span class="WHIT">   </span><span class="COMM">/**@private*/</span><span class="WHIT">
+<span class='line'> 93</span> </span><span class="WHIT">   </span><span class="NAME">this.reloadNumber</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 94</span> </span><span class="WHIT">   </span><span class="COMM">/**@private*/</span><span class="WHIT">
+<span class='line'> 95</span> </span><span class="WHIT">   </span><span class="NAME">this.layerControl</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 96</span> </span><span class="WHIT">   </span><span class="COMM">/**@private*/</span><span class="WHIT">
+<span class='line'> 97</span> </span><span class="WHIT">   </span><span class="NAME">this.parentLayer</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 98</span> </span><span class="WHIT">   </span><span class="COMM">/**@private*/</span><span class="WHIT">
+<span class='line'> 99</span> </span><span class="WHIT">   </span><span class="NAME">this.childrenLayers</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>100</span> </span><span class="WHIT">   </span><span class="COMM">/**@private*/</span><span class="WHIT">
+<span class='line'>101</span> </span><span class="WHIT">   </span><span class="NAME">this.doNotCombine</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>102</span> </span><span class="WHIT">   </span><span class="COMM">/**@private*/</span><span class="WHIT">
+<span class='line'>103</span> </span><span class="WHIT">   </span><span class="NAME">this.opacity</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>104</span> </span><span class="WHIT">   </span><span class="COMM">/**@private*/</span><span class="WHIT">
+<span class='line'>105</span> </span><span class="WHIT">   </span><span class="NAME">this.mapType</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>106</span> </span><span class="WHIT"> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>107</span> </span><span class="WHIT"> 
+<span class='line'>108</span>  </span><span class="COMM">/**@private*/</span><span class="WHIT"> 
+<span class='line'>109</span>  </span><span class="NAME">MVMapTileLayer.prototype.getType</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>110</span> </span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>111</span> </span><span class="WHIT"> 	</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="STRN">"MVMapTileLayer"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>112</span> </span><span class="WHIT"> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>113</span> 
+<span class='line'>114</span> </span><span class="WHIT"> </span><span class="COMM">/**
+<span class='line'>115</span>     This method sets whether the tile layer is combinable. 
+<span class='line'>116</span>     &lt;p>A combinable tile layer can
+<span class='line'>117</span>     be combined with other combinable tile layer(s) when a) they are adjacent to each other
+<span class='line'>118</span>     in the tile layer stack, b) they are served by the same MapViewer server and c) they
+<span class='line'>119</span>     have the same zoom level and coordinate system definition. &lt;/p>
+<span class='line'>120</span>     
+<span class='line'>121</span>     &lt;p>When being combined, multiple tile layers will be combined and merged into one by 
+<span class='line'>122</span>     MapViewer server and displayed in fact by the client as one tile layer. In other words, 
+<span class='line'>123</span>     at any give location within the map, instead of fetching and overlaying multiple tile 
+<span class='line'>124</span>     images belonging to multiple tile layers in the browser, the client asks MapViewer server
+<span class='line'>125</span>     to merge these multiple tiles into one tile image and displays the merged tile image intead. 
+<span class='line'>126</span>     
+<span class='line'>127</span>     &lt;p>When there are many tile layers, combining multiple tile layers into one can greatly reduce the number of tile images 
+<span class='line'>128</span>     fetched and displayed by the client and hence improve client side map rendering performance.
+<span class='line'>129</span>     A tile layer is not combinable by default. &lt;/p>
+<span class='line'>130</span>     
+<span class='line'>131</span>     @param {Boolean} combinable True if the map tile layer can be combined with other tile layer(s).
+<span class='line'>132</span>     @returns        None
+<span class='line'>133</span>     @type           void
+<span class='line'>134</span>  */</span><span class="WHIT"> 
+<span class='line'>135</span>  </span><span class="NAME">MVMapTileLayer.prototype.setCombinable</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">combinable</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>136</span> </span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>137</span> </span><span class="WHIT">   </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">combinable</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>138</span> </span><span class="WHIT">     </span><span class="NAME">this.doNotCombine</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>139</span> </span><span class="WHIT">   </span><span class="KEYW">else</span><span class="WHIT">
+<span class='line'>140</span> </span><span class="WHIT">     </span><span class="NAME">this.doNotCombine</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>141</span> </span><span class="WHIT"> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>142</span> 
+<span class='line'>143</span> </span><span class="WHIT"> </span><span class="COMM">/**
+<span class='line'>144</span>     This method sets whether the background color of the map images from 
+<span class='line'>145</span>     the map tile layer is transparent. By default, map tile images are treated as
+<span class='line'>146</span>     non-transparent images for optimal performance in Microsoft Internet Explorer. If the map background 
+<span class='line'>147</span>     color is transparent, this method has to be called so that the background 
+<span class='line'>148</span>     color of map images can be displayed properly in Microsoft Internet Explorer.
+<span class='line'>149</span>     @param {Boolean} transparent True if the map images background is transparent.
+<span class='line'>150</span>     @returns        None
+<span class='line'>151</span>     @type           void
+<span class='line'>152</span>  */</span><span class="WHIT"> 
+<span class='line'>153</span>  </span><span class="NAME">MVMapTileLayer.prototype.setTransparent</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">transparent</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>154</span> </span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>155</span> </span><span class="WHIT">  </span><span class="NAME">this.isTransparent</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">transparent</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>156</span> </span><span class="WHIT"> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>157</span> 
+<span class='line'>158</span> </span><span class="WHIT"> </span><span class="COMM">/**
+<span class='line'>159</span>    This method sets the visibility of the map tile layer.
+<span class='line'>160</span>    @param {Boolean} visible visible is a Boolean true (make the map tile layer visible) or false 
+<span class='line'>161</span>                     (make the map tile layer not visible).
+<span class='line'>162</span>     @returns        None
+<span class='line'>163</span>     @type           void
+<span class='line'>164</span>  */</span><span class="WHIT"> 
+<span class='line'>165</span>  </span><span class="NAME">MVMapTileLayer.prototype.setVisible</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">visible</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>166</span> </span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">  
+<span class='line'>167</span>    </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">this.parent</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>168</span> </span><span class="WHIT">   </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>169</span> </span><span class="WHIT">     </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this.layerControl</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>170</span> </span><span class="WHIT">     </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>171</span> </span><span class="WHIT">       </span><span class="NAME">this.visible</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">visible</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>172</span> </span><span class="WHIT">       </span><span class="NAME">this.layerControl.setVisible</span><span class="PUNC">(</span><span class="NAME">visible</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>173</span> </span><span class="WHIT">     </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>174</span> </span><span class="WHIT">     </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this.isExtAPITileLayer</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>175</span> </span><span class="WHIT">     </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>176</span> </span><span class="WHIT">       </span><span class="NAME">this.visible</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">visible</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>177</span> </span><span class="WHIT">       </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this.layerDiv</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>178</span> </span><span class="WHIT">       </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>179</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">visible</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>180</span> </span><span class="WHIT">        </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>181</span> </span><span class="WHIT">          </span><span class="NAME">this.layerDiv.style.visibility</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">"visible"</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>182</span> </span><span class="WHIT">          </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">center</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.parent.getCenter</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>183</span> </span><span class="WHIT">          </span><span class="NAME">this.parent.setExternalAPITileLayerCenter</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">center.getPointX</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">center.getPointY</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">this.parent.zoomLevel</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>184</span> </span><span class="WHIT">          </span><span class="COMM">//this.display();</span><span class="WHIT">
+<span class='line'>185</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>186</span> </span><span class="WHIT">        </span><span class="KEYW">else</span><span class="WHIT">
+<span class='line'>187</span> </span><span class="WHIT">          </span><span class="NAME">this.layerDiv.style.visibility</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">"hidden"</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>188</span> </span><span class="WHIT">       </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>189</span> </span><span class="WHIT">     </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>190</span> </span><span class="WHIT">     </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this.parentLayer</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>191</span> </span><span class="WHIT">     </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>192</span> </span><span class="WHIT">       </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">visibilityBefore</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.parentLayer.isVisible</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>193</span> </span><span class="WHIT">       </span><span class="NAME">this.visible</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">visible</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>194</span> </span><span class="WHIT">       </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">visibilityAfter</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.parentLayer.isVisible</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>195</span> </span><span class="WHIT">       </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">visibilityBefore</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="NAME">visibilityAfter</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>196</span> </span><span class="WHIT">         </span><span class="NAME">this.parentLayer.setVisible</span><span class="PUNC">(</span><span class="NAME">visibilityAfter</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>197</span> </span><span class="WHIT">       </span><span class="COMM">//set parentLayer transparent property</span><span class="WHIT">
+<span class='line'>198</span> </span><span class="WHIT">       </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">transparent</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.parentLayer.getTransparent</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>199</span> </span><span class="WHIT">       </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">this.parentLayer.layerControl</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>200</span> </span><span class="WHIT">         </span><span class="NAME">this.parentLayer.layerControl.isTransparent</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">transparent</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>201</span> </span><span class="WHIT">       </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">visibilityAfter</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>202</span> </span><span class="WHIT">         </span><span class="NAME">this.parentLayer.refresh</span><span class="PUNC">(</span><span class="KEYW">true</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>203</span> </span><span class="WHIT">     </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>204</span> </span><span class="WHIT">     </span><span class="NAME">this.parent.showEmbeddedCopyright</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>205</span> </span><span class="WHIT">   </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>206</span> </span><span class="WHIT">   </span><span class="KEYW">else</span><span class="WHIT">
+<span class='line'>207</span> </span><span class="WHIT">     </span><span class="NAME">this.visible</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">visible</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>208</span> </span><span class="WHIT"> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>209</span> </span><span class="WHIT"> 
+<span class='line'>210</span>  </span><span class="COMM">/**
+<span class='line'>211</span>    This method gets the visibility of the map tile layer. 
+<span class='line'>212</span>     @returns        true if the map tile layer is currently visible, false if the 
+<span class='line'>213</span>                     map tile layer is not currently visible.
+<span class='line'>214</span>     @type           Boolean 
+<span class='line'>215</span>  */</span><span class="WHIT">
+<span class='line'>216</span> </span><span class="WHIT"> </span><span class="NAME">MVMapTileLayer.prototype.isVisible</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>217</span> </span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>218</span> </span><span class="WHIT">   </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">this.childrenLayers</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>219</span> </span><span class="WHIT">     </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.visible</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>220</span> </span><span class="WHIT">   </span><span class="KEYW">else</span><span class="WHIT">
+<span class='line'>221</span> </span><span class="WHIT">   </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>222</span> </span><span class="WHIT">     </span><span class="KEYW">for</span><span class="PUNC">(</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">=</span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">&lt;</span><span class="NAME">this.childrenLayers.length</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>223</span> </span><span class="WHIT">     </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>224</span> </span><span class="WHIT">       </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this.childrenLayers</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">.</span><span class="NAME">visible</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>225</span> </span><span class="WHIT">         </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>226</span> </span><span class="WHIT">     </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>227</span> </span><span class="WHIT">     </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>228</span> </span><span class="WHIT">   </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>229</span> </span><span class="WHIT"> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>230</span> </span><span class="WHIT"> 
+<span class='line'>231</span>  </span><span class="COMM">/**
+<span class='line'>232</span>    This method sets the min level and max level.The map tile layer will be visible only as the 
+<span class='line'>233</span>    zoom level between them.
+<span class='line'>234</span>    @param {Integer} minLevel It specifies the min level.The map tile layer will not be visible if the zoom level is lower than it. 
+<span class='line'>235</span>    @param {Integer} maxLevel It specifies the max level.The map tile layer will not be visible if the zoom level is higher than it.
+<span class='line'>236</span>    @returns        None
+<span class='line'>237</span>    @type           void
+<span class='line'>238</span>  */</span><span class="WHIT">
+<span class='line'>239</span> </span><span class="WHIT"> </span><span class="NAME">MVMapTileLayer.prototype.setVisibleZoomLevelRange</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">minLevel</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">maxLevel</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>240</span> </span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>241</span> </span><span class="WHIT">   </span><span class="NAME">this.minVisibleLevel</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">minLevel</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>242</span> </span><span class="WHIT">   </span><span class="NAME">this.maxVisibleLevel</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">maxLevel</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>243</span> </span><span class="WHIT">   </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">this.layerControl</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>244</span> </span><span class="WHIT">   </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>245</span> </span><span class="WHIT">     </span><span class="NAME">this.layerControl.minVisibleLevel</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.minVisibleLevel</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>246</span> </span><span class="WHIT">     </span><span class="NAME">this.layerControl.maxVisibleLevel</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.maxVisibleLevel</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>247</span> </span><span class="WHIT">   </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>248</span> </span><span class="WHIT"> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>249</span> </span><span class="WHIT"> </span><span class="COMM">/**
+<span class='line'>250</span>    This method reloads all map tiles currently displayed from the server.
+<span class='line'>251</span>    @param {Boolean} reuseBrowserCache It specifies whether to reuse tiles cached in the local browser cache. 
+<span class='line'>252</span>    @returns        None
+<span class='line'>253</span>    @type           void
+<span class='line'>254</span>  */</span><span class="WHIT">
+<span class='line'>255</span> </span><span class="WHIT"> </span><span class="NAME">MVMapTileLayer.prototype.refresh</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">reuseBrowserCache</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>256</span> </span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>257</span> </span><span class="WHIT">   </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">reuseBrowserCache</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>258</span> </span><span class="WHIT">     </span><span class="NAME">this.reloadNumber</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">Math.round</span><span class="PUNC">(</span><span class="NAME">Math.random</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">*</span><span class="NUMB">10000000000</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>259</span> </span><span class="WHIT">   </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">this.parent</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>260</span> </span><span class="WHIT">   </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>261</span> </span><span class="WHIT">     </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this.layerControl</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="PUNC">!</span><span class="NAME">this.parentLayer</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>262</span> </span><span class="WHIT">     </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>263</span> </span><span class="WHIT">       </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this.layerControl.zoomControl</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>264</span> </span><span class="WHIT">          </span><span class="NAME">this.layerControl.zoomControl.removeCloneTiles</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>265</span> </span><span class="WHIT">       </span><span class="NAME">this.layerControl.initTiles</span><span class="PUNC">(</span><span class="NAME">this.parent.getPaneWidth</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">this.parent.getPaneHeight</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">,</span><span class="WHIT"> 
+<span class='line'>266</span>                                    </span><span class="NAME">this.parent.mapCenterX</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">this.parent.mapCenterY</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>267</span> </span><span class="WHIT">     </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>268</span> </span><span class="WHIT">   </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>269</span> </span><span class="WHIT"> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>270</span> </span><span class="WHIT"> 
+<span class='line'>271</span>  </span><span class="COMM">/**
+<span class='line'>272</span>    This method gets the name of the map tile layer. 
+<span class='line'>273</span>    @returns        Tile layer name
+<span class='line'>274</span>    @type           String
+<span class='line'>275</span>  */</span><span class="WHIT">
+<span class='line'>276</span> </span><span class="WHIT"> </span><span class="NAME">MVMapTileLayer.prototype.getName</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>277</span> </span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>278</span> </span><span class="WHIT">   </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.getMapSource</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>279</span> </span><span class="WHIT"> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>280</span> </span><span class="WHIT"> 
+<span class='line'>281</span>  </span><span class="COMM">/**
+<span class='line'>282</span>    @private
+<span class='line'>283</span>  */</span><span class="WHIT">
+<span class='line'>284</span> </span><span class="WHIT"> </span><span class="NAME">MVMapTileLayer.prototype.getMapSource</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>285</span> </span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>286</span> </span><span class="WHIT">   </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this.childrenLayers</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>287</span> </span><span class="WHIT">   </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>288</span> </span><span class="WHIT">     </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">ms</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>289</span> </span><span class="WHIT">     </span><span class="KEYW">for</span><span class="PUNC">(</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">=</span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">&lt;</span><span class="NAME">this.childrenLayers.length</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>290</span> </span><span class="WHIT">     </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>291</span> </span><span class="WHIT">       </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this.childrenLayers</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">.</span><span class="NAME">visible</span><span class="WHIT">  
+<span class='line'>292</span>           </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">this.childrenLayers</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">.</span><span class="NAME">minVisibleLevel</span><span class="PUNC">==</span><span class="KEYW">null</span><span class="WHIT"> 
+<span class='line'>293</span>           </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="NAME">this.childrenLayers</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">.</span><span class="NAME">minVisibleLevel</span><span class="PUNC">&lt;=</span><span class="NAME">this.parent.zoomLevel</span><span class="PUNC">)</span><span class="WHIT"> 
+<span class='line'>294</span>           </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">this.childrenLayers</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">.</span><span class="NAME">maxVisibleLevel</span><span class="PUNC">==</span><span class="KEYW">null</span><span class="WHIT"> 
+<span class='line'>295</span>           </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="NAME">this.childrenLayers</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">.</span><span class="NAME">maxVisibleLevel</span><span class="PUNC">>=</span><span class="NAME">this.parent.zoomLevel</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>296</span> </span><span class="WHIT">       </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>297</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">ms</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>298</span> </span><span class="WHIT">          </span><span class="NAME">ms</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">";"</span><span class="PUNC">+</span><span class="NAME">this.childrenLayers</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">.</span><span class="NAME">mapSource</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>299</span> </span><span class="WHIT">        </span><span class="KEYW">else</span><span class="WHIT">
+<span class='line'>300</span> </span><span class="WHIT">          </span><span class="NAME">ms</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.childrenLayers</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">.</span><span class="NAME">mapSource</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>301</span> </span><span class="WHIT">       </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>302</span> </span><span class="WHIT">     </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>303</span> </span><span class="WHIT">     </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">ms</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>304</span> </span><span class="WHIT">   </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>305</span> </span><span class="WHIT">   </span><span class="KEYW">else</span><span class="WHIT">
+<span class='line'>306</span> </span><span class="WHIT">     </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.mapSource</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>307</span> </span><span class="WHIT"> </span><span class="PUNC">}</span><span class="WHIT"> 
+<span class='line'>308</span>   
+<span class='line'>309</span>  </span><span class="COMM">/**
+<span class='line'>310</span>    @private
+<span class='line'>311</span>  */</span><span class="WHIT">
+<span class='line'>312</span> </span><span class="WHIT"> </span><span class="NAME">MVMapTileLayer.prototype.clone</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>313</span> </span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>314</span> </span><span class="WHIT">   </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">mt</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">MVMapTileLayer</span><span class="PUNC">(</span><span class="NAME">this.mapSource</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">this.mcsURL</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>315</span> </span><span class="WHIT">   </span><span class="NAME">mt.isTransparent</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.isTransparent</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>316</span> </span><span class="WHIT">   </span><span class="NAME">mt.tileImageFormat</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.tileImageFormat</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>317</span> </span><span class="WHIT">   </span><span class="NAME">mt.minVisibleLevel</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.minVisibleLevel</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>318</span> </span><span class="WHIT">   </span><span class="NAME">mt.maxVisibleLevel</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.maxVisibleLevel</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>319</span> </span><span class="WHIT">   </span><span class="NAME">mt.doNotCombine</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.doNotCombine</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>320</span> </span><span class="WHIT">   </span><span class="NAME">mt.zIndex</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.zIndex</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>321</span> </span><span class="WHIT">   </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this.config</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>322</span> </span><span class="WHIT">     </span><span class="NAME">mt.config</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.config</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>323</span> </span><span class="WHIT">   </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">mt</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>324</span> </span><span class="WHIT"> </span><span class="PUNC">}</span><span class="WHIT"> 
+<span class='line'>325</span>  </span><span class="COMM">/**
+<span class='line'>326</span>    @private
+<span class='line'>327</span>  */</span><span class="WHIT">
+<span class='line'>328</span> </span><span class="WHIT"> </span><span class="NAME">MVMapTileLayer.prototype.destroy</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>329</span> </span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>330</span> </span><span class="WHIT">   </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this.layerControl</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>331</span> </span><span class="WHIT">   </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>332</span> </span><span class="WHIT">     </span><span class="NAME">this.layerControl.destroy</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>333</span> </span><span class="WHIT">     </span><span class="NAME">this.layerControl</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>334</span> </span><span class="WHIT">   </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>335</span> </span><span class="WHIT">   </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this.layerDiv</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>336</span> </span><span class="WHIT">   </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>337</span> </span><span class="WHIT">     </span><span class="NAME">MVUtil.clearNode</span><span class="PUNC">(</span><span class="NAME">this.layerDiv</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">this.parent.errorHandler</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>338</span> </span><span class="WHIT">     </span><span class="NAME">this.layerDiv.parentNode.removeChild</span><span class="PUNC">(</span><span class="NAME">this.layerDiv</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>339</span> </span><span class="WHIT">     </span><span class="NAME">this.layerDiv</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>340</span> </span><span class="WHIT">     </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this.cleanUp</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>341</span> </span><span class="WHIT">       </span><span class="NAME">this.cleanUp</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>342</span> </span><span class="WHIT">   </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>343</span> </span><span class="WHIT"> </span><span class="PUNC">}</span><span class="WHIT"> 
+<span class='line'>344</span>  </span><span class="COMM">/**
+<span class='line'>345</span>    @private
+<span class='line'>346</span>  */</span><span class="WHIT">
+<span class='line'>347</span> </span><span class="WHIT"> </span><span class="NAME">MVMapTileLayer.prototype.scrollTiles</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>348</span> </span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>349</span> </span><span class="WHIT">   </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this.layerControl</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>350</span> </span><span class="WHIT">     </span><span class="NAME">this.layerControl.scrollTiles</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>351</span> </span><span class="WHIT"> </span><span class="PUNC">}</span><span class="WHIT"> 
+<span class='line'>352</span>  </span><span class="COMM">/**
+<span class='line'>353</span>    @private
+<span class='line'>354</span>  */</span><span class="WHIT">
+<span class='line'>355</span> </span><span class="WHIT"> </span><span class="NAME">MVMapTileLayer.prototype.isExtAPITileLayer</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>356</span> </span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>357</span> </span><span class="WHIT">   </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.getType</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">==</span><span class="STRN">"MVExternalAPIMapTileLayer"</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>358</span> </span><span class="WHIT"> </span><span class="PUNC">}</span><span class="WHIT"> 
+<span class='line'>359</span>  
+<span class='line'>360</span>  </span><span class="COMM">/**
+<span class='line'>361</span>    @private
+<span class='line'>362</span>  */</span><span class="WHIT">
+<span class='line'>363</span> </span><span class="WHIT"> </span><span class="NAME">MVMapTileLayer.prototype.getTransparent</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>364</span> </span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>365</span> </span><span class="WHIT">   </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">this.childrenLayers</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>366</span> </span><span class="WHIT">   </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>367</span> </span><span class="WHIT">     </span><span class="KEYW">for</span><span class="PUNC">(</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">t</span><span class="PUNC">=</span><span class="NUMB">0</span><span class="PUNC">;</span><span class="NAME">t</span><span class="PUNC">&lt;</span><span class="NAME">this.childrenLayers.length</span><span class="PUNC">;</span><span class="NAME">t</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>368</span> </span><span class="WHIT">     </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>369</span> </span><span class="WHIT">       </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">this.childrenLayers</span><span class="PUNC">[</span><span class="NAME">t</span><span class="PUNC">]</span><span class="PUNC">.</span><span class="NAME">isTransparent</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">this.childrenLayers</span><span class="PUNC">[</span><span class="NAME">t</span><span class="PUNC">]</span><span class="PUNC">.</span><span class="NAME">isVisble</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>370</span> </span><span class="WHIT">       </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>371</span> </span><span class="WHIT">         </span><span class="NAME">this.isTransparent</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>372</span> </span><span class="WHIT">         </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>373</span> </span><span class="WHIT">       </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>374</span> </span><span class="WHIT">     </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>375</span> </span><span class="WHIT">     </span><span class="NAME">this.isTransparent</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>376</span> </span><span class="WHIT">   </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>377</span> </span><span class="WHIT">   </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.isTransparent</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>378</span> </span><span class="WHIT"> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>379</span> </span><span class="WHIT"> 
+<span class='line'>380</span>  </span><span class="COMM">/**
+<span class='line'>381</span>    This method sets opacity of tile layer image.
+<span class='line'>382</span>    @param {int} opacity. The parameter opacity should be a number between 0 and 1. 
+<span class='line'>383</span>    @returns        None
+<span class='line'>384</span>    @type           void
+<span class='line'>385</span>  */</span><span class="WHIT">
+<span class='line'>386</span> </span><span class="WHIT"> </span><span class="NAME">MVMapTileLayer.prototype.setOpacity</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">opacity</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>387</span> </span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>388</span> </span><span class="WHIT">   </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">isNaN</span><span class="PUNC">(</span><span class="NAME">opacity</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>389</span> </span><span class="WHIT">   </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>390</span> </span><span class="WHIT">     </span><span class="KEYW">return</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>391</span> </span><span class="WHIT">   </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>392</span> </span><span class="WHIT">   </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">opacity</span><span class="PUNC">></span><span class="NUMB">1</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="NAME">opacity</span><span class="PUNC">&lt;</span><span class="NUMB">0</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>393</span> </span><span class="WHIT">     </span><span class="KEYW">return</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>394</span> </span><span class="WHIT">   </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">this.opacity</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="NAME">opacity</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>395</span> </span><span class="WHIT">     </span><span class="KEYW">return</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>396</span> </span><span class="WHIT">   </span><span class="NAME">this.opacity</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">opacity</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>397</span> </span><span class="WHIT">   </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this.layerControl</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>398</span> </span><span class="WHIT">   </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>399</span> </span><span class="WHIT">     </span><span class="NAME">this.layerControl.reload</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>400</span> </span><span class="WHIT">     </span><span class="KEYW">return</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>401</span> </span><span class="WHIT">   </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>402</span> </span><span class="WHIT">   </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">this.parentLayer</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">this.parentLayer.childrenLayers.length</span><span class="PUNC">></span><span class="NUMB">1</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>403</span> </span><span class="WHIT">   </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>404</span> </span><span class="WHIT">     </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">mv</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.parentLayer.layerControl.parent</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>405</span> </span><span class="WHIT">     </span><span class="NAME">mv.removeMapTileLayer</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>406</span> </span><span class="WHIT">     </span><span class="NAME">mv.addMapTileLayer</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>407</span> </span><span class="WHIT">   </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>408</span> </span><span class="WHIT">   </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">this.parentLayer</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">this.parentLayer.layerControl</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>409</span> </span><span class="WHIT">   </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>410</span> </span><span class="WHIT">     </span><span class="NAME">this.parentLayer.opacity</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.opacity</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>411</span> </span><span class="WHIT">     </span><span class="NAME">this.parentLayer.layerControl.reload</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>412</span> </span><span class="WHIT">   </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>413</span> </span><span class="WHIT"> </span><span class="PUNC">}</span><span class="WHIT"> 
+<span class='line'>414</span> </span><span class="COMM">/**
+<span class='line'>415</span>  This method sets map type of a server side defined built-in tile layer, such as Google tile layer,
+<span class='line'>416</span>  bing tile layer and Yahoo tile layer. This method does nothing for any other map tile layers.
+<span class='line'>417</span>   
+<span class='line'>418</span>  @param {int} type. The parameter specifies the map type. 
+<span class='line'>419</span>  @returns        None
+<span class='line'>420</span>  @type           void
+<span class='line'>421</span> */</span><span class="WHIT">
+<span class='line'>422</span> </span><span class="NAME">MVMapTileLayer.prototype.setMapType</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">type</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>423</span> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>424</span> </span><span class="WHIT">  </span><span class="NAME">this.mapType</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">type</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>425</span> </span><span class="WHIT">  </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this.layerControl</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">this.layerControl.setMapType</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>426</span> </span><span class="WHIT">    </span><span class="NAME">this.layerControl.setMapType</span><span class="PUNC">(</span><span class="NAME">type</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>427</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>428</span> </span><span class="COMM">/**
+<span class='line'>429</span> This method gets the map type of a server side defined built-in tile layer, such as Google tile layer,
+<span class='line'>430</span> bing tile layer and Yahoo tile layer. This method does nothing for any other map tile layers.
+<span class='line'>431</span>  
+<span class='line'>432</span> @returns        Map type
+<span class='line'>433</span> */</span><span class="WHIT">
+<span class='line'>434</span> </span><span class="NAME">MVMapTileLayer.prototype.getMapType</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>435</span> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>436</span> </span><span class="WHIT">  </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this.layerControl</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">this.layerControl.getMapType</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>437</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.layerControl.getMapType</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>438</span> </span><span class="WHIT">  </span><span class="KEYW">else</span><span class="WHIT">
+<span class='line'>439</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.mapType</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>440</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>441</span> </span><span class="COMM">/**@private*/</span><span class="WHIT">
+<span class='line'>442</span> </span><span class="NAME">MVBaseMap</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">MVMapTileLayer</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>443</span> </span></pre></body></html>

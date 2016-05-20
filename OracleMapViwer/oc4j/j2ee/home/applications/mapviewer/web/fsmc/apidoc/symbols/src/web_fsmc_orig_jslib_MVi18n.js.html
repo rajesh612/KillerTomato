@@ -1,0 +1,326 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/* $Header: lbs/ship/ear/web/fsmc/orig_jslib/MVi18n.js /st_lbs_11.1.1.x/1 2010/08/06 13:39:56 jxyang Exp $ */</span><span class="WHIT">
+<span class='line'>  2</span> </span><span class="COMM">/* Copyright (c) 2001, 2010, Oracle and/or its affiliates. 
+<span class='line'>  3</span> All rights reserved. */</span><span class="WHIT">
+<span class='line'>  4</span> </span><span class="COMM">/*
+<span class='line'>  5</span>    DESCRIPTION
+<span class='line'>  6</span>      Locale translation/Globalization
+<span class='line'>  7</span> 
+<span class='line'>  8</span>     We must use functions implemented in this module to ensure all system generated error 
+<span class='line'>  9</span>     messages, info tips and any other string literals are translated into the proper locale.
+<span class='line'> 10</span>       
+<span class='line'> 11</span>     1. All error messages and string literals are stored in a hashmap object named MVMessages. 
+<span class='line'> 12</span>     It is defined in MVMessages.js. When being used, each error message and string literal 
+<span class='line'> 13</span>     should be identified and referred only by its ID, not its actual content. The file MVMessages.js 
+<span class='line'> 14</span>     lists the IDs of these messages and their English content. This list is not yet complete, it 
+<span class='line'> 15</span>     still does not include string literals used by the redline and distance tool operation 
+<span class='line'> 16</span>     button(Finish/Clear), and their rightclick client context menu items(Add/Delete). If needed, 
+<span class='line'> 17</span>     you can add new string literal entries into this file. I'll update the server side resource 
+<span class='line'> 18</span>     file accordingly.
+<span class='line'> 19</span>     
+<span class='line'> 20</span>     The ID of an error message will look like "MAPVIEWER-&lt;error no.>", e.g. "MAPVIEWER-05000". 
+<span class='line'> 21</span>     The ID of any other string literal can be anything easy to remember.
+<span class='line'> 22</span>     
+<span class='line'> 23</span>     The English content of the messages listed in MVMessages.js is used as the initial message 
+<span class='line'> 24</span>     content when the JS library is loaded into the browser. When the client application starts, 
+<span class='line'> 25</span>     a request is sent only once to MapViewer server when a MVMapView object is initialized to 
+<span class='line'> 26</span>     fetch the translated strings of these messages and replace the English message content 
+<span class='line'> 27</span>     with localized content. This is different from the old processLocale call, which invokes 
+<span class='line'> 28</span>     a server side translation whenever it is called.
+<span class='line'> 29</span>     
+<span class='line'> 30</span>     2. We must use MVi18n.reportError to print out an error message on the client side. The 
+<span class='line'> 31</span>     function prints out error message in the following format:
+<span class='line'> 32</span>       
+<span class='line'> 33</span>     [&lt;function-where-the-error-occurs>] &lt;error-code>: &lt;description> (&lt;additional-info>)
+<span class='line'> 34</span>     
+<span class='line'> 35</span>     For example, the following call reports an error that occurs inside the MVMapView constructor.
+<span class='line'> 36</span>       MVi18n.reportError("MVMapView.constructor", "MAPVIEWER-05519", "mapDiv") ;
+<span class='line'> 37</span>         
+<span class='line'> 38</span>     This function takes three string parameters. The first parameter specifies the name of 
+<span class='line'> 39</span>     function where the error occurs. The second parameter specifies the error code. The third 
+<span class='line'> 40</span>     parameter is optional. It provides any additional information to describe the error. 
+<span class='line'> 41</span>     In the above example, the third parameter specifies the name of the parameter that is 
+<span class='line'> 42</span>     missing or invalid.
+<span class='line'> 43</span>     
+<span class='line'> 44</span>     The above call prints out the following string for an English client.
+<span class='line'> 45</span>       [MVMapView.constructor] MAPVIEWER-05519: One or more parameter is missing or invalid. (mapDiv)
+<span class='line'> 46</span>     
+<span class='line'> 47</span>     3. We must use MVi18n.getInfoMessage to get any other translated string literals. These 
+<span class='line'> 48</span>     strings are used as info tips for system generated map decoration objects or labeling text 
+<span class='line'> 49</span>     used by built-in utilities such as redline tool and distance tool. 
+<span class='line'> 50</span>       
+<span class='line'> 51</span>    PRIVATE CLASSES
+<span class='line'> 52</span>     &lt;list of private classes defined - with one-line descriptions>
+<span class='line'> 53</span> 
+<span class='line'> 54</span>    NOTES
+<span class='line'> 55</span>     &lt;other useful comments, qualifications, etc.>
+<span class='line'> 56</span> 
+<span class='line'> 57</span>    MODIFIED    (MM/DD/YY)
+<span class='line'> 58</span>     jxyang     07/22/10 - remove rtarget from url
+<span class='line'> 59</span>     jxyang     07/14/10 - Bug 9898903: send rtarget as a POST parameter for proxied requests
+<span class='line'> 60</span>     jxyang     02/23/10 - use MVUtil.isLocalDomain
+<span class='line'> 61</span>     jxyang     07/15/09 - support instance specific error handling
+<span class='line'> 62</span>     jxyang     06/12/09 - return '' when message is null
+<span class='line'> 63</span>     jxyang     02/27/09 - add 0 to error code
+<span class='line'> 64</span>     jxyang     02/25/09 - more comments
+<span class='line'> 65</span>     jxyang     02/18/09 - add translatedInfoMessages
+<span class='line'> 66</span>     jxyang     09/24/07 - add debug
+<span class='line'> 67</span>     lqian      07/17/07 - bug 6239602: remove processLocaleOper
+<span class='line'> 68</span>     jxyang     06/25/07 - support debug mode
+<span class='line'> 69</span>     jxyang     06/15/07 - use function instead of function name
+<span class='line'> 70</span>     jxyang     01/25/07 - use MVGlobalVariables.getProxyURL
+<span class='line'> 71</span>     jxyang     12/19/06 - use MVXMLHttpRequest only for cross-domain requests
+<span class='line'> 72</span>     jxyang     12/11/06 - use asynchronized ajax call for processLocaleOper
+<span class='line'> 73</span> */</span><span class="WHIT">
+<span class='line'> 74</span> </span><span class="COMM">/**
+<span class='line'> 75</span>  *@private
+<span class='line'> 76</span>  *MVi18n decides how client side errors are handled, and also message globalization.
+<span class='line'> 77</span> */</span><span class="WHIT">
+<span class='line'> 78</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">MVi18n</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'> 79</span> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 80</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 81</span> 
+<span class='line'> 82</span> </span><span class="COMM">/**
+<span class='line'> 83</span>  *@private
+<span class='line'> 84</span> */</span><span class="WHIT">
+<span class='line'> 85</span> </span><span class="NAME">MVi18n.methodType</span><span class="PUNC">=</span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 86</span> 
+<span class='line'> 87</span> </span><span class="COMM">/**
+<span class='line'> 88</span>  *@private
+<span class='line'> 89</span> */</span><span class="WHIT">
+<span class='line'> 90</span> </span><span class="NAME">MVi18n.methodName</span><span class="PUNC">=</span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 91</span> 
+<span class='line'> 92</span> </span><span class="COMM">/**
+<span class='line'> 93</span>  *@private
+<span class='line'> 94</span> */</span><span class="WHIT">
+<span class='line'> 95</span> </span><span class="NAME">MVi18n.argType</span><span class="PUNC">=</span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 96</span> 
+<span class='line'> 97</span> </span><span class="COMM">/**
+<span class='line'> 98</span>  *@private
+<span class='line'> 99</span> */</span><span class="WHIT">
+<span class='line'>100</span> </span><span class="NAME">MVi18n.URL</span><span class="PUNC">=</span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>101</span> 
+<span class='line'>102</span> </span><span class="COMM">/**
+<span class='line'>103</span>  *@private
+<span class='line'>104</span> */</span><span class="WHIT">
+<span class='line'>105</span> </span><span class="NAME">MVi18n.language</span><span class="PUNC">=</span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>106</span> </span><span class="COMM">/**
+<span class='line'>107</span>  *@private
+<span class='line'>108</span> */</span><span class="WHIT">
+<span class='line'>109</span> </span><span class="NAME">MVi18n.country</span><span class="PUNC">=</span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>110</span> </span><span class="COMM">/**
+<span class='line'>111</span>  *@private
+<span class='line'>112</span> */</span><span class="WHIT">
+<span class='line'>113</span> </span><span class="NAME">MVi18n.fetched</span><span class="PUNC">=</span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>114</span> </span><span class="NAME">MVi18n.timeoutCount</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>115</span> </span><span class="COMM">/**@private
+<span class='line'>116</span>  * This method checks whether the localized message strings have
+<span class='line'>117</span>  * been loaded from the server. MVMapView.display calls this method to wait until
+<span class='line'>118</span>  * this method returns true. If this method has been called more than
+<span class='line'>119</span>  * 10 times, there probably is something wrong with the server(e.g. the server can
+<span class='line'>120</span>  * be running on an older version of mapviewer that does not support such interface),
+<span class='line'>121</span>  * this method will return true. This is neccessary to prevent the client from waiting
+<span class='line'>122</span>  * indefinitely.  
+<span class='line'>123</span>  */</span><span class="WHIT">
+<span class='line'>124</span> </span><span class="NAME">MVi18n.isFetched</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>125</span> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>126</span> </span><span class="WHIT">  </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">MVi18n.fetched</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>127</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>128</span> </span><span class="WHIT">  </span><span class="NAME">MVi18n.timeoutCount</span><span class="WHIT"> </span><span class="PUNC">++</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>129</span> </span><span class="WHIT">  </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">MVi18n.timeoutCount</span><span class="PUNC">></span><span class="NUMB">10</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>130</span> </span><span class="WHIT">    </span><span class="NAME">MVi18n.fetched</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>131</span> </span><span class="WHIT">  </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">MVi18n.fetched</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>132</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>133</span> </span><span class="COMM">/**@private
+<span class='line'>134</span>   All Oracle Maps client side error reporting must be handled using this method. 
+<span class='line'>135</span>   It prints out the error message in the following format:
+<span class='line'>136</span>   [&lt;function-where-the-error-occurs>] &lt;error-code>: &lt;description> (&lt;additional-info>)
+<span class='line'>137</span>   
+<span class='line'>138</span>   For example,  
+<span class='line'>139</span>     MVi18n.reportError("MVMapView.constructor", "MAPVIEWER-05519", "mapDiv") ;
+<span class='line'>140</span>   The above reportError call will print out the following message.
+<span class='line'>141</span>     [MVMapView.constructor] MAPVIEWER-05519: One or more parameter is missing or invalid. (mapDiv)
+<span class='line'>142</span> 
+<span class='line'>143</span>  *@param {String} func the name of the function where the error occurs.
+<span class='line'>144</span>  *@param {String} error the error code
+<span class='line'>145</span>  *@param {String} info any additional info
+<span class='line'>146</span>  */</span><span class="WHIT">
+<span class='line'>147</span> </span><span class="NAME">MVi18n.reportError</span><span class="PUNC">=</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">func</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">error</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">info</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">errorHandler</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>148</span> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>149</span> </span><span class="WHIT">  </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">info</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>150</span> </span><span class="WHIT">    </span><span class="NAME">info</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">" ("</span><span class="PUNC">+</span><span class="NAME">info</span><span class="PUNC">+</span><span class="STRN">")"</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>151</span> </span><span class="WHIT">  </span><span class="KEYW">else</span><span class="WHIT">
+<span class='line'>152</span> </span><span class="WHIT">    </span><span class="NAME">info</span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">""</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>153</span> </span><span class="WHIT">  </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">errorHandler</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>154</span> </span><span class="WHIT">    </span><span class="NAME">errorHandler</span><span class="PUNC">(</span><span class="STRN">"["</span><span class="PUNC">+</span><span class="NAME">func</span><span class="PUNC">+</span><span class="STRN">"] "</span><span class="PUNC">+</span><span class="NAME">MVi18n.getErrorMessage</span><span class="PUNC">(</span><span class="NAME">error</span><span class="PUNC">)</span><span class="PUNC">+</span><span class="NAME">info</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>155</span> </span><span class="WHIT">  </span><span class="KEYW">else</span><span class="WHIT">
+<span class='line'>156</span> </span><span class="WHIT">    </span><span class="NAME">MVi18n.alert</span><span class="PUNC">(</span><span class="STRN">"["</span><span class="PUNC">+</span><span class="NAME">func</span><span class="PUNC">+</span><span class="STRN">"] "</span><span class="PUNC">+</span><span class="NAME">MVi18n.getErrorMessage</span><span class="PUNC">(</span><span class="NAME">error</span><span class="PUNC">)</span><span class="PUNC">+</span><span class="NAME">info</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>157</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>158</span> </span><span class="COMM">/**@private
+<span class='line'>159</span>   This method gets the translated error message.
+<span class='line'>160</span> */</span><span class="WHIT">
+<span class='line'>161</span> </span><span class="NAME">MVi18n.getErrorMessage</span><span class="PUNC">=</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">error</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>162</span> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>163</span> </span><span class="WHIT">  </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">MVMessages</span><span class="PUNC">[</span><span class="NAME">error</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>164</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">error</span><span class="PUNC">+</span><span class="STRN">": "</span><span class="PUNC">+</span><span class="NAME">MVMessages</span><span class="PUNC">[</span><span class="NAME">error</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>165</span> </span><span class="WHIT">  </span><span class="KEYW">else</span><span class="WHIT">
+<span class='line'>166</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">error</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>167</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>168</span> </span><span class="COMM">/**@private
+<span class='line'>169</span>   This method gets the translated info message.
+<span class='line'>170</span> */</span><span class="WHIT">
+<span class='line'>171</span> </span><span class="NAME">MVi18n.getInfoMessage</span><span class="PUNC">=</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">info</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>172</span> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>173</span> </span><span class="WHIT">  </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">MVMessages</span><span class="PUNC">[</span><span class="NAME">info</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>174</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">MVMessages</span><span class="PUNC">[</span><span class="NAME">info</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>175</span> </span><span class="WHIT">  </span><span class="KEYW">else</span><span class="WHIT">
+<span class='line'>176</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="STRN">''</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>177</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>178</span> </span><span class="COMM">/**
+<span class='line'>179</span>  *@private
+<span class='line'>180</span>  *This method shows error messages in the way that 
+<span class='line'>181</span>  *is specified by MVi18n.addBehavior=function(methodType, 
+<span class='line'>182</span>  *methodName, argType) in globalization context.
+<span class='line'>183</span>  *@param {String} str error message which will be translated 
+<span class='line'>184</span>  *                    into and then displayed in corresponding 
+<span class='line'>185</span>  *                    language style according to the locale 
+<span class='line'>186</span>  *                    setting of the browser.
+<span class='line'>187</span>  *@param {String} p0, p1 and p2 are optional params. If specified,
+<span class='line'>188</span>  *                    they are used as arguments for the
+<span class='line'>189</span>  *                    server-side message formatter. p0 will be
+<span class='line'>190</span>  *                    used to replace argument position 0, p1 
+<span class='line'>191</span>  *                    will be position 1 and so forth.
+<span class='line'>192</span> 
+<span class='line'>193</span>  *@return none
+<span class='line'>194</span>  *@type void
+<span class='line'>195</span>  *@see #addBehavior
+<span class='line'>196</span> */</span><span class="WHIT">
+<span class='line'>197</span> </span><span class="COMM">/**
+<span class='line'>198</span>  *@private
+<span class='line'>199</span>  *This method fetches translated info message strings from the server. 
+<span class='line'>200</span>  */</span><span class="WHIT">
+<span class='line'>201</span> </span><span class="NAME">MVi18n.fetchMessages</span><span class="PUNC">=</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>202</span> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>203</span> </span><span class="WHIT">  </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">MVi18n.URL</span><span class="PUNC">==</span><span class="KEYW">null</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>204</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>205</span> </span><span class="WHIT">  
+<span class='line'>206</span>   </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">localDomain</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">MVUtil.isLocalDomain</span><span class="PUNC">(</span><span class="NAME">MVi18n.URL</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>207</span> </span><span class="WHIT">  </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">xmlHttp</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">localDomain</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="NAME">MVMapView.XMLHTTPEnabled</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>208</span> </span><span class="WHIT">  </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">url</span><span class="PUNC">=</span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>209</span> </span><span class="WHIT">  
+<span class='line'>210</span>   </span><span class="NAME">url</span><span class="PUNC">=</span><span class="NAME">MVi18n.URL</span><span class="PUNC">+</span><span class="STRN">"/mcserver"</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>211</span> </span><span class="WHIT">    
+<span class='line'>212</span>   </span><span class="KEYW">try</span><span class="WHIT">
+<span class='line'>213</span> </span><span class="WHIT">  </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>214</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">req</span><span class="PUNC">=</span><span class="NAME">MVUtil.getXMLHttpRequest</span><span class="PUNC">(</span><span class="NAME">xmlHttp</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>215</span> </span><span class="WHIT">    
+<span class='line'>216</span>     </span><span class="NAME">req.open</span><span class="PUNC">(</span><span class="STRN">"POST"</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">MVUtil.getXMLHttpUrl</span><span class="PUNC">(</span><span class="NAME">url</span><span class="PUNC">)</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>217</span> </span><span class="WHIT">    </span><span class="NAME">req.setRequestHeader</span><span class="PUNC">(</span><span class="STRN">"Content-Type"</span><span class="PUNC">,</span><span class="STRN">"application/x-www-form-urlencoded"</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">   
+<span class='line'>218</span>        
+<span class='line'>219</span>     </span><span class="NAME">req.onreadystatechange</span><span class="PUNC">=</span><span class="NAME">MVUtil.closureWrapper</span><span class="PUNC">(</span><span class="NAME">req</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>220</span> </span><span class="WHIT">    </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>221</span> </span><span class="WHIT">      </span><span class="KEYW">try</span><span class="WHIT">
+<span class='line'>222</span> </span><span class="WHIT">      </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>223</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this.readyState</span><span class="PUNC">!=</span><span class="NUMB">4</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>224</span> </span><span class="WHIT">          </span><span class="KEYW">return</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>225</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this.status</span><span class="PUNC">==</span><span class="NUMB">200</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>226</span> </span><span class="WHIT">          </span><span class="NAME">text</span><span class="PUNC">=</span><span class="NAME">this.responseText</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>227</span> </span><span class="WHIT">        </span><span class="NAME">MVUtil.gc</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>228</span> </span><span class="WHIT">        </span><span class="NAME">eval</span><span class="PUNC">(</span><span class="NAME">text</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>229</span> </span><span class="WHIT">        </span><span class="NAME">MVi18n.fetched</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>230</span> </span><span class="WHIT">      </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>231</span> </span><span class="WHIT">      </span><span class="KEYW">catch</span><span class="PUNC">(</span><span class="NAME">e</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>232</span> </span><span class="WHIT">      </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>233</span> </span><span class="WHIT">        </span><span class="NAME">MVi18n.fetched</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>234</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>235</span> </span><span class="WHIT">      </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>236</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>237</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">params</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">"request=getinfomsgs"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>238</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">MVi18n.language</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>239</span> </span><span class="WHIT">      </span><span class="NAME">params</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">params</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">"&language="</span><span class="PUNC">+</span><span class="NAME">MVi18n.language</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>240</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">MVi18n.country</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>241</span> </span><span class="WHIT">      </span><span class="NAME">params</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">params</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">"&country="</span><span class="PUNC">+</span><span class="NAME">MVi18n.country</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>242</span> 
+<span class='line'>243</span> </span><span class="WHIT">    </span><span class="NAME">req.send</span><span class="PUNC">(</span><span class="NAME">MVUtil.getXMLHttpReq</span><span class="PUNC">(</span><span class="NAME">url</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">params</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>244</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>245</span> </span><span class="WHIT">  </span><span class="KEYW">catch</span><span class="PUNC">(</span><span class="NAME">ex</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>246</span> </span><span class="WHIT">  </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>247</span> </span><span class="WHIT">    </span><span class="NAME">MVi18n.reportError</span><span class="PUNC">(</span><span class="STRN">"MVi18n.fetchMessages"</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">"MAPVIEWER-05511"</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">ex</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>248</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>249</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>250</span> 
+<span class='line'>251</span> </span><span class="COMM">/**
+<span class='line'>252</span>  *@private
+<span class='line'>253</span>  *This method specifies how client side errors are handled.  
+<span class='line'>254</span>  *For example, 
+<span class='line'>255</span>  * MVi18n.addBehavior("func", "alert", "text");
+<span class='line'>256</span>  * MVi18n.addBehavior("func", "window.open", "url"); 
+<span class='line'>257</span>  *@param {String} methodType its value should be set "func" or "eval"
+<span class='line'>258</span>  *@param {String} methodName it specifies the name of function 
+<span class='line'>259</span>  *                           which is built in the JavaScript language or 
+<span class='line'>260</span>  *                           defined by users.
+<span class='line'>261</span>  *@param {String} argType it specifies the type of argument, 
+<span class='line'>262</span>  *                        and its value should be set "text" or "url".
+<span class='line'>263</span>  *@return none
+<span class='line'>264</span>  *@type void
+<span class='line'>265</span> */</span><span class="WHIT">
+<span class='line'>266</span> </span><span class="NAME">MVi18n.addBehavior</span><span class="PUNC">=</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">methodType</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">methodName</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">argType</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>267</span> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>268</span> </span><span class="WHIT">  </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">methodType</span><span class="PUNC">==</span><span class="KEYW">null</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">methodType</span><span class="PUNC">!=</span><span class="STRN">"func"</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">methodType</span><span class="PUNC">!=</span><span class="STRN">"eval"</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>269</span> </span><span class="WHIT">  </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>270</span> </span><span class="WHIT">    </span><span class="NAME">MVi18n.alert</span><span class="PUNC">(</span><span class="STRN">"MethodType Error"</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>271</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>272</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>273</span> </span><span class="WHIT">  
+<span class='line'>274</span>   </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">methodName</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>275</span> </span><span class="WHIT">  </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>276</span> </span><span class="WHIT">    </span><span class="NAME">MVi18n.alert</span><span class="PUNC">(</span><span class="STRN">"MethodName Error"</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>277</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>278</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>279</span> </span><span class="WHIT">  
+<span class='line'>280</span>   </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">argType</span><span class="PUNC">==</span><span class="KEYW">null</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">(</span><span class="NAME">argType.toLowerCase</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">!=</span><span class="STRN">"url"</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">argType.toLowerCase</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">!=</span><span class="STRN">"text"</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>281</span> </span><span class="WHIT">  </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>282</span> </span><span class="WHIT">    </span><span class="NAME">MVi18n.alert</span><span class="PUNC">(</span><span class="STRN">"ArgType Error"</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>283</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>284</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>285</span> </span><span class="WHIT">  
+<span class='line'>286</span>   </span><span class="NAME">MVi18n.methodType</span><span class="PUNC">=</span><span class="NAME">methodType</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>287</span> </span><span class="WHIT">  </span><span class="NAME">MVi18n.methodName</span><span class="PUNC">=</span><span class="NAME">methodName</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>288</span> </span><span class="WHIT">  </span><span class="NAME">MVi18n.argType</span><span class="PUNC">=</span><span class="NAME">argType</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>289</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>290</span> </span><span class="COMM">/**
+<span class='line'>291</span>  *@private
+<span class='line'>292</span>  *This method specifies URL for XMLHTTPRequest to submit to. Both 
+<span class='line'>293</span>  *MVi18n.processLocale(...) and MVi18n.processLocaleOper(...) require
+<span class='line'>294</span>  *its support.  
+<span class='line'>295</span>  *@param {String} URL it specifies URL for XMLHTTPRequest to submit to.
+<span class='line'>296</span>  *@return none
+<span class='line'>297</span>  *@type void
+<span class='line'>298</span> */</span><span class="WHIT">
+<span class='line'>299</span> </span><span class="NAME">MVi18n.setURL</span><span class="PUNC">=</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">URL</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>300</span> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>301</span> </span><span class="WHIT">  </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">URL</span><span class="PUNC">==</span><span class="KEYW">null</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="NAME">URL</span><span class="PUNC">==</span><span class="STRN">""</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>302</span> </span><span class="WHIT">  </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>303</span> </span><span class="WHIT">    </span><span class="NAME">MVi18n.alert</span><span class="PUNC">(</span><span class="STRN">"Parameter should not be null or empty. Error occurs in MVi18n.setURL(...)"</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>304</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>305</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>306</span> </span><span class="WHIT">  
+<span class='line'>307</span>   </span><span class="NAME">MVi18n.URL</span><span class="PUNC">=</span><span class="NAME">URL</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>308</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>309</span> </span><span class="NAME">MVi18n.alert</span><span class="PUNC">=</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">str</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>310</span> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>311</span> </span><span class="WHIT">  </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">MVi18n.methodName</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>312</span> </span><span class="WHIT">  </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>313</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">func</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">MVi18n.methodName</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>314</span> </span><span class="WHIT">    </span><span class="NAME">func</span><span class="PUNC">(</span><span class="NAME">str</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>315</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>316</span> </span><span class="WHIT">  </span><span class="KEYW">else</span><span class="WHIT">
+<span class='line'>317</span> </span><span class="WHIT">    </span><span class="NAME">alert</span><span class="PUNC">(</span><span class="NAME">str</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>318</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>319</span> </span></pre></body></html>

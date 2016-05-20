@@ -1,0 +1,278 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Map Cache Server/Map Client</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+  
+<script language=javascript>
+  var mapview;
+  var rectangleToolIns=new Array();
+  var rectangleTool=null;
+
+  function showMap()
+  { 
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var centerPoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    
+    mapview = new MVMapView(document.getElementById("map"), baseURL);           
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+    mapview.setCenter(centerPoint);   
+    mapview.setZoomLevel(mapZoom);
+
+    mapview.display();        
+  }
+  
+  function addRectangleTool()
+  {
+    rectangleTool = new MVRectangleTool("mvdemo.L.MAJOR STREET");
+    mapview.addRectangleTool(rectangleTool);
+    rectangleToolIns.push(rectangleTool);
+    refreshRectangleToolList();
+  }
+  
+  function initRectangleTool()
+  {
+    var rectangleToolList=document.getElementById("rectangleToolList");
+    if((rectangleToolList.selectedIndex)<0)
+    {
+      alert("Please choose rectangle tool instance from the list above to initialize! ");
+      return;
+    }
+    else
+      rectangleTool=rectangleToolIns[rectangleToolList.selectedIndex];
+    
+    rectangleToolIns[rectangleToolList.selectedIndex].init();
+    var listenerFlag=document.getElementById("listenerFlag");
+    AddEventListener(listenerFlag.checked);
+  }
+
+  function clearRectangleTool()
+  {
+    var rectangleToolList=document.getElementById("rectangleToolList");
+    if((rectangleToolList.selectedIndex)<0)
+    {
+      alert("Please choose rectangle tool instance from the list above to clear! ");
+      return;
+    }
+    rectangleToolIns[rectangleToolList.selectedIndex].clear();
+  }
+
+  function refreshRectangleToolList()
+  {
+    var rectangleToolList=document.getElementById("rectangleToolList");
+    
+    rectangleToolList.options.length=0;
+        
+    for(var i=0; i<rectangleToolIns.length; ++i)
+    {
+      var option=document.createElement("option");
+      option.text="RectangleTool"+(i+1);
+      option.value=rectangleToolIns[i].id;      
+      rectangleToolList.options[rectangleToolList.options.length]=option;
+    }     
+  }
+
+  function getOrdinates()
+  { 
+    var mouseLoc = mapview.getMouseLocation();
+    var latLngStr = '<font color="#FF0000">The location to start dragging mouse:' + mouseLoc.getPointX() + ', ' + mouseLoc.getPointY() + '</font>' ;
+    document.getElementById("message").innerHTML = latLngStr;
+  }
+
+  function getRectangle()
+  { 
+    var rectangle=rectangleTool.getRectangle();
+    
+    if(rectangle!=null)
+      document.getElementById("message").innerHTML+='<br><font color="#00FF00">The rectangle: '+
+              rectangleTool.getRectangle()+'</font>';
+    else
+      document.getElementById("message").innerHTML+='<br><font color="#00FF00">The rectangle: null</font>';
+  }
+  
+  function showRectangleSize()
+  {
+    document.getElementById("message").innerHTML='<br><font color="#00FF00">Width:'+rectangleTool.getWidth('meter')
+              +' meters, height:'+rectangleTool.getHeight('meter')+' meters</font>';
+  }
+  
+  function AddEventListener(flag)
+  {
+    rectangleTool.attachEventListener(MVEvent.DRAG, showRectangleSize);
+    if(flag)
+    {
+      document.getElementById("message").innerHTML = "<font color=\"#FF0000\">Message Area</font>";
+      
+      rectangleTool.attachEventListener(MVEvent.START, getOrdinates);
+      rectangleTool.attachEventListener(MVEvent.FINISH, getRectangle);
+    }
+    else
+    {
+      document.getElementById("message").innerHTML = "";
+      rectangleTool.detachEventListener(MVEvent.START, getOrdinates);
+      rectangleTool.detachEventListener(MVEvent.FINISH, getRectangle);
+    }      
+  }
+</script>
+</head>
+
+<body onload=javascript:showMap();>
+<h3>Oracle Maps example - rectangle tool</h3>
+  <div id="demo" style="position:absolute; left:68%; top:50px; width:28%; height:100%">        
+         Please follow the below steps to draw a rectangle on the map:
+         <p>
+              Available Rectangle Tool Instances <br>
+              <select id="rectangleToolList" size="3">  
+              </select>
+         </p> 
+      
+         <OL>
+                <LI><a href="javascript:addRectangleTool()">Create a New Rectangle Tool Instance</a></LI>
+                
+                <LI>Use Rectangle Tool</LI>
+                <UL>
+                    <LI><a href="javascript:initRectangleTool()">Initialize the selected rectangle tool</a></LI>
+                    <LI><a href="javascript:clearRectangleTool()">Call clear() method of the selected rectangle tool</a></LI>               
+                </UL>
+         </OL> 
+         
+         <INPUT TYPE="checkbox" id="listenerFlag"> Verbose mode (displays rectangle coordinates) <br></br>
+         <p id="message"></p>        
+  </div>
+      
+  <div id="map" style="position:absolute; left:10px; top:50px; width:65%; height:75%"></div>
+<div style="position:absolute;top:85%; left:10px;width:98%" class="noprint">
+<HR/>
+<H3>Instructions</H3>
+This example shows how to use the built-in rectangle tool to create a rubber-band rectangle on the map.
+As you can see it is quite similar to how you use a red-lining tool.
+<h3>Source code</h3>
+The JavaScript code for this demo is listed below.
+<blockquote>
+<pre>
+  var mapview;
+  var rectangleToolIns=new Array();
+  var rectangleTool=null;
+
+  function showMap()
+  { 
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var centerPoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);           
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+    mapview.setCenter(centerPoint);   
+    mapview.setZoomLevel(mapZoom);
+    mapview.display();        
+  }
+  <font color="#ff0000">
+  //create a rectangle tool
+  function addRectangleTool()
+  {
+    rectangleTool = new MVRectangleTool("mvdemo.L.MAJOR STREET");
+    mapview.addRectangleTool(rectangleTool);
+    rectangleToolIns.push(rectangleTool);
+    refreshRectangleToolList();
+  }
+  
+  //initialize a rectangle tool
+  function initRectangleTool()
+  {
+    var rectangleToolList=document.getElementById("rectangleToolList");
+    if((rectangleToolList.selectedIndex)&lt;0)
+    {
+      alert("Please choose rectangle tool instance from the list above to initialize! ");
+      return;
+    }
+    else
+      rectangleTool=rectangleToolIns[rectangleToolList.selectedIndex];
+    
+    rectangleToolIns[rectangleToolList.selectedIndex].init();
+    var listenerFlag=document.getElementById("listenerFlag");
+    AddEventListener(listenerFlag.checked);
+  }
+
+  //clear a rectangle tool
+  function clearRectangleTool()
+  {
+    var rectangleToolList=document.getElementById("rectangleToolList");
+    if((rectangleToolList.selectedIndex)&lt;0)
+    {
+      alert("Please choose rectangle tool instance from the list above to clear! ");
+      return;
+    }
+    rectangleToolIns[rectangleToolList.selectedIndex].clear();
+  }
+  </font>
+  function refreshRectangleToolList()
+  {
+    var rectangleToolList=document.getElementById("rectangleToolList");
+    
+    rectangleToolList.options.length=0;
+        
+    for(var i=0; i&lt;rectangleToolIns.length; ++i)
+    {
+      var option=document.createElement("option");
+      option.text="RectangleTool"+(i+1);
+      option.value=rectangleToolIns[i].id;      
+      rectangleToolList.options[rectangleToolList.options.length]=option;
+    }     
+  }
+
+  function getOrdinates()
+  { 
+    var mouseLoc = mapview.getMouseLocation();
+    var latLngStr = '&lt;font color="#FF0000"&gt;The location to start dragging mouse:' 
+      + mouseLoc.getPointX() + ', ' + mouseLoc.getPointY() + '&lt;/font&gt;' ;
+    document.getElementById("message").innerHTML = latLngStr;
+  }
+
+  function getRectangle()
+  { 
+    var rectangle=rectangleTool.getRectangle();
+    
+    if(rectangle!=null)
+      document.getElementById("message").innerHTML+='&lt;br&gt;&lt;br&gt;&lt;font color="#00FF00"&gt;The rectangle: '+
+              rectangleTool.getRectangle()+'&lt;/font&gt;';
+    else
+      document.getElementById("message").innerHTML+='&lt;br&gt;&lt;br&gt;&lt;font color="#00FF00"&gt;The rectangle: null&lt;/font&gt;';
+  }
+  
+  function showRectangleSize()
+  {
+    document.getElementById("message").innerHTML='<br><font color="#00FF00">Width:'+rectangleTool.getWidth('meter')
+              +' meters, height:'+rectangleTool.getHeight('meter')+' meters</font>';
+  }
+  <font color="#ff0000">
+  // add event listener for a rectangle tool
+  function AddEventListener(flag)
+  {
+    rectangleTool.attachEventListener(MVEvent.DRAG, showRectangleSize);
+    if(flag)
+    {
+      document.getElementById("message").innerHTML = "&lt;font color=\"#FF0000\"&gt;Message Area&lt;/font&gt;";
+      
+      rectangleTool.attachEventListener(MVEvent.START, getOrdinates);
+      rectangleTool.attachEventListener(MVEvent.FINISH, getRectangle);
+    }
+    else
+    {
+      document.getElementById("message").innerHTML = "";
+      rectangleTool.detachEventListener(MVEvent.START, getOrdinates);
+      rectangleTool.detachEventListener(MVEvent.FINISH, getRectangle);
+    }      
+  }
+  </font>
+</pre>
+</blockquote> 
+</body>
+  
+</html>
+
+

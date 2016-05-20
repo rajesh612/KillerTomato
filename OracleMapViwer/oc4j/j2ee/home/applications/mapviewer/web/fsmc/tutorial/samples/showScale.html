@@ -1,0 +1,65 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Map Cache Server/Map Client</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript> 
+  var scaleBar = null;
+  function showMap()
+  {
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);
+    mapview.display();
+    scaleBar=new MVMapDecoration(new MVScaleBar(),0, 1, null, null, 4, -45);
+    mapview.addMapDecoration(scaleBar);
+    mapview.addMapDecoration(new MVMapDecoration(new MVNavigationPanel(),0,0,null,null,4,4)) ;
+  }
+</script>
+</head>
+	
+<body onload="javascript:showMap();">
+<h3>Oracle Maps example - map scale bar</h3>  
+  <input type=button value="Toggle Scale Bar" onclick="javascript:scaleBar.setVisible(!scaleBar.isVisible())"/><br>
+  <div id="map" style="width: 800px; height: 400px"></div>
+<HR/>
+<h3>Instructions</h3>
+This demo displays a scale bar inside the map area above.
+
+<h3>Source code</h3>
+<blockquote>
+<pre>
+  function showMap()
+  {
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);
+    mapview.display();
+    <font color="#ff0000"> 
+    scaleBar=new MVMapDecoration(new MVScaleBar(),0, 1, null, null, 4, -45);
+    mapview.addMapDecoration(scaleBar);
+    </font>
+    mapview.addMapDecoration(new MVMapDecoration(new MVNavigationPanel(),0,0,null,null,4,4)) ;
+  }
+</pre>
+</blockquote>
+</body>
+	
+</html>
+
+

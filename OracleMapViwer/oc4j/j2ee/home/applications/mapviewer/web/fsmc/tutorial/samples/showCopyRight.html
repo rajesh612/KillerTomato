@@ -1,0 +1,69 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Map Cache Server/Map Client</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+  var mapview;
+  
+  function showMap()
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);
+
+    mapview.addCopyRightNote("&#169;2006 powered by oracle&#8482;");
+        
+    mapview.display();   
+  }
+    
+</script>
+</head>
+	
+<body onload="javascript:showMap();">
+<h3>Oracle Maps example - add copyright note to the map
+  <div id="map" style="left:0px; top:10px; width:100%; height:60%">
+  </div>
+
+<HR/>
+<h3>Instructions</h3>
+In this demo you should see a copyright note on the map. This is added through
+the following code.
+
+<h3>Source code</h3>
+<blockquote>
+<pre>
+  var mapview;
+  
+  function showMap()
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);
+<font color="#ff0000">
+    mapview.addCopyRightNote("&#169;2006 powered by oracle&#8482;");
+</font>        
+    mapview.display();   
+  }
+</pre>
+</blockquote>
+</body>
+	
+</html>
+
+

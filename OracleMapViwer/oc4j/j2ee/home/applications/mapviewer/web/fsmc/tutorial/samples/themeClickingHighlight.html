@@ -1,0 +1,111 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Oracle Maps Tutorial - theme highlighting</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+ var themebasedfoi ;
+  function showMap()
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122;
+    var mapCenterLat =  37.5;
+    var mapZoom      =  3;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    var mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);    
+
+    themebasedfoi = new MVThemeBasedFOI('themebasedfoi1','mvdemo.customers');
+    themebasedfoi.setBringToTopOnMouseOver(true);
+    
+    // Add a vector Marker style    
+    var style = new MVStyleMarker("my_vector_icon", "vector");
+    style.setSize(19, 19);
+    style.setStrokeColor("ff0000");
+    style.setStrokeWidth("1.5");
+    style.setFillColor("00ff00");    
+    style.setVectorShape("c:50");        
+    themebasedfoi.addStyle(style);
+    themebasedfoi.setRenderingStyle("my_vector_icon");
+    
+    // Enable highlighting FOIs by mouse clicks
+    themebasedfoi.enableHighlight(true);
+    themebasedfoi.setHighlightStyle("mvdemo.M.REDSQ");
+    themebasedfoi.setHighlightMode("single");
+
+    mapview.addThemeBasedFOI(themebasedfoi);
+    
+    mapview.addNavigationPanel("EAST") ;
+    mapview.display();  			
+    
+    document.getElementById("defaultCheck").click();
+  }
+
+  function setHighlightMode(mode)
+  {
+    themebasedfoi.setHighlightMode(mode);
+  }
+
+  function highlightReturned()
+  {
+    // Highlight all FOIs
+    themebasedfoi.highlight();
+  }
+
+  function dehighlightAll()
+  {
+    // De-highlight all FOIs
+    themebasedfoi.deHighlight();
+  }
+</script>
+    
+</head>
+
+<body onload=javascript:showMap();>
+<h3>Oracle Maps example -  Theme based FOI layer highlighting feature</h3>
+  <form name="selectMode">
+    <input type="radio" id="defaultCheck" name="preserverMode" value="-1" onclick="setHighlightMode('single')" checked="checked"/>Single Selection<br>
+    <input type="radio" name="preserverMode" value="0" onclick="setHighlightMode('multiple')"/>Multiple Selection<br>
+    <ul>
+     <li>
+       <a href="javascript:highlightReturned()">Click here to highlight all FOIs returned from the server currently.</a>
+     </li>  
+     <li>
+       <a href="javascript:dehighlightAll()">Click here to change all highlighted FOIs to non-highlighted status.</a>
+     </li>
+    </ul>
+  </form>
+
+  <div id="map" style="left:0px; top:10px; width:100%; height:60%"></div>
+
+<HR/>
+<H3>Instructions</H3>
+This demo shows how to highlight an FOI by clicking on it. 
+
+
+<h3>Source code</h3>
+
+<blockquote>
+<pre>
+    // Enable highlighting FOIs by mouse clicks
+    themebasedfoi.enableHighlight(true);
+    themebasedfoi.setHighlightStyle("mvdemo.M.REDSQ");
+    themebasedfoi.setHighlightMode("single");
+    
+    // Highlight all FOIs
+    themebasedfoi.highlight();
+    
+    // De-highlight all FOIs
+    themebasedfoi.deHighlight();
+</pre>
+</blockquote>
+</body>
+</html>      
+
+
+

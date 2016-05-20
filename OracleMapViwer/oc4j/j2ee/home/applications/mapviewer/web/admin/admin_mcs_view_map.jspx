@@ -1,0 +1,192 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
+          xmlns:h="http://java.sun.com/jsf/html"
+          xmlns:f="http://java.sun.com/jsf/core"
+          xmlns:af="http://xmlns.oracle.com/adf/faces"
+          xmlns:afh="http://xmlns.oracle.com/adf/faces/html">
+  <jsp:output omit-xml-declaration="true" doctype-root-element="HTML"
+              doctype-system="http://www.w3.org/TR/html4/loose.dtd"
+              doctype-public="-//W3C//DTD HTML 4.01 Transitional//EN"/>
+  <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+  <f:view>
+    <afh:html>
+      <afh:head title="Map Tile Layer Admin">
+        <meta http-equiv="Content-Type"
+              content="text/html; charset=windows-1252"/>
+        <afh:script source="../fsmc/jslib/oraclemaps.js"/>
+        <afh:script source="../../admin/manageTiles.js"/>
+      </afh:head>
+      <afh:body onload="initMapPage()">
+        <h:form id="mapForm">
+          <af:inputHidden id="mapCacheName"
+                          value="#{adminMCIs.selectedCacheName}"/>
+          <af:inputHidden id="defaultSrid"
+                          value="#{adminMCIs.selectedCacheSRID}"/>
+          <af:inputHidden value="#{manageMapTiles.showMap}" id="showMap"/>
+          <af:inputHidden id="selectedRect"
+                          value="#{manageMapTiles.selectedRectangle}"/>
+          <af:panelPage>
+            <f:facet name="menu1">
+              <af:menuTabs id="menuTabsArea" value="#{menuModel.model}"
+                           var="menuTab">
+                <f:facet name="nodeStamp">
+                  <af:commandMenuItem text="#{menuTab.label}"
+                                      action="#{menuTab.getOutcome}"
+                                      type="default"
+                                      rendered="#{menuTab.shown and menuTab.type=='default'}"/>
+                </f:facet>
+              </af:menuTabs>
+            </f:facet>
+            <f:facet name="menuGlobal">
+              <af:menuButtons var="menuButton" id="menuButtsArea"
+                              value="#{menuModel.model}">
+                <f:facet name="nodeStamp">
+                  <af:commandMenuItem text="#{menuButton.label}"
+                                      action="#{menuButton.getOutcome}"
+                                      icon="#{menuButton.icon}"
+                                      rendered="#{menuButton.type=='global'}"
+                                      type="global"/>
+                </f:facet>
+              </af:menuButtons>
+            </f:facet>
+            <f:facet name="branding">
+              <af:objectImage source="/myicons/oracle_logo.gif"/>
+            </f:facet>
+            <f:facet name="brandingApp">
+              <af:objectImage source="/myicons/mapviewer_admin.gif"/>
+            </f:facet>
+            <f:facet name="appCopyright">
+              <af:outputText value="#{mvbundle.copyright}"/>
+            </f:facet>
+            <f:facet name="appPrivacy"/>
+            <f:facet name="appAbout"/>
+            <f:facet name="brandingAppContextual">
+              <af:outputFormatted value="#{mvbundle.loclocloc}"
+                                  styleUsage="inContextBranding"/>
+            </f:facet>
+            <f:facet name="menu2">
+              <af:menuBar var="menuSubTab" id="menuSubTabsArea" startDepth="1"
+                          value="#{menuModel.model}">
+                <f:facet name="nodeStamp">
+                  <af:commandMenuItem text="#{menuSubTab.label}"
+                                      action="#{menuSubTab.getOutcome}"/>
+                </f:facet>
+              </af:menuBar>
+            </f:facet>
+            <af:panelGroup>
+              <af:panelHorizontal valign="top">
+                <af:panelSideBar width="220px">
+                  <af:panelGroup layout="vertical">
+                    <af:panelPartialRoot/>
+                    <af:outputLabel value="Area Selection Tool"/>
+                    <af:outputFormatted value="Draw a rectangular selection area on the map"
+                                        inlineStyle="font-family:Arial; font-size:8.0pt; color:rgb(51,102,153);"/>
+                    <af:panelHorizontal>
+                      <af:selectBooleanCheckbox selected="false" disabled="#{manageMapTiles.isBuiltinExternalTileLayer}"
+                                                id="rectSelCheckBox"
+                                                onclick="toggleRectSelection(this)"/>
+                      <af:outputLabel value="Off" id="rectSelLabel"/>
+                    </af:panelHorizontal>
+                    <af:objectSeparator/>
+                    <af:outputLabel value="Zoom Level Selection"/>
+                    <af:outputFormatted value="Select one or more levels to perform tile operation"
+                                        inlineStyle="font-family:Arial; font-size:8.0pt; color:rgb(51,102,153);"/>
+                    <af:selectManyListbox value="#{manageMapTiles.selectedLevels}"
+                                          disabled="#{manageMapTiles.isBuiltinExternalTileLayer}"
+                                          id="zoomLevelSelection" size="5">
+                      <af:forEach varStatus="vs" begin="0"
+                                  end="#{manageMapTiles.zoomLevelCount-1}">
+                        <af:selectItem value="#{vs.current}"
+                                       label="Level #{vs.current}"/>
+                      </af:forEach>
+                    </af:selectManyListbox>
+                    <af:objectSeparator rendered="#{!manageMapTiles.isBuiltinExternalTileLayer}"/>
+                    <af:outputLabel value="Tile Operations" rendered="#{!manageMapTiles.isBuiltinExternalTileLayer}"/>
+                    <af:commandButton text="Prefetch Tiles"
+                                      rendered="#{!manageMapTiles.isBuiltinExternalTileLayer}"
+                                      action="#{manageMapTiles.prefetchTiles}"
+                                      onclick="enableFormValidation('prefetch');reactivateProgressIndicators();"
+                                      id="prefetchTiles" partialSubmit="true"
+                                      partialTriggers="prefetchTiles checkStatus clearTiles refreshTiles pollid"
+                                      disabled="#{manageMapTiles.operationBeingProcessed}"/>
+                    <af:commandButton text="Clear Tiles"
+                                      rendered="#{!manageMapTiles.isBuiltinExternalTileLayer}"
+                                      action="#{manageMapTiles.clearTiles}"
+                                      onclick="enableFormValidation('clear')"
+                                      partialSubmit="true" id="clearTiles"
+                                      disabled="#{manageMapTiles.operationBeingProcessed}"
+                                      partialTriggers="prefetchTiles checkStatus clearTiles refreshTiles pollid"/>
+                    <af:commandButton text="Refresh Tiles"
+                                      rendered="#{!manageMapTiles.isBuiltinExternalTileLayer}"
+                                      action="#{manageMapTiles.refreshTiles}"
+                                      onclick="enableFormValidation('refresh')"
+                                      partialSubmit="true" id="refreshTiles"
+                                      disabled="#{manageMapTiles.operationBeingProcessed}"
+                                      partialTriggers="prefetchTiles checkStatus clearTiles refreshTiles pollid"/>
+                    <af:objectSeparator rendered="#{!manageMapTiles.isBuiltinExternalTileLayer}"/>
+                    <af:panelHorizontal rendered="#{!manageMapTiles.isBuiltinExternalTileLayer}">
+                      <af:outputLabel value="Operation Status"/>
+                      <af:objectSpacer width="10" height="10"/>
+                    </af:panelHorizontal>
+                    <af:commandButton text="Refresh" 
+                                      rendered="#{!manageMapTiles.isBuiltinExternalTileLayer}"
+                                      action="#{manageMapTiles.refreshOperationStatus}"
+                                      onclick="disableFormValidation()"
+                                      partialSubmit="true" id="checkStatus"/>
+                    <af:panelHorizontal rendered="#{!manageMapTiles.isBuiltinExternalTileLayer}">
+                      <af:outputFormatted value="Status:  #{manageMapTiles.operationStatus}"
+                                          inlineStyle="font-size:small; font-style:normal; color:rgb(51,102,153);"
+                                          partialTriggers="pollid checkStatus prefetchTiles clearTiles refreshTiles"/>
+                    </af:panelHorizontal>
+                    <af:inputText columns="25" rows="5"
+                                  rendered="#{!manageMapTiles.isBuiltinExternalTileLayer}"
+                                  value="#{manageMapTiles.currentOperation}"
+                                  disabled="false"
+                                  partialTriggers="pollid checkStatus prefetchTiles clearTiles refreshTiles"
+                                  readOnly="true"
+                                  inlineStyle="font-family:Arial; font-size:9.0pt; color:rgb(51,102,153);"/>
+                    <af:objectSeparator/>
+                  </af:panelGroup>
+                  <af:commandButton text="Return" action="back_to_mcs_admin"/>
+                </af:panelSideBar>
+                <af:panelGroup layout="vertical"
+                               inlineStyle="vertical-align:top;">
+                  <af:panelHorizontal>
+                    <af:inputText label="Center X" columns="6"
+                                  value="#{manageMapTiles.mapCenterX}"
+                                  id="mapCenterX">
+                      <af:validator validatorId="manageTilesValidator"/>
+                    </af:inputText>
+                    <af:objectSpacer width="10" height="10"/>
+                    <af:inputText label="Center Y" columns="6"
+                                  value="#{manageMapTiles.mapCenterY}"
+                                  id="mapCenterY"/>
+                    <af:objectSpacer width="10" height="10"/>
+                    <af:inputText label="SRID" columns="3" value="0"
+                                  id="mapSrid"/>
+                    <af:objectSpacer width="10" height="10"/>
+                    <af:inputText label="Zoom Level" columns="1"
+                                  value="#{manageMapTiles.zoomLevel}"
+                                  id="zoomLevel"/>
+                    <af:objectSpacer width="10" height="10"/>
+                    <af:commandButton text="Show Map"
+                                      onclick="showMap();disableFormValidation();"
+                                      partialSubmit="true" blocking="true"/>
+                  </af:panelHorizontal>
+                  <f:verbatim>
+                    <div id="mapDiv"
+                         style="width:600.0px; height:430.0px; background-image:none; border-style:solid; border-width:thin; color:rgb(51,102,153);">
+                      <center>
+                        Set the map center and click the "Show Map" button.
+                      </center>
+                    </div>
+                  </f:verbatim>
+                </af:panelGroup>
+              </af:panelHorizontal>
+            </af:panelGroup>
+          </af:panelPage>
+        </h:form>
+      </afh:body>
+    </afh:html>
+  </f:view>
+</jsp:root>

@@ -1,0 +1,217 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Map Cache Server/Map Client</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+  var mapview;
+  
+  function showMap()
+  { 
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);
+    mapview.display();
+  }
+  
+  function addCity()
+  {
+    var name=document.getElementById('cityname').value;
+    if (name==null || name=="")
+    {
+      alert("Please input city name!");
+    }
+    name=name.toUpperCase();
+    var list=document.getElementById('citylist');
+    var option=document.createElement("option");
+    option.text=name;
+    option.value=name;
+    option.id=name;
+    list.options[list.options.length]=option;
+  }
+  function removeAllCity()
+  {
+    var list=document.getElementById("citylist");
+    list.options.length=1;
+  }
+  function removeCity()
+  {
+    var list=document.getElementById("citylist");
+    
+    if((list.selectedIndex)<=0)
+    {
+      alert("Please choose city from list");
+      return;
+    }
+    
+    for(var i=list.selectedIndex+1; i<list.options.length; i++)
+    {
+      list.options[i-1].value=list.options[i].value;
+      list.options[i-1].text=list.options[i].text;
+      list.options[i-1].id=list.options[i].id;
+    }
+    list.options.length=list.options.length-1;
+  }
+  function searchCity()
+  {
+    var list=document.getElementById("citylist");
+    var parameters="";
+    for (var i=1;i<list.options.length;i++ )
+    {
+      parameters=parameters+"\""+list.options[i].value+"\",";
+    }
+    if (parameters.length>0)
+    {
+      parameters=parameters.substring(0,parameters.length-1);
+    }
+    var marrayPara = new MVArrayParameter(parameters, MVArrayParameter.STRING_ARRAY);
+    var themebasedfoi=mapview.getThemeBasedFOI("themebasedfoi1");
+    if (themebasedfoi==null)
+    {
+      themebasedfoi = new MVThemeBasedFOI('themebasedfoi1','mvdemo.customer_by_cities');
+      themebasedfoi.setQueryParameters(marrayPara);      
+      themebasedfoi.setBringToTopOnMouseOver(true);
+      mapview.addThemeBasedFOI(themebasedfoi);
+    }
+    else
+    {
+      themebasedfoi.setQueryParameters(marrayPara);      
+      themebasedfoi.setBringToTopOnMouseOver(true);
+      themebasedfoi.refresh() ;
+    }
+  }
+</script>
+
+</head>
+
+<body onload= javascript:showMap()>
+<h3>Oracle Maps example - ARRAY type binding variable &amp; templated theme based FOI </h3>
+<div id="map" style="position:absolute;left:10px; top:50px; width:65%; height:70%"></div> 
+<div  style="position:absolute;left:68%; top:50px; width:30%; height:300px;">
+Please input city name:<br><input type="text" id="cityname" value="SAN FRANCISCO" size="20"/><input type="button" value="add" onclick="addCity()">
+<br><br>
+City List:<br>
+<select id="citylist" size="8">
+<option>----city list-------</option>
+</select><br>
+<input type="button" value="search" onclick="searchCity()"/>
+<input type="button" value="remove" onclick="removeCity()"/>
+<input type="button" value="remove all" onclick="removeAllCity()"/>
+</div> 
+<div style="position:absolute;top:81%; left:10px;width:98%" class="noprint">
+<HR/>
+<H3>Instructions</H3>
+This example shows how to supply values to a templated theme based FOI whose 
+binding variable is of ARRAY type.  Specifically, you can supply a list of
+city names, and the FOI layer will display only customers in those listed
+cities.
+  
+<h3>Source code</h3>
+The JavaScript code for this demo is listed below.
+<blockquote>
+<pre>
+  var mapview;
+  function showMap()
+  { 
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);
+    mapview.display();
+  }
+  
+  function addCity()
+  {
+    var name=document.getElementById('cityname').value;
+    if (name==null || name=="")
+    {
+      alert("Please input city name!");
+    }
+    name=name.toUpperCase();
+    var list=document.getElementById('citylist');
+    var option=document.createElement("option");
+    option.text=name;
+    option.value=name;
+    option.id=name;
+    list.options[list.options.length]=option;
+  }
+  
+  function removeAllCity()
+  {
+    var list=document.getElementById("citylist");
+    list.options.length=1;
+  }
+  
+  function removeCity()
+  {
+    var list=document.getElementById("citylist");
+    
+    if((list.selectedIndex)<=0)
+    {
+      alert("Please choose city from list");
+      return;
+    }
+    
+    for(var i=list.selectedIndex+1; i&lt;list.options.length; i++)
+    {
+      list.options[i-1].value=list.options[i].value;
+      list.options[i-1].text=list.options[i].text;
+      list.options[i-1].id=list.options[i].id;
+    }
+    list.options.length=list.options.length-1;
+  }
+  <font color="#ff0000">
+  function searchCity()
+  {
+    var list=document.getElementById("citylist");
+    var parameters="";
+    for (var i=1;i&lt;list.options.length;i++ )
+    {
+      parameters=parameters+"\""+list.options[i].value+"\",";
+    }
+    if (parameters.length>0)
+    {
+      parameters=parameters.substring(0,parameters.length-1);
+    }
+    var marrayPara = new MVArrayParameter(parameters, MVArrayParameter.STRING_ARRAY);
+    var themebasedfoi=mapview.getThemeBasedFOI("themebasedfoi1");
+    if (themebasedfoi==null)
+    {
+      themebasedfoi = new MVThemeBasedFOI('themebasedfoi1','mvdemo.customer_by_cities');
+      themebasedfoi.setQueryParameters(marrayPara);      
+      themebasedfoi.setBringToTopOnMouseOver(true);
+      mapview.addThemeBasedFOI(themebasedfoi);
+    }
+    else
+    {
+      themebasedfoi.setQueryParameters(marrayPara);      
+      themebasedfoi.setBringToTopOnMouseOver(true);
+      themebasedfoi.refresh() ;
+    }
+  }
+  </font>
+</pre>
+</blockquote>
+  Note that in the above sample, the way we pass an array of city names to the MapViewer server for the theme customer_by_cities, is by creating a JS object of type MVArrayParameter. The SQL type "mv_stringlist" specified in the MVArrayParameter constructor is used to hold the list of city names at the server side; this user type is automatically created by MapViewer. 
+</br>
+
+ 
+   
+</div>
+</body>
+</html>
+
+

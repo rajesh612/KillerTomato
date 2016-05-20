@@ -1,0 +1,294 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Map Cache Server/Map Client</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+  
+<script language=javascript>
+  var mapview;
+  var redlineIns=new Array();
+  var rlflag=true;
+  var ordflag=false;
+  var mapMoveFlag=false;
+
+  function init()
+  {
+  	document.getElementById("redLineOrdFlag").checked = false;
+  	showMap();
+  }
+
+  function showMap()
+  { 
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var centerPoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    
+    mapview = new MVMapView(document.getElementById("map"), baseURL);           
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+    mapview.setCenter(centerPoint);   
+    mapview.setZoomLevel(mapZoom);
+    mapview.attachEventListener(MVEvent.RECENTER,checkMapMove);
+    mapview.attachEventListener(MVEvent.MOUSE_CLICK,getRedLineOrd);
+    mapview.display();        
+  }
+  
+  function redLine()
+  {
+    var redline = new MVRedlineTool("mvdemo.L.FERRY", "mvdemo.C.RED");
+    mapview.addRedLineTool(redline);
+    redlineIns.push(redline);
+    refreshRedlineList();
+  }
+  
+  function initRedLine()
+  {
+    var redlineList=document.getElementById("redlineList");
+    if((redlineList.selectedIndex)<0)
+    {
+      alert("Please choose redline tool instance from the list above to initialize! ");
+      return;
+    }
+    redlineIns[redlineList.selectedIndex].init();
+    setRLFlag(true);
+  }
+
+  function generateRedLine()
+  {
+    var redlineList=document.getElementById("redlineList");
+    if((redlineList.selectedIndex)<0)
+    {
+      alert("Please choose redline tool instance from the list above to generate the polygon! ");
+      return;
+    }
+    redlineIns[redlineList.selectedIndex].generateArea();
+    setRLFlag(false);
+  }
+
+  function clearRedLine()
+  {
+    var redlineList=document.getElementById("redlineList");
+    if((redlineList.selectedIndex)<0)
+    {
+      alert("Please choose redline tool instance from the list above to clear! ");
+      return;
+    }
+    redlineIns[redlineList.selectedIndex].clear();
+  }
+
+  function refreshRedlineList()
+  {
+    var redlineList=document.getElementById("redlineList");
+    redlineList.options.length=0;
+    for(var i=0; i<redlineIns.length; ++i)
+    {
+      var option=document.createElement("option");
+      option.text="RedLine"+redlineIns[i].id;
+      option.value=redlineIns[i].id;      
+      redlineList.options[redlineList.options.length]=option;
+    }     
+  }
+
+  function checkMapMove()
+  { 
+    mapMoveFlag = true;
+  }
+
+  function getRedLineOrd()
+  { 
+    if(mapMoveFlag)
+    {
+      mapMoveFlag = false;
+      return;
+    }
+    var redlineList=document.getElementById("redlineList");
+    if((redlineList.selectedIndex)<0)
+    {
+      return;
+    }
+    if (rlflag && ordflag)
+      alert("Redline coordinates:"+ redlineIns[redlineList.selectedIndex].getOrdinates()+" ");
+  }
+
+  function showRedLineOrd(item)
+  {
+    ordflag=item.checked;
+  }
+
+  function setRLFlag(flag)
+  {
+    rlflag=flag;
+  }
+</script>
+</head>
+
+<body onload=javascript:init();>
+<h3>Oracle Maps example - multiple redlines</h3>
+  <div id="demo" style="position:absolute; left:68%; top:50px; width:28%; height:100%">        
+         Please follow the below steps to draw one or more red line shapes:
+         <p>
+              Redline Tool Instance List: <br>
+              <select id="redlineList" size="3">  
+              </select>
+         </p> 
+
+         <OL>
+                <LI><a href="javascript:redLine();setRLFlag(false)">Create a new Redline Tool instance</a></LI>
+                <br>
+                <br>
+                <LI>Select a redline tool instance, then </LI>
+                <UL>
+                    <LI><a href="javascript:initRedLine()">Initialize</a> and start drawing on the map</LI>
+                    <br>
+                    <LI><a href="javascript:generateRedLine()">Generate the red line polygon</a></LI>
+                    <br>
+                    <LI><a href="javascript:clearRedLine()">Clear the selected Redline Tool instance</a></LI>               
+                </UL>
+         </OL>  
+         
+         <p>
+         <INPUT id="redLineOrdFlag" TYPE="checkbox" value="showRedLineOrd" onclick="showRedLineOrd(this)">Show Red Line Coordinates
+         </p>       
+  </div>
+      
+  <div id="map" style="position:absolute; left:10px; top:50px; width:65%; height:75%"></div>
+<div style="position:absolute;top:85%; left:10px;width:98%" class="noprint">
+<HR/>
+<H3>Instructions</H3>
+ This example shows how to add multiple hand-drawn redlines.
+ 
+<h3>Source code</h3>
+The JavaScript code for this demo is listed below.
+<blockquote>
+<pre>
+  var mapview;
+  var redlineIns=new Array();
+  var rlflag=true;
+  var ordflag=false;
+  var mapMoveFlag=false;
+
+  function init()
+  {
+  	document.getElementById("redLineOrdFlag").checked = false;
+  	showMap();
+  }
+
+  function showMap()
+  { 
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var centerPoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    
+    mapview = new MVMapView(document.getElementById("map"), baseURL);           
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+    mapview.setCenter(centerPoint);   
+    mapview.setZoomLevel(mapZoom);
+    mapview.attachEventListener(MVEvent.RECENTER,checkMapMove);
+    mapview.attachEventListener(MVEvent.MOUSE_CLICK,getRedLineOrd);
+    mapview.display();        
+  }
+  
+  <font color="#ff0000">
+  //create a redline tool
+  function redLine()
+  {
+    var redline = new MVRedlineTool("mvdemo.L.FERRY", "mvdemo.C.RED");
+    mapview.addRedLineTool(redline);
+    redlineIns.push(redline);
+    refreshRedlineList();
+  }
+  
+  //initialize a redline tool
+  function initRedLine()
+  {
+    var redlineList=document.getElementById("redlineList");
+    if((redlineList.selectedIndex)<0)
+    {
+      alert("Please choose redline tool instance from the list above to initialize! ");
+      return;
+    }
+    redlineIns[redlineList.selectedIndex].init();
+    setRLFlag(true);
+  }
+  </font>
+  function generateRedLine()
+  {
+    var redlineList=document.getElementById("redlineList");
+    if((redlineList.selectedIndex)<0)
+    {
+      alert("Please choose redline tool instance from the list above to generate the polygon! ");
+      return;
+    }
+    redlineIns[redlineList.selectedIndex].generateArea();
+    setRLFlag(false);
+  }
+  
+  <font color="#ff0000">
+  //clear a red line tool
+  function clearRedLine()
+  {
+    var redlineList=document.getElementById("redlineList");
+    if((redlineList.selectedIndex)<0)
+    {
+      alert("Please choose redline tool instance from the list above to clear! ");
+      return;
+    }
+    redlineIns[redlineList.selectedIndex].clear();
+  }
+  </font>
+  function refreshRedlineList()
+  {
+    var redlineList=document.getElementById("redlineList");
+    redlineList.options.length=0;
+    for(var i=0; i<redlineIns.length; ++i)
+    {
+      var option=document.createElement("option");
+      option.text="RedLine"+redlineIns[i].id;
+      option.value=redlineIns[i].id;      
+      redlineList.options[redlineList.options.length]=option;
+    }     
+  }
+
+  function checkMapMove()
+  { 
+    mapMoveFlag = true;
+  }
+
+  <font color="#ff0000">
+  //show coordinates of the redline tool
+  function getRedLineOrd()
+  { 
+    if(mapMoveFlag)
+    {
+      mapMoveFlag = false;
+      return;
+    }
+    var redlineList=document.getElementById("redlineList");
+    if((redlineList.selectedIndex)<0)
+    {
+      return;
+    }
+    if (rlflag && ordflag)
+      alert("Redline coordinates:"+ redlineIns[redlineList.selectedIndex].getOrdinates()+" ");
+  }
+  </font>
+  function showRedLineOrd(item)
+  {
+    ordflag=item.checked;
+  }
+
+  function setRLFlag(flag)
+  {
+    rlflag=flag;
+  }
+</pre>
+</blockquote> 
+</body>
+  
+</html>
+
+

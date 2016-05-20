@@ -1,0 +1,165 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/* $Header: lbs/ship/ear/web/fsmc/orig_jslib/MVBarChartStyle.js /st_lbs_11.1.1.x/1 2010/08/06 13:39:56 jxyang Exp $ */</span><span class="WHIT">
+<span class='line'>  2</span> 
+<span class='line'>  3</span> </span><span class="COMM">/* Copyright (c) 2001, 2010, Oracle and/or its affiliates. 
+<span class='line'>  4</span> All rights reserved. */</span><span class="WHIT">
+<span class='line'>  5</span> 
+<span class='line'>  6</span> </span><span class="COMM">/*
+<span class='line'>  7</span>    DESCRIPTION
+<span class='line'>  8</span>      client side Bar Chart Style support
+<span class='line'>  9</span> 
+<span class='line'> 10</span>    PRIVATE CLASSES
+<span class='line'> 11</span>     &lt;list of private classes defined - with one-line descriptions>
+<span class='line'> 12</span> 
+<span class='line'> 13</span>    NOTES
+<span class='line'> 14</span>     &lt;other useful comments, qualifications, etc.>
+<span class='line'> 15</span> 
+<span class='line'> 16</span>    MODIFIED    (MM/DD/YY)
+<span class='line'> 17</span>     jxyang     07/09/10 - 1. add api doc for set methods.
+<span class='line'> 18</span>                           2. fix minValue/maxValue checking problem
+<span class='line'> 19</span>     jxyang     10/01/07 - doc changes
+<span class='line'> 20</span>     jxyang     01/24/07 - should not use + to encode whitespace
+<span class='line'> 21</span>     jxyang     11/30/06 - api doc change
+<span class='line'> 22</span>     lqian      10/01/06 - create
+<span class='line'> 23</span> */</span><span class="WHIT">
+<span class='line'> 24</span> 
+<span class='line'> 25</span> </span><span class="COMM">/**
+<span class='line'> 26</span>  @class MVBarInfo this class represents the definition of a single bar in
+<span class='line'> 27</span>         a Bar chart.
+<span class='line'> 28</span>  @constructor
+<span class='line'> 29</span>  @param {string} name the name of the bar; used only for labeling in a map
+<span class='line'> 30</span>         legend.
+<span class='line'> 31</span>  @param {string} color the RRGGBB value of the color of the bar, such
+<span class='line'> 32</span>                    as "FFFFFF" for white.
+<span class='line'> 33</span>   */</span><span class="WHIT">
+<span class='line'> 34</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">MVBarInfo</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">color</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'> 35</span> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 36</span> </span><span class="WHIT">  </span><span class="COMM">/**@private*/</span><span class="WHIT">
+<span class='line'> 37</span> </span><span class="WHIT">  </span><span class="NAME">this.name</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">name</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 38</span> </span><span class="WHIT">  </span><span class="COMM">/**@private*/</span><span class="WHIT">
+<span class='line'> 39</span> </span><span class="WHIT">  </span><span class="NAME">this.color</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 40</span> </span><span class="WHIT">  
+<span class='line'> 41</span>   </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">color</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'> 42</span> </span><span class="WHIT">  </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 43</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">color.charAt</span><span class="PUNC">(</span><span class="NUMB">0</span><span class="PUNC">)</span><span class="PUNC">==</span><span class="STRN">'#'</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'> 44</span> </span><span class="WHIT">      </span><span class="NAME">this.color</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">color.substring</span><span class="PUNC">(</span><span class="NUMB">1</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">color.length</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 45</span> </span><span class="WHIT">    </span><span class="KEYW">else</span><span class="WHIT">
+<span class='line'> 46</span> </span><span class="WHIT">      </span><span class="NAME">this.color</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">color</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 47</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 48</span> </span><span class="WHIT">  </span><span class="COMM">/**@private*/</span><span class="WHIT">
+<span class='line'> 49</span> </span><span class="WHIT">  </span><span class="NAME">this.color_opacity</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">255</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 50</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 51</span> 
+<span class='line'> 52</span> </span><span class="COMM">/**
+<span class='line'> 53</span>  @class MVBarChartStyle represents the client side Bar Chart style.  
+<span class='line'> 54</span>  @constructor 
+<span class='line'> 55</span>  @param {string} name the name of this style
+<span class='line'> 56</span>  @param {integer} width the overall width of the bar chart
+<span class='line'> 57</span>  @param {integer} height the overall height of the bar chart
+<span class='line'> 58</span>  @param {Array} bars the array containing all the bar definitions
+<span class='line'> 59</span>  */</span><span class="WHIT">
+<span class='line'> 60</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">MVBarChartStyle</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">width</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">height</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">bars</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'> 61</span> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 62</span> </span><span class="WHIT">  </span><span class="COMM">/**@private*/</span><span class="WHIT">
+<span class='line'> 63</span> </span><span class="WHIT">  </span><span class="NAME">this.name</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">name</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 64</span> </span><span class="WHIT">  </span><span class="COMM">/**@private*/</span><span class="WHIT">
+<span class='line'> 65</span> </span><span class="WHIT">  </span><span class="NAME">this.width</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">width</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 66</span> </span><span class="WHIT">  </span><span class="COMM">/**@private*/</span><span class="WHIT">
+<span class='line'> 67</span> </span><span class="WHIT">  </span><span class="NAME">this.height</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">height</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 68</span> </span><span class="WHIT">  </span><span class="COMM">/**@private*/</span><span class="WHIT">
+<span class='line'> 69</span> </span><span class="WHIT">  </span><span class="NAME">this.bars</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">bars</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 70</span> </span><span class="WHIT">  </span><span class="COMM">/**@private*/</span><span class="WHIT">
+<span class='line'> 71</span> </span><span class="WHIT">  </span><span class="NAME">this.minValue</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 72</span> </span><span class="WHIT">  </span><span class="COMM">/**@private*/</span><span class="WHIT">
+<span class='line'> 73</span> </span><span class="WHIT">  </span><span class="NAME">this.maxValue</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">  
+<span class='line'> 74</span>   </span><span class="COMM">/**@private*/</span><span class="WHIT">
+<span class='line'> 75</span> </span><span class="WHIT">  </span><span class="NAME">this.shareScale</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">  </span><span class="COMM">//all bar charts in the same map will share same scale</span><span class="WHIT">
+<span class='line'> 76</span> </span><span class="WHIT">  </span><span class="COMM">/**@private*/</span><span class="WHIT">
+<span class='line'> 77</span> </span><span class="WHIT">  </span><span class="NAME">this.showXAxis</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 78</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 79</span> </span><span class="COMM">/**
+<span class='line'> 80</span>  * Sets the bar minimum value.
+<span class='line'> 81</span>  * @param min the bar minimum value
+<span class='line'> 82</span>  * @return
+<span class='line'> 83</span>  */</span><span class="WHIT">
+<span class='line'> 84</span> </span><span class="NAME">MVBarChartStyle.prototype.setMinValue</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">min</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'> 85</span> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 86</span> </span><span class="WHIT">  </span><span class="NAME">this.minValue</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">min</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 87</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 88</span> 
+<span class='line'> 89</span> </span><span class="COMM">/**
+<span class='line'> 90</span>  * Sets the bar maximum value.
+<span class='line'> 91</span>  * @param min the bar maximum value
+<span class='line'> 92</span>  * @return
+<span class='line'> 93</span>  */</span><span class="WHIT">
+<span class='line'> 94</span> </span><span class="NAME">MVBarChartStyle.prototype.setMaxValue</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">max</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'> 95</span> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 96</span> </span><span class="WHIT">  </span><span class="NAME">this.maxValue</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">max</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 97</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 98</span> </span><span class="COMM">/**
+<span class='line'> 99</span>  * Sets if the size of bars is to be based in an individual feature, or if it is to based on values 
+<span class='line'>100</span>  * of all map features of the theme.
+<span class='line'>101</span>  * @param ss true means size are related with value of all features, false means the each bar size is independent.
+<span class='line'>102</span>  * @return
+<span class='line'>103</span>  */</span><span class="WHIT">
+<span class='line'>104</span> </span><span class="NAME">MVBarChartStyle.prototype.setShareScale</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">ss</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>105</span> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>106</span> </span><span class="WHIT">  </span><span class="NAME">this.shareScale</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">ss</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>107</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>108</span> </span><span class="COMM">/**
+<span class='line'>109</span>  * Sets if X axis should be rendered.
+<span class='line'>110</span>  * @param showx true to render X axis, false to not render
+<span class='line'>111</span>  * @return
+<span class='line'>112</span>  */</span><span class="WHIT">
+<span class='line'>113</span> </span><span class="NAME">MVBarChartStyle.prototype.setShowXAxis</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">showx</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>114</span> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>115</span> </span><span class="WHIT">  </span><span class="NAME">this.showXAxis</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">showx</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>116</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>117</span> </span><span class="COMM">/**@private*/</span><span class="WHIT">
+<span class='line'>118</span> </span><span class="NAME">MVBarChartStyle.prototype.getXMLString</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>119</span> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>120</span> </span><span class="WHIT">  </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">xmlDef</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> 
+<span class='line'>121</span>   </span><span class="STRN">'&lt;style name="'</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">this.name</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">'">'</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT">
+<span class='line'>122</span> </span><span class="WHIT">  </span><span class="STRN">'&lt;AdvancedStyle>&lt;BarChartStyle'</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT">
+<span class='line'>123</span> </span><span class="WHIT">  </span><span class="STRN">' width="'</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">this.width</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">'" height="'</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">this.height</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">'"'</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>124</span> </span><span class="WHIT">  
+<span class='line'>125</span>   </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this.shareScale</span><span class="PUNC">==</span><span class="KEYW">true</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>126</span> </span><span class="WHIT">  </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>127</span> </span><span class="WHIT">    </span><span class="NAME">xmlDef</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">xmlDef</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">' share_scale="true"'</span><span class="PUNC">;</span><span class="WHIT">   
+<span class='line'>128</span>   </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>129</span> </span><span class="WHIT">  
+<span class='line'>130</span>   </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this.maxValue</span><span class="PUNC">!=</span><span class="KEYW">null</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">this.minValue</span><span class="PUNC">!=</span><span class="KEYW">null</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>131</span> </span><span class="WHIT">  </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>132</span> </span><span class="WHIT">    </span><span class="NAME">xmlDef</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">xmlDef</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">' min_value="'</span><span class="PUNC">+</span><span class="NAME">this.minValue</span><span class="PUNC">+</span><span class="STRN">'" max_value="'</span><span class="PUNC">+</span><span class="NAME">this.maxValue</span><span class="PUNC">+</span><span class="STRN">'"'</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>133</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>134</span> </span><span class="WHIT">  
+<span class='line'>135</span>   </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this.showXAxis</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>136</span> </span><span class="WHIT">  </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>137</span> </span><span class="WHIT">    </span><span class="NAME">xmlDef</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">xmlDef</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">' show_x_axis="true"'</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>138</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>139</span> </span><span class="WHIT">  
+<span class='line'>140</span>   </span><span class="NAME">xmlDef</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="NAME">xmlDef</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">'>'</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>141</span> </span><span class="WHIT">  
+<span class='line'>142</span>   </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">this.bars</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>143</span> </span><span class="WHIT">  </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>144</span> </span><span class="WHIT">    </span><span class="COMM">/*       &lt;PieSlice name="jan" color="#ff00ff" /> */</span><span class="WHIT">
+<span class='line'>145</span> </span><span class="WHIT">    </span><span class="KEYW">for</span><span class="PUNC">(</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">=</span><span class="NUMB">0</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">&lt;</span><span class="NAME">this.bars.length</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>146</span> </span><span class="WHIT">    </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>147</span> </span><span class="WHIT">      </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">bi</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.bars</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>148</span> </span><span class="WHIT">      </span><span class="NAME">xmlDef</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">xmlDef</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">' &lt;Bar name="'</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">bi.name</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">'"'</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>149</span> </span><span class="WHIT">      </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">bi.color</span><span class="WHIT"> </span><span class="PUNC">!=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>150</span> </span><span class="WHIT">        </span><span class="NAME">xmlDef</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">xmlDef</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">' color="#'</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">bi.color</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">'"'</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>151</span> </span><span class="WHIT">      </span><span class="NAME">xmlDef</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">xmlDef</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">' />'</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>152</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>153</span> </span><span class="WHIT">  </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>154</span> 
+<span class='line'>155</span> </span><span class="WHIT">  </span><span class="NAME">xmlDef</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">' &lt;/BarChartStyle>&lt;/AdvancedStyle>&lt;/style>'</span><span class="PUNC">;</span><span class="WHIT">    
+<span class='line'>156</span>   </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">xmlDef</span><span class="PUNC">;</span><span class="WHIT">  
+<span class='line'>157</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>158</span> </span></pre></body></html>

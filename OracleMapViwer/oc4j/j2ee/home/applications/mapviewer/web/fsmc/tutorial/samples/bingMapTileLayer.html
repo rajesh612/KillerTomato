@@ -1,0 +1,74 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+<title>Oracle Maps Demo - Builtin Microsoft Bing Maps tile layer</title>
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+<script charset="UTF-8" type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=6.2">
+</script>
+<script type="text/javascript">
+
+  var baseURL  = "http://"+document.location.host+"/mapviewer";
+  
+  function showMap() {
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    baseMap = new MVBingTileLayer() ;
+    baseMap.setKey("your_bing_maps_key") ;
+    mapview.addMapTileLayer(baseMap);
+    var mpoint = MVSdoGeometry.createPoint(-122.39497, 37.80304, 8307);
+    mapview.setCenterAndZoomLevel(mpoint, 8);
+    mapview.addNavigationPanel() ;    
+    ovcontainer = new MVMapDecoration(new MVOverviewMap(4),null,null,200,150) ;
+    ovcontainer.setCollapsible(true, true);
+    ovcontainer.setTitleBar("<font face='Tahoma' size='2'>Overview Map</font>", "/mapviewer/fsmc/images/overviewicon.gif", "Overview map");
+    mapview.addMapDecoration(ovcontainer);
+    mapview.display();
+  }
+
+  function setMapType(mapType)
+  {
+    baseMap.setMapType(mapType) ;
+  }
+</script>
+</head>
+<body onload="showMap()">
+<h3>Oracle Maps example - Builtin Microsoft Bing Maps tile layer</h3>
+This demo displays Microsoft Bing Maps as an a built-in map tile layer. You need to apply for a Bing Maps API key and use it in your code as described in the <a href="../../apidoc/symbols/MVBingTileLayer.html">API doc</a>.<br><br>
+  Select a map type: 
+  <a href="javascript:setMapType(MVBingTileLayer.TYPE_ROAD)">Road map</a>
+  <a href="javascript:setMapType(MVBingTileLayer.TYPE_HYBRID)">Hybrid map</a>
+  <a href="javascript:setMapType(MVBingTileLayer.TYPE_SHADED)">Shaded map</a>
+  <a href="javascript:setMapType(MVBingTileLayer.TYPE_SATELLITE)">Arial map</a>
+  <div id="map" style="width:700px; height:500px"></div>
+</body>
+
+<h3>Instructions</h3>
+   <font style="color:red">IMPORTANT NOTE: To use third party maps as an Oracle Maps tile layer, the map usage of your application must meet the terms of service defined by the map service provider. </font>
+   
+   <p>To add a Bing Maps tile layer, you need to first load the Bing Maps Javascript API libary into your application web page. </p>
+  <blockquote>
+   <pre>&lt;script charset="UTF-8" type="text/javascript" src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=6.2">
+&lt;/script>
+</pre>
+  </blockquote>
+   
+   <p>Then in your application code, you need to create a MVBingTileLayer object, set your Bing Maps key and add the tile layer to the MVMapView instance. </p>
+  <blockquote>
+   <pre>
+    baseMap = new MVBingTileLayer() ;
+    baseMap.setKey("your_bing_maps_key") ;
+    mapview.addMapTileLayer(baseMap);
+   </pre>
+  </blockquote>
+   
+   Your application can also invoke the setMapType method to change the map type displayed by the map tile layer.
+  <blockquote>
+   <pre>
+  &lt;a href="javascript:setMapType(MVBingTileLayer.TYPE_ROAD)">Road map</a>
+  &lt;a href="javascript:setMapType(MVBingTileLayer.TYPE_HYBRID)">Hybrid map</a>
+  &lt;a href="javascript:setMapType(MVBingTileLayer.TYPE_SHADED)">Shaded map</a>
+  &lt;a href="javascript:setMapType(MVBingTileLayer.TYPE_SATELLITE)">Arial map</a>
+   </pre>
+  </blockquote>
+  
+  Please refer the API doc for more information on how to use the built-in Bing Maps tile layer class <a href="../../apidoc/symbols/MVBingTileLayer.html">MVBingTileLayer</a>.
+</html>

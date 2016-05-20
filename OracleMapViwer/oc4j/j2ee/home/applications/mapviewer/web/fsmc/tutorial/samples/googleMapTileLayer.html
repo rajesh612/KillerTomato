@@ -1,0 +1,71 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+<title>Oracle Maps Demo - Builtin Google Maps tile layer</title>
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=your_google_maps_key"
+  type="text/javascript"></script>
+<script type="text/javascript">
+
+  var baseURL  = "http://"+document.location.host+"/mapviewer";
+  
+  function showMap() {
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    baseMap = new MVGoogleTileLayer() ;
+    mapview.addMapTileLayer(baseMap);
+    var mpoint = MVSdoGeometry.createPoint(-122.39497, 37.80304, 8307);
+    mapview.setCenterAndZoomLevel(mpoint, 8);
+    mapview.addNavigationPanel() ;    
+    ovcontainer = new MVMapDecoration(new MVOverviewMap(4),null,null,200,150) ;
+    ovcontainer.setCollapsible(true, true);
+    ovcontainer.setTitleBar("<font face='Tahoma' size='2'>Overview Map</font>", "/mapviewer/fsmc/images/overviewicon.gif", "Overview map");
+    mapview.addMapDecoration(ovcontainer);
+    mapview.display();
+  }
+
+  function setMapType(mapType)
+  {
+    baseMap.setMapType(mapType) ;
+  }
+</script>
+</head>
+<body onload="showMap()">
+<h3>Oracle Maps example - Builtin Google Maps tile layer</h3>
+This demo displays Google Maps as an a built-in map tile layer. You need to apply for a Google Maps API key and use it to load the Google Maps API library as described in the <a href="../../apidoc/symbols/MVGoogleTileLayer.html">API doc</a>.<br><br>
+  Select a map type: 
+  <a href="javascript:setMapType(MVGoogleTileLayer.TYPE_ROAD)">Road map</a>
+  <a href="javascript:setMapType(MVGoogleTileLayer.TYPE_HYBRID)">Hybrid map</a>
+  <a href="javascript:setMapType(MVGoogleTileLayer.TYPE_SHADED)">Shaded map</a>
+  <div id="map" style="width:700px; height:500px"></div>
+</body>
+
+<h3>Instructions</h3>
+   <font style="color:red">IMPORTANT NOTE: To use third party maps as an Oracle Maps tile layer, the map usage of your application must meet the terms of service defined by the map service provider.</font>
+   
+   <p>To add a Google Maps tile layer, you need to first load the Google Maps Javascript API libary into your application web page. </p>
+  <blockquote>
+   <pre>&lt;script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=[your-Google-Maps-API-key]"
+  type="text/javascript">&lt;/script>
+</pre>
+  </blockquote>
+   
+   <p>Then in your application code, you need to create a MVGoogleTileLayer object and add it to the MVMapView instance. </p>
+  <blockquote>
+   <pre>
+      mapview = new MVMapView(document.getElementById("map"), baseURL);
+      baseMap = new MVGoogleTileLayer() ;
+      mapview.addMapTileLayer(baseMap);
+   </pre>
+  </blockquote>
+   
+   Your application can also invoke the setMapType method to change the map type displayed by the map tile layer.
+  <blockquote>
+   <pre>
+  &lt;a href="javascript:setMapType(MVGoogleTileLayer.TYPE_ROAD)">Road map</a>
+  &lt;a href="javascript:setMapType(MVGoogleTileLayer.TYPE_HYBRID)">Hybrid map</a>
+  &lt;a href="javascript:setMapType(MVGoogleTileLayer.TYPE_SHADED)">Shaded map</a>
+   </pre>
+  </blockquote>
+  
+  Please refer the API doc for more information on how to use the built-in Google Maps tile layer class <a href="../../apidoc/symbols/MVGoogleTileLayer.html">MVGoogleTileLayer</a>.
+</html>

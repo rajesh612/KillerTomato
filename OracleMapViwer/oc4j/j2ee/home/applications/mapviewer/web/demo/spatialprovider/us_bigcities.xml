@@ -1,0 +1,144 @@
+<?xml version="1.0" standalone="yes"?>
+<spatial_data>
+
+ <data_attributes>
+   <attribute name="city" type="string" />
+   <attribute name="state_abrv" type="string" />
+   <attribute name="pop90" type="double" />
+ </data_attributes>
+
+ <data_extents>
+    <xmin> -122.49586 </xmin>
+    <ymin> 29.45765 </ymin>
+    <xmax> -73.943849 </xmax>
+    <ymax> 42.3831 </ymax>
+ </data_extents>
+
+ <geoFeature>
+   <attributes> New York,NY,7322564 </attributes>
+   <geometricProperty>
+     <Point>
+       <coordinates>-73.943849, 40.6698</coordinates>
+     </Point>
+    </geometricProperty>
+  </geoFeature>
+
+ <geoFeature>
+   <attributes> Los Angeles,CA,3485398 </attributes>
+   <geometricProperty>
+     <Point>
+       <coordinates>-118.4112, 34.112101</coordinates>
+     </Point>
+    </geometricProperty>
+  </geoFeature>
+
+ <geoFeature>
+   <attributes> Chicago,IL,2783726 </attributes>
+   <geometricProperty>
+     <Point>
+       <coordinates>-87.684965, 41.83705</coordinates>
+     </Point>
+    </geometricProperty>
+  </geoFeature>
+
+ <geoFeature>
+   <attributes> Houston,TX,1630553 </attributes>
+   <geometricProperty>
+     <Point>
+       <coordinates>-95.386728, 29.7687</coordinates>
+     </Point>
+    </geometricProperty>
+  </geoFeature>
+
+ <geoFeature>
+   <attributes> Philadelphia,PA,1585577 </attributes>
+   <geometricProperty>
+     <Point>
+       <coordinates>-75.134678, 40.006817</coordinates>
+     </Point>
+    </geometricProperty>
+  </geoFeature>
+
+ <geoFeature>
+   <attributes> San Diego,CA,1110549 </attributes>
+   <geometricProperty>
+     <Point>
+       <coordinates>-117.13577, 32.81495</coordinates>
+     </Point>
+    </geometricProperty>
+  </geoFeature>
+
+ <geoFeature>
+   <attributes> Detroit,MI,1027974 </attributes>
+   <geometricProperty>
+     <Point>
+       <coordinates>-83.102198, 42.3831</coordinates>
+     </Point>
+    </geometricProperty>
+  </geoFeature>
+
+ <geoFeature>
+   <attributes> Dallas,TX,1006877 </attributes>
+   <geometricProperty>
+     <Point>
+       <coordinates>-96.765249, 32.794151</coordinates>
+     </Point>
+    </geometricProperty>
+  </geoFeature>
+
+ <geoFeature>
+   <attributes> Phoenix,AZ,983403 </attributes>
+   <geometricProperty>
+     <Point>
+       <coordinates>-112.0714, 33.54255</coordinates>
+     </Point>
+    </geometricProperty>
+  </geoFeature>
+
+ <geoFeature>
+   <attributes> San Antonio,TX,935933 </attributes>
+   <geometricProperty>
+     <Point>
+       <coordinates>-98.505355, 29.45765</coordinates>
+     </Point>
+    </geometricProperty>
+  </geoFeature>
+
+ <geoFeature>
+   <attributes> San Jose,CA,782248 </attributes>
+   <geometricProperty>
+     <Point>
+       <coordinates>-121.84978, 37.304</coordinates>
+     </Point>
+    </geometricProperty>
+  </geoFeature>
+
+ <geoFeature>
+   <attributes> Indianapolis,IN,741952 </attributes>
+   <geometricProperty>
+     <Point>
+       <coordinates>-86.145999, 39.7777</coordinates>
+     </Point>
+    </geometricProperty>
+  </geoFeature>
+
+ <geoFeature>
+   <attributes> Baltimore,MD,736014 </attributes>
+   <geometricProperty>
+     <Point>
+       <coordinates>-76.610616, 39.3008</coordinates>
+     </Point>
+    </geometricProperty>
+  </geoFeature>
+
+ <geoFeature>
+   <attributes> San Francisco,CA,723959 </attributes>
+   <geometricProperty>
+     <Point>
+       <coordinates>-122.49586, 37.77904</coordinates>
+     </Point>
+    </geometricProperty>
+  </geoFeature>
+
+</spatial_data>
+

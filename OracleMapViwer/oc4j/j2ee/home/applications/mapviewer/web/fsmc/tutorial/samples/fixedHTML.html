@@ -1,0 +1,146 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Map Cache Server/Map Client</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+<script language=javascript>
+  var mapview;
+  var md1,md2;
+  function showMap()
+  { 
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);    
+    addFixedHTML()
+                                           
+  }
+
+  function openNewWindow(){
+    window.open('http://www.oracle.com','oracle');
+  }
+  function addFixedHTML()
+  {
+    md1=new MVMapDecoration( "Hello World",0.1, 0.1,200,20);
+    mapview.addMapDecoration(md1);
+    md2=new MVMapDecoration("<img src=\"http://www.oracle.com/admin/images/ocom/oralogo_small.gif\">",0.1, 0.1,20,5);
+    md2.setOffset(0,50)
+    md2.attachEventListener(MVEvent.MOUSE_CLICK,openNewWindow);
+    mapview.display();
+    mapview.addMapDecoration(md2);
+    
+  }
+  function removeFixedHTML()
+  {
+    var id = document.getElementById('mapdecoid').value;
+    eval("mapview.removeMapDecoration(md"+id+")");
+  }
+  function changeVisibility()
+  {
+  	var id = document.getElementById('mapdecoid').value;
+    eval("md"+id+".setVisible(!md"+id+".isVisible())");
+  }
+</script>
+</head>
+
+<body onload="javascript:showMap();">
+<h3>Oracle Maps example - map decorations</h3>
+  <div id="map" style="left:0px; top:10px; width:100%; height:60%"></div> 
+  <BR></BR>
+
+<h3>Instructions</h3>
+In this demo we added two pieces of map decorations. A map decoration is an arbitrary
+HTML string that is displayed at a dixed location inside the map DIV. One is a simple string of
+"Hello World", the other the Oracle logo. When you add a Map Decoration to the
+map, the JavaScript API automatically assigns a unique Id to it, starting at 1.
+You can manipulate each map decoration by its Id, as show below.
+<br></br>
+
+ <table><tr><td>
+ Select a map decoration (by its Id):
+ <FORM>
+	 <SELECT ID="mapdecoid">  
+	 <OPTION VALUE="1" SELECTED>1</OPTION>
+	 <OPTION VALUE="2">2</OPTION>
+	 </SELECT>
+</FORM>
+</td>
+</tr>
+<tr>
+<td>
+and  <a href="javascript:changeVisibility()">click here to change visibility</a>
+</td>
+</tr>
+<tr>
+<td>
+or <a href="javascript:removeFixedHTML()">click here to remove it</a> 
+</td>
+</tr>
+</table>
+
+<h3>Source code</h3>
+Here are the source code for this demo.
+
+<blockquote>
+<pre>
+  var mapview;
+  var md1,md2;
+  function showMap()
+  { 
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);    
+    addFixedHTML()
+                                           
+  }
+
+  function openNewWindow(){
+    window.open('http://www.oracle.com','oracle');
+  }
+  
+  function addFixedHTML()
+  {
+    <font color="#ff0000">
+    md1=new MVMapDecoration( "Hello World",0.1, 0.1,200,20);
+    mapview.addMapDecoration(md1);
+    md2=new MVMapDecoration("&lt;img src=\"http://www.oracle.com/admin/images/ocom/oralogo_small.gif\"&gt;",0.1, 0.1,20,5);
+    md2.setOffset(0,50)
+    md2.attachEventListener(MVEvent.MOUSE_CLICK,openNewWindow);
+    </font>
+    mapview.display();
+    <font color="#ff0000">
+    mapview.addMapDecoration(md2);
+    </font>
+  }
+  <font color="#FF0000">
+  function removeFixedHTML()
+  {
+    var id = document.getElementById('mapdecoid').value;
+    eval("mapview.removeMapDecoration(md"+id+")");
+  }
+  function changeVisibility()
+  {
+  	var id = document.getElementById('mapdecoid').value;
+    eval("md"+id+".setVisible(!md"+id+".isVisible())");
+  }
+  </FONT>
+</pre>
+</blockquote>
+</body>
+  
+</html>
+
+

@@ -1,0 +1,120 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html" charset=UTF-8">
+<TITLE>Map Cache Server/Map Client</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+  var mapview;
+  
+  function showMap() 
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.7706;
+    var mapZoom      =  4;       
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+    mapview.setCenter(mpoint);   
+    mapview.setZoomLevel(mapZoom);
+    
+    addThemeBasedFOI();
+    mapview.addNavigationPanel() ;
+    mapview.display();
+  }
+  
+  function addThemeBasedFOI()
+  {
+    var themebasedfoi1 = new MVThemeBasedFOI('themebasedfoi1','mvdemo.THEME_DEMO_COUNTY_POPDENSITY');
+    themebasedfoi1.enableAutoWholeImage(true) ;
+    mapview.addThemeBasedFOI(themebasedfoi1);
+
+    var themebasedfoi2 = new MVThemeBasedFOI('themebasedfoi2','mvdemo.customers');
+    mapview.addThemeBasedFOI(themebasedfoi2);
+  
+  }
+  
+  function setVisible(item)
+  {
+    var themebasedfoi = mapview.getThemeBasedFOI(item.value);	  		
+    themebasedfoi.setVisible(!themebasedfoi.isVisible());
+  }
+</script>
+</head>
+
+<body onload="javascript:showMap();">
+<h3>Oracle Maps example - show/hide Theme Based FOI layers </h3>
+
+      <ul>  
+        <LI ><INPUT TYPE="checkbox" value="themebasedfoi1" onclick="setVisible(this)" checked/>Show County population layer
+        <LI ><INPUT TYPE="checkbox" value="themebasedfoi2" onclick="setVisible(this)" checked/>Show Customer layer
+      </ul>
+
+   <div id="map" style="left:0px;top:10px;width:100%; height:60%"></div> 
+   
+<HR/>
+<h3>Instructions</h3>
+  This demo displays two Theme based FOI layers. One layer shows customers as red dots.
+  The other shows counties shaded according to its population.  You can use the 
+  two check boxes above the map to toggle each FOI layer on or off. Note that you
+  can also click on the colored counties layer (when it is visible) to display an info-tip window
+  showing the county population.
+<h3> Source code </h3>
+
+The JavaScript code for the above map is below.
+
+<blockquote>
+  <pre>
+    var mapview;
+    
+    function showMap() 
+    {	
+      var baseURL  = "http://"+document.location.host+"/mapviewer";
+      var mapCenterLon = -122.45;
+      var mapCenterLat =  37.7706;
+      var mapZoom      =  4;       
+      var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+      mapview = new MVMapView(document.getElementById("map"), baseURL);
+      mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+      mapview.setCenter(mpoint);   
+      mapview.setZoomLevel(mapZoom);
+      <font color="#ff0000">
+      addThemeBasedFOI();
+      </font>
+      mapview.addNavigationPanel();
+      mapview.display();
+    }
+    <font color="#ff0000">
+    function addThemeBasedFOI()
+    {
+      var themebasedfoi1 = new MVThemeBasedFOI('themebasedfoi1','mvdemo.THEME_DEMO_COUNTY_POPDENSITY');
+      themebasedfoi1.enableAutoWholeImage(true) ;
+      mapview.addThemeBasedFOI(themebasedfoi1);
+      
+      var themebasedfoi2 = new MVThemeBasedFOI('themebasedfoi2','mvdemo.customers');
+      mapview.addThemeBasedFOI(themebasedfoi2);
+    }
+    
+    function setVisible(item)
+    {
+      var themebasedfoi = mapview.getThemeBasedFOI(item.value);	  		
+      themebasedfoi.setVisible(!themebasedfoi.isVisible());
+    }	
+    </font>
+  </pre>
+</blockquote>
+
+The HTML code that wires the <I>setVisible()</I> function is listed here:
+<blockquote>
+	<pre>
+        &lt;LI&gt;&lt;INPUT TYPE="checkbox" value="themebasedfoi1" onclick="setVisible(this)" checked/&gt;Show Customers&lt;LI&gt;
+        &lt;LI&gt;&lt;INPUT TYPE="checkbox" value="themebasedfoi2" onclick="setVisible(this)" checked/&gt;Show County population density&lt;LI&gt;	
+	</pre>
+</blockquote>
+</body>
+</html>
+
+

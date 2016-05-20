@@ -1,0 +1,130 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" type="text/css" href="../t.css" />
+<TITLE>Map Cache Server/Map Client/Navigation Panel</TITLE>
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript> 
+  var mapview;
+  var navPan;
+  function showMap()
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.7706;
+    var mapZoom      =  4;       
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+    mapview.setCenter(mpoint);   
+    mapview.setZoomLevel(mapZoom);
+    var nav = new MVNavigationPanel() ;
+    nav.setZoomLevelInfoTips({0:"Country", 3:"State", 5:"County", 7:"City", 9:"Street"}) ;
+    navPan = new MVMapDecoration(nav,0,0,null,null,4,4) ;
+    mapview.addMapDecoration(navPan) ;
+    mapview.display(); 
+  }
+
+  var panningButtons = 8 ;
+  var showSlider = true ;
+  var showZoomingButtons = true ;
+  function switchPanelComponent(component, checkBox)
+  {
+    if(navPan)
+      mapview.removeMapDecoration(navPan) ;
+    if(component=="panning")
+      showPanningButtons = checkBox.checked ;
+    else if(component=="slider")
+      showSlider = checkBox.checked ;
+    else if(component=="zooming")
+      showZoomingButtons = checkBox.checked ;
+    else 
+    {
+      panningButtons = parseInt(checkBox.options[component].value) ;
+    }
+    var nav = new MVNavigationPanel(panningButtons, showSlider, showZoomingButtons) ;
+    nav.setZoomLevelInfoTips({0:"Country", 3:"State", 5:"County", 7:"City", 9:"Street"}) ;
+    navPan = new MVMapDecoration(nav,0,0,null,null,4,4) ;
+    mapview.addMapDecoration(navPan) ;
+  }
+  
+</script>
+
+</head>
+	
+<body onload= javascript:showMap();>
+<h3>Oracle Maps example - customize the navigation panel</h3>
+  <div id="map" style="position:absolute; left:10px; top:50px; width:65%; height:60%"></div>
+  <div id="demo" style="position:absolute; left:68%; top:50px;">
+    Customize the style of the navigation panel.
+    <OL>
+      <LI>
+      <SELECT NAME="mylist" onChange="switchPanelComponent(this.selectedIndex, this)">
+      <OPTION VALUE="0">0
+      <OPTION VALUE="4">4
+      <OPTION VALUE="8" selected>8
+      </SELECT>
+      Number of panning bottons</LI>
+      <LI><input type=checkbox onclick="switchPanelComponent('slider', this)" checked>Show zoom leve slider</LI>
+      <LI><input type=checkbox onclick="switchPanelComponent('zooming', this)" checked>Show zooming buttons</LI>
+    </OL>
+    <input type=button onclick="navPan.setVisible(!navPan.isVisible())" value="Toggle Navigation Panel">
+  </div>
+<div style="position:absolute;top:70%; left:10px;width:98%" class="noprint">
+<HR/>
+<H3>Instructions</H3>
+This example shows how to customize the display of the navigation panel.
+<h3>Source code</h3>
+The JavaScript code for this demo is listed below.
+<blockquote>
+<pre>	
+  var mapview;
+  var navPan;
+  function showMap()
+  { 
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.7706;
+    var mapZoom      =  4;       
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+    mapview.setCenter(mpoint);   
+    mapview.setZoomLevel(mapZoom);
+  <font color="#ff0000">
+    var nav = new MVNavigationPanel() ;
+    nav.setZoomLevelInfoTips({0:"Country", 3:"State", 5:"County", 7:"City", 9:"Street"}) ;
+    navPan = new MVMapDecoration(nav,0,0,null,null,4,4) ;
+    mapview.addMapDecoration(navPan) ;
+  </font>
+    mapview.display(); 
+  }
+
+  <font color="#ff0000">
+  var showPanningButtons = true ;
+  var showSlider = true ;
+  var showZoomingButtons = true ;
+  function switchPanelComponent(component, checkBox)
+  {
+    if(navPan)
+      mapview.removeMapDecoration(navPan) ;
+    if(component=="panning")
+      showPanningButtons = checkBox.checked ;
+    if(component=="slider")
+      showSlider = checkBox.checked ;
+    if(component=="zooming")
+      showZoomingButtons = checkBox.checked ;
+    var nav = new MVNavigationPanel(panningButtons, showSlider, showZoomingButtons) ;
+    nav.setZoomLevelInfoTips({0:"Country", 3:"State", 5:"County", 7:"City", 9:"Street"}) ;
+    navPan = new MVMapDecoration(nav,0,0,null,null,4,4) ;
+    mapview.addMapDecoration(navPan) ;
+  }
+  </font>
+</pre>
+</blockquote> 
+</body>	
+</html>
+
+

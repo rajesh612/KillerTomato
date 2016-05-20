@@ -1,0 +1,85 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html" charset=UTF-8">
+<TITLE>Map Cache Server/Map Client/infoWindow</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+  var mapview;
+  
+  function showMap()
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+    mapview.setCenter(mpoint);   
+    mapview.setZoomLevel(mapZoom);
+    
+    mapview.display();  			
+    
+    displayInfoWindow();
+  }
+  
+  function displayInfoWindow() 
+  {	
+    var mpoint = MVSdoGeometry.createPoint (-122.4, 37.68,8301);
+    var mpoint1 = mapview.transformGeom(mpoint, mapview.getSrid());
+    mapview.displayInfoWindow(mpoint1, "<img src=\"http://www.oracle.com/admin/images/ocom/oralogo_small.gif\">"); 
+  }                     
+</script>
+</head>
+
+<body onload="javascript:showMap();">
+<h3>Oracle Maps example - custom info window </h3>
+   <div id="map" style="left:0px; top:10px;width: 100%; height: 60%"></div> 
+
+<HR/>
+<h3>Instructions</h3>
+This demo shows how to set custom contents (which can be arbitrary HTML code) 
+to be displayed inside an info window. In this case the content is the Oracle company
+logo.
+
+<h3>Source code</h3>
+The JavaScript source code for this demo is listed below.
+<blockquote>
+<pre>
+  var mapview;
+  
+  function showMap()
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+    mapview.setCenter(mpoint);   
+    mapview.setZoomLevel(mapZoom);
+    
+    mapview.display();  			
+    <font color="#ff0000">
+    displayInfoWindow();
+    </font>
+  }
+  <font color="#ff0000">
+  function displayInfoWindow() 
+  {	
+    var mpoint = MVSdoGeometry.createPoint (-122.4, 37.68,8301);
+    var mpoint1 = mapview.transformGeom(mpoint, mapview.getSrid());
+    mapview.displayInfoWindow(mpoint1, "&lt;img src=\"http://www.oracle.com/admin/images/ocom/oralogo_small.gif\"&gt;"); 
+  }                     
+  </font>
+</pre>
+</blockquote>
+</body>
+
+</html>
+
+

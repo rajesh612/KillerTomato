@@ -1,0 +1,113 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html" charset=UTF-8">
+<TITLE>Map Cache Server/Map Client</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+  var mapview;
+  var basemap1 = new MVMapTileLayer("mvdemo.demo_map");
+  var basemap2 = new MVMapTileLayer("mvdemo.customer_map", "",  true);
+  basemap2.setTransparent(true);
+  function showMap() 
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4; 
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    
+    mapview.addMapTileLayer(basemap1);  
+    mapview.addMapTileLayer(basemap2); 
+    basemap1.setVisible (true);
+    basemap2.setVisible (true);
+     
+    mapview.setCenter(mpoint);   
+    mapview.setZoomLevel(mapZoom);    
+    mapview.display();
+  }
+  
+  function setVisible(item)
+  {
+    var basemap = eval(item.value);
+    basemap.setVisible(!basemap.isVisible());
+  }
+  </script>
+</head>
+
+<body onload="javascript:showMap()">
+<h3>Oracle Maps example - multiple basemap layers</h3>
+
+<table width="100%" height="60%">
+<tr>
+<td width="60%">
+   <div id="map" style="left:10px; top:10px;width:100%; height: 100%"></div> 
+</td>
+<td width="40%">
+   <div id="demo" style="left:12px; top:10px;">
+      <ul>  
+     	 <LI ><INPUT TYPE="checkbox" value="basemap1" onclick="setVisible(this)" checked/>Show Demo_Map
+         <LI ><INPUT TYPE="checkbox" value="basemap2" onclick="setVisible(this)" checked/>Show Customer_Map
+      </ul>
+   </div> 
+</td>
+</tr>
+</table>
+
+<h3>Instructions</h3>
+This demo shows that you can add multiple basemap layers to the map area. A
+base map is typically associated with a MapViewer basemap and all of its map
+tiles are pre-generated and cached by a map cache instance. In this case two
+basemaps from the <b>mvdemo</b> schema are added to the map display, and you can 
+switch the visibility of each. 
+<BR></BR>
+Note that in order to display the customer basemap, you must have created a
+map cache instance using MapViewer's Admin web page for the 'CUSTOMER_MAP' 
+base map. You can follow similar instructions for 'DEMO_MAP' in the tutorial
+<a href="../setup.html">setup</a> page.
+
+<h3>Source code</h3>
+<blockquote>
+<pre>
+  var mapview;
+  <font color="#ff0000">
+  var basemap1 = new MVMapTileLayer("mvdemo.demo_map");
+  var basemap2 = new MVMapTileLayer("mvdemo.customer_map", "",  true);
+  basemap2.setTransparent(true);
+  </font>
+  function showMap() 
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4; 
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+
+  <font color="#ff0000">    
+    mapview.addMapTileLayer(basemap1);  
+    mapview.addMapTileLayer(basemap2); 
+    basemap1.setVisible (true);
+    basemap2.setVisible (true);
+  </font>
+    mapview.setCenter(mpoint);   
+    mapview.setZoomLevel(mapZoom);    
+    mapview.display();
+  }
+  
+  function setVisible(item)
+  {
+      <font color="#ff0000">
+    var basemap = eval(item.value);
+    basemap.setVisible(!basemap.isVisible());
+    </font>
+  }
+</pre>
+</blockquote>
+</body>
+</html>
+
+

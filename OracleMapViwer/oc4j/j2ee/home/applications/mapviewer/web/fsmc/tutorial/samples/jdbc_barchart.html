@@ -1,0 +1,133 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Oracle Maps Tutorial - theme highlighting</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+  var themebasedfoi;
+  var mapview;
+  
+  function showMap()
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -100;
+    var mapCenterLat =  35.5;
+    var mapZoom      =  0;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);    
+
+    createThemeFOI();
+
+    buildDynamicStyle(themebasedfoi);
+    
+    mapview.addNavigationPanel("EAST") ;
+
+    mapview.display();  			
+    
+  }
+
+  function createThemeFOI()
+  {
+    var baseQuery= "select geom, state, WHITE, BLACK, ASIANPI, state_abrv, AMINDIAN, HISPANIC from states";
+    var theme = "<themes><theme name='MY_JDBC_THEME' >" +
+                "<jdbc_query label_column='state' spatial_column='geom' jdbc_srid='8307' " +
+                "render_style='C.COUNTIES' datasource='mvdemo'>" + baseQuery +
+                "<hidden_info>"+
+                "<field column=\"WHITE\"/>"+
+                "<field column=\"BLACK\"/>"+
+                "<field column=\"ASIANPI\"/>"+
+                "<field column=\"AMINDIAN\"/>"+
+                "<field column=\"HISPANIC\"/>"+
+                "</hidden_info>"+
+                "</jdbc_query>"+
+                "<rendering>"+
+                "   <style name='my_style' value_columns='white,black,asianpi,amindian,hispanic'/>"+
+                "</rendering>"+
+                "</theme></themes>" ; 
+    themebasedfoi = new MVThemeBasedFOI('ajdbctheme',theme);    
+    themebasedfoi.setBringToTopOnMouseOver(true);
+	themebasedfoi.enableImageCaching(false);
+    mapview.addThemeBasedFOI(themebasedfoi); 
+  }
+  
+  function buildDynamicStyle(themebasedfoi)
+  {
+      var xmlDef = '<AdvancedStyle>'+
+       '<BarChartStyle width="40" height="30" share_scale="false"'+
+       '   min_value="0.0" max_value="1000000">'+
+       '    <Bar name="1990" color="#FF0000" />'+
+       '    <Bar name="1995" color="#FFC800" />'+
+       '    <Bar name="1998" color="#0000FF" />'+
+       '    <Bar name="2000" color="#00FF00" />'+
+       '    <Bar name="2002" color="#00FFFF" />'+
+       '</BarChartStyle>'+
+    '</AdvancedStyle>';
+
+      var styleObj = new MVXMLStyle("my_style", xmlDef);
+
+      themebasedfoi.addStyle(styleObj);
+      themebasedfoi.setRenderingStyle("my_style");
+  }
+
+
+
+</script>
+    
+</head>
+
+<body onload=javascript:showMap();>
+<h3>Oracle Maps example - Dynamic (JDBC) theme, dynamic Bar chart style and rendering rule</h3>
+
+  <div id="map" style="left:0px; top:0px; width:60%; height:60%"></div>
+
+<HR/>
+
+<h3>Instructions</h3>
+  This demo adds a dynamic query-based FOI layer to the map. It also creates a dynamic 5-bar Bar chart style to plot the population of five different races on each state.
+  It is very similar to the preivous tutorial, the only difference is that we use a Bar chart style here.
+
+<h3> Source code </h3>
+
+The key JavaScript code for the above map is listed below.
+
+<blockquote>
+	<pre>
+   function buildDynamicStyle(themebasedfoi)
+   {<font color="#ff0000">
+      var xmlDef = '<AdvancedStyle>'+
+       ' &lt;BarChartStyle width="40" height="30" share_scale="false"'+
+       '   min_value="0.0" max_value="1000000"&gt;'+
+       '    &lt;Bar name="white" color="#FF0000" /&gt;'+
+       '    &lt;Bar name="black" color="#FFC800" /&gt;'+
+       '    &lt;Bar name="asianpi" color="#0000FF" /&gt;'+
+       '    &lt;Bar name="amindian" color="#00FF00" /&gt;'+
+       '    &lt;Bar name="hispanic" color="#00FFFF" /&gt;'+
+       ' &lt;/BarChartStyle&gt;'+
+       '&lt;/AdvancedStyle&gt;';
+
+      var styleObj = new MVXMLStyle("my_style", xmlDef);
+	  </font>
+      themebasedfoi.addStyle(styleObj);
+      themebasedfoi.setRenderingStyle("my_style");
+  }
+	</pre>
+	
+Note that in the above code we first create the XML representation of the Bar chart style, then use the generic MVXMLStyle class to 
+actually construct the style object. In fact you can use this approach to create all types of MapViewer styles. <br>
+
+Also note that the attributes <i>share_scale</i>, <i>min_value</i> and <i>max_value</i> in the Bar chart's 
+XML definition refer to how MapViewer scales the height of the bars (across all bar charts or not). In this case the 
+height of each bar is determined locally within each bar chart. The overall bar chart size is specified by the 
+<i>width</i> and <i>height</i> attributes. For more info on Bar chart support please refer to the MapViewer User's Guide.
+
+</blockquote>
+</body>
+</html>      
+
+

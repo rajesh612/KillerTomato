@@ -1,0 +1,102 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Oracle Maps - Distance tool</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+  
+<script language=javascript>
+  var mapview;
+  var distancetool;
+  var ordflag=false;
+  
+  function showMap()
+  {	
+    document.getElementById("distanceOrdFlag").checked = false;
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);     			
+    mapview.addBaseMapLayer(new MVBaseMap("mvdemo.demo_map"));   
+    mapview.setCenter(mpoint);   
+    mapview.setZoomLevel(mapZoom);
+    
+    distancetool = new MVDistanceTool(MVDistanceTool.IMPERIAL) ; 
+    mapview.addDistanceTool(distancetool);
+    distancetool.setEventListener(MVEvent.NEW_SHAPE_POINT, getDistanceOrd);
+    distancetool.setEventListener(MVEvent.FINISH, finishAction);
+    distancetool.setEventListener(MVEvent.MODIFY, getDistanceOrd);
+    
+    mapview.display(); 
+  }
+  
+  function finishAction()
+  {
+    alert("Distance tool is done!");
+  }
+  
+  function getDistanceOrd()
+  { 
+    if (ordflag)
+      alert("Distance Tool coordinates:"+ distancetool.getOrdinates()+" ");
+  }
+
+  function showDistanceOrd(item)
+  {
+    ordflag=item.checked;
+  }
+
+</script>
+</head>
+
+<body onload="javascript:showMap()">
+<h3>Oracle Maps example - Distance measuring tool</h3>
+<table>
+<tr><td width="60%" height="400px">
+<div id="map" style="left:0px; top:0px; width:100%; height:100%"></div>
+</td>
+<td width="40%">
+<div id="demo" style="left:10px; top:0px; width: 90%; height: 100%">        
+         
+         <LI><a href="javascript:distancetool.init();">Click here</a> to activate the distance tool and then start drawing on the map. </LI>
+         
+         <LI>When you're finished, click the "Finish" link inside the distance measurement window to deactivate the distance tool, or click the "Clear" link to deactivate the distance tool and clear the measurement lines.</LI>
+         
+         <LI><INPUT id="distanceOrdFlag" TYPE="checkbox" value="showDistanceOrd" onclick="showDistanceOrd(this)">Check here to see the distance shape point coordinates whenever a new shape point is created or the existing ones are changed.</LI>
+</div>      
+</td>
+</tr>
+</table>
+
+<HR/>
+<H3>Instructions</H3>
+This demo shows you how to initiate a distance tool and draw
+simple shapes on the map. 
+
+<h3>Source code</h3>
+The JavaScript code that creates the distance tool and adds event listeners is listed below.
+<blockquote>
+<pre>
+    distancetool = new MVDistanceTool(MVDistanceTool.IMPERIAL) ; 
+    mapview.addDistanceTool(distancetool);
+    distancetool.setEventListener(MVEvent.NEW_SHAPE_POINT, getDistanceOrd);
+    distancetool.setEventListener(MVEvent.FINISH, finishAction);
+    distancetool.setEventListener(MVEvent.MODIFY, getDistanceOrd);
+</pre>
+</blockquote>
+
+The JavaScript code that activates the distance tool is listed below.
+<blockquote>
+<pre>
+    &lt;a href="javascript:<font color="red">distancetool.init();</font>"&gt;Click here&lt;/a&gt; to activate the distance tool and then start drawing on the map.
+</pre>
+</blockquote>
+
+</body>
+
+</html>
+
+

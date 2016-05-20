@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="1.2"
+          xmlns:h="http://java.sun.com/jsf/html"
+          xmlns:f="http://java.sun.com/jsf/core"
+          xmlns:af="http://xmlns.oracle.com/adf/faces"
+          xmlns:afh="http://xmlns.oracle.com/adf/faces/html">
+  <jsp:text>
+    <![CDATA[ <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> ]]>
+  </jsp:text>
+  <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+  <f:view>
+    <afh:html>
+      <afh:head title="deleteWarn">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+      </afh:head>
+      <afh:body>
+        <h:form>
+          <af:panelGroup layout="vertical">
+            <af:outputFormatted value="Warning!"
+                                styleUsage="pageStamp"/>
+            <af:objectSpacer width="10" height="10"/>
+            <af:inputText label="You are about to delete data source:"
+                          value="#{processScope.dataSourceToDelete}"
+                          readOnly="true"/>
+            <af:objectSpacer width="10" height="10"/>
+            <af:panelButtonBar>
+              <af:commandButton text="Confirm"
+                                actionListener="#{adminDataSrcs.deleteDialogConfirm}"/>
+              <af:commandButton text="Cancel"
+                                actionListener="#{adminDataSrcs.cancelDelete}"/>
+            </af:panelButtonBar>
+          </af:panelGroup>
+        </h:form>
+      </afh:body>
+    </afh:html>
+  </f:view>
+</jsp:root>

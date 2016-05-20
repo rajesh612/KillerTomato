@@ -1,0 +1,111 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
+          xmlns:h="http://java.sun.com/jsf/html"
+          xmlns:f="http://java.sun.com/jsf/core"
+          xmlns:af="http://xmlns.oracle.com/adf/faces"
+          xmlns:afh="http://xmlns.oracle.com/adf/faces/html">
+  <jsp:output omit-xml-declaration="true" doctype-root-element="HTML"
+              doctype-system="http://www.w3.org/TR/html4/loose.dtd"
+              doctype-public="-//W3C//DTD HTML 4.01 Transitional//EN"/>
+  <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+  <f:view>
+    <afh:html>
+      <afh:head title="OracleAS MapViewer Admin">
+        <meta http-equiv="Content-Type"
+              content="text/html; charset=windows-1252"/>
+      </afh:head>
+      <afh:body>
+        <h:form>
+          <af:panelPage>
+            <f:facet name="menu1">
+              <af:menuTabs id="menuTabsArea" value="#{menuModel.model}"
+                           var="menuTab">
+                <f:facet name="nodeStamp">
+                  <af:commandMenuItem text="#{menuTab.label}"
+                                      action="#{menuTab.getOutcome}"
+                                      type="default"
+                                      rendered="#{menuTab.shown and                                                    menuTab.type=='default'                                                   }"/>
+                </f:facet>
+              </af:menuTabs>
+            </f:facet>
+            <f:facet name="menuGlobal">
+              <af:menuButtons var="menuButton" id="menuButtsArea"
+                              value="#{menuModel.model}">
+                <f:facet name="nodeStamp">
+                  <af:commandMenuItem text="#{menuButton.label}"
+                                      action="#{menuButton.getOutcome}"
+                                      icon="#{menuButton.icon}"
+                                      rendered="#{menuButton.type=='global'}"
+                                      type="global"/>
+                </f:facet>
+              </af:menuButtons>
+            </f:facet>
+            <f:facet name="branding">
+              <af:objectImage source="/myicons/oracle_logo.gif"/>
+            </f:facet>
+            <f:facet name="brandingApp">
+              <af:objectImage source="/myicons/mapviewer_admin.gif"/>
+            </f:facet>
+            <f:facet name="appCopyright">
+              <af:outputText value="#{mvbundle.copyright}"/>
+            </f:facet>
+            <f:facet name="appPrivacy"/>
+            <f:facet name="appAbout"/>
+            <f:facet name="brandingAppContextual">
+              <af:outputFormatted value="#{mvbundle.loclocloc}"
+                                  styleUsage="inContextBranding"/>
+            </f:facet>
+            <f:facet name="menu2">
+              <af:menuBar var="menuSubTab" id="menuSubTabsArea" startDepth="1"
+                          value="#{menuModel.model}">
+                <f:facet name="nodeStamp">
+                  <af:commandMenuItem text="#{menuSubTab.label}"
+                                      action="#{menuSubTab.getOutcome}"/>
+                </f:facet>
+              </af:menuBar>
+            </f:facet>
+            <af:panelGroup layout="vertical">
+              <af:panelHorizontal>
+                <af:commandButton text="Return"
+                                  action="#{edit_cache_instance.swithToNonXMLMode}"/>
+                <af:objectSpacer width="10" height="10"/>
+                <af:commandButton text="Cancel" action="cancel" rendered="#{!edit_cache_instance.isBuiltinExternal}"/>
+                <af:objectSpacer width="10" height="10"/>
+                <af:commandButton text="Submit" rendered="#{!edit_cache_instance.isBuiltinExternal}"
+                                  action="#{edit_cache_instance.finishEdittingXML}"/>
+              </af:panelHorizontal>
+              <af:objectSpacer width="10" height="15"/>
+              <af:panelTip>
+                <af:outputFormatted value="Use this form to directly submit a XML request for a new map tile layer."/>
+              </af:panelTip>
+              <af:objectSpacer width="10" height="10"/>
+              <af:panelBox text="Edit map tile layer - xml mode"
+                           width="100%">
+                <af:panelForm fieldWidth="65%" labelWidth="35%" width="100%"
+                              maxColumns="1"
+                              partialTriggers="mapSrcPropertiesID httpProxyId">
+                  <f:facet name="footer">
+                    <af:panelButtonBar>
+                      <af:commandButton text="Return"
+                                        action="#{edit_cache_instance.swithToNonXMLMode}"/>
+                      <af:commandButton text="Cancel" action="cancel" rendered="#{!edit_cache_instance.isBuiltinExternal}"/>
+                      <af:commandButton text="Submit" rendered="#{!edit_cache_instance.isBuiltinExternal}"
+                                        action="#{edit_cache_instance.finishEdittingXML}"/>
+                    </af:panelButtonBar>
+                  </f:facet>
+                  <af:objectSpacer width="10" height="10"/>
+                  <af:inputText rows="45" columns="95" readOnly="#{edit_cache_instance.isBuiltinExternal}"
+                                value="#{edit_cache_instance.XMLString}"/>
+                </af:panelForm>
+              </af:panelBox>
+            </af:panelGroup>
+            <f:facet name="messages">
+              <af:messages/>
+            </f:facet>
+          </af:panelPage>
+        </h:form>
+      </afh:body>
+    </afh:html>
+  </f:view>
+  <!--oracle-jdev-comment:preferred-managed-bean-name:edit_cache_instance-->
+</jsp:root>

@@ -1,0 +1,306 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Map Cache Server/Free Scroll Map Client</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+  var baseURL = "http://"+document.location.host+"/mapviewer";
+  var mapview;
+  var foiCount = 0 ;
+  
+  function showMap()
+  {	
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.82;
+    var mapZoom      =  4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+    mapview.setCenter(mpoint);   
+    mapview.setZoomLevel(mapZoom);
+    
+    mapview.display();  			
+  }
+    
+  function addIndFOI()
+  {
+    var foiId = document.getElementById('foiid').value;
+    var foiCreateString = document.getElementById('geometryStr').value;
+    var foiWidth = document.getElementById('FOIWidth').value;
+    var foiHeight = document.getElementById('FOIHeight').value;
+    var theme = document.getElementById('theme').value;
+    
+    var shape=eval(foiCreateString);
+    var foi = new MVFOI(foiId, shape, theme, "", foiWidth, foiHeight);				
+    if(!(mapview.addFOI(foi)))
+      return;
+    
+    var IndFOIList=document.getElementById("IndFOIList");
+    var option=document.createElement("option");
+    option.text=foiId;
+    option.value=foiId;
+    option.id=foiId;
+    IndFOIList.options[IndFOIList.options.length]=option;
+    foiCount++
+    document.getElementById('foiid').value = "foi" + (1+foiCount);
+  }
+  
+  function removeIndFOI()
+  {
+    var IndFOIList=document.getElementById("IndFOIList");
+    
+    if((IndFOIList.selectedIndex)<0)
+    {
+      alert("Please choose FOI from above list to remove");
+      return;
+    }
+    
+    mapview.removeFOI(IndFOIList.value);
+    listAllIndFOIs();  	
+  }
+  
+  function showHideIndFOI()
+  {
+    var IndFOIList=document.getElementById("IndFOIList");
+    
+    if((IndFOIList.selectedIndex)<0)
+    {
+      alert("Please choose FOI from above list to show/hide");
+      return;
+    }
+    
+    var foi=mapview.getFOI(IndFOIList.value);	
+    if(foi.isVisible())
+    {
+      foi.setVisible(false);
+    }
+    else
+    {
+      foi.setVisible(true);
+    }  	
+  }
+  
+  function removeAllIndFOIs()
+  {
+    mapview.removeAllFOIs();
+    
+    var IndFOIList=document.getElementById("IndFOIList");
+    IndFOIList.options.length=0;
+  }
+  
+  function listAllIndFOIs()
+  {
+    var IndFOIList=document.getElementById("IndFOIList");
+    
+    IndFOIList.options.length=0;
+    
+    var IndFOIArray=mapview.getAllFOIs();
+    for(var i=0; i<IndFOIArray.length; ++i)
+    {
+      var option=document.createElement("option");
+      option.text=IndFOIArray[i].id;
+      option.value=IndFOIArray[i].id;
+      option.id=IndFOIArray[i].id;
+      IndFOIList.options[IndFOIList.options.length]=option;
+    }	  	
+  }
+  
+  function changeTemplate(sel)
+  {
+    document.getElementById('geometryStr').value = sel.options[sel.selectedIndex].value ;
+  }
+</script>
+
+<style type="text/css">
+<!--
+.red 
+{
+color: #FF0000;
+}
+-->
+</style>
+
+</head>
+
+<body onload= javascript:showMap()>
+<h3>Oracle Maps example - Creating individual FOIs for various geometry types</h3>
+<h3> Instructions </h3>
+  This demo shows how to create and display individual Features of Interest at
+  the client side using the JavaScript API. You will learn how to construct
+  dynamic FOIs using one of the many constructors of the MVSdoGeometry object,
+  and assign a MapViewer style to each FOI. You will also learn how to toggle
+  the visiblity of an FOI as well as remove it from the map.
+<table width="100%" height="80%">
+  <tr width="100%">
+    <td width="300px">
+    <strong><span class="red">Creating a new FOI</span></strong>
+    <ul>
+      <li>Step 1.   <b>Specify a unique FOI ID: </b><input type="text" id="foiid" value="foi1" size="10">
+      </li>
+      
+      <li>Step 2. <b>Construct an FOI: </b><br>
+        Select a javascript template to create an FOI geometry. You can change the coordinates afterwards.<br>
+       <select onchange="changeTemplate(this)">
+        <option value="MVSdoGeometry.createPoint(-122.30, 37.73, 8307)">Point</option>
+        <option value="MVSdoGeometry.createPointAtBearing(-122.30, 37.73, Math.PI/4, 5000, 8307)">Point at bearing</option>
+        <option value="MVSdoGeometry.createPolygon( [-122.492, 37.94, -122.54, 37.82, -122.31, 37.79],8307)">Polygon</option> 
+        <option value="MVSdoGeometry.createCircle(-122.30, 37.73, 0.03, 8307)">Circle</option>
+        <option value="MVSdoGeometry.createGeodeticCirclePolygon(-122.30, 37.85, 5000, 8307)">CirclePolygon</option>
+        <option value="MVSdoGeometry.createRectangle(-122.492, 37.94, -122.54, 37.82, 8307)">Rectangle</option>
+        <option value="MVSdoGeometry.createRectangleByGCD(-122.30, 37.9, 2000, 2000, 8307)">Rectangle in earth distance</option>
+       </select>
+       <textarea id="geometryStr" rows="2" cols="40">MVSdoGeometry.createPoint(-122.30, 37.73, 8307)</textarea>
+       <br>
+      </li>
+      
+      <li>FOI Width (point-type only):<input type="text" id="FOIWidth" value="20" size="10"></li>       
+      <li>FOI Height (point-type only):<input type="text" id="FOIHeight" value="20" size="10"></li>
+      <li>Step 3. <b>Specify a MapViewer style for the new FOI: </b><br>
+        <input type="text" id="theme" value="mvdemo.C.RED" size="30" maxlength="50">
+        <br>
+          eg. mvdemo.C.RED, mvdemo.m.shield1, ...
+      </li>
+      <li> Step 4. click <input type="button" id="addFoi" value="Display the new FOI" onclick="addIndFOI()"> </li>
+    </ul>
+    
+    <li><strong><span class="red">Toggling and Removing an FOI</span></strong></li>
+      Select the id of an FOI, then click the desired action button below.
+      <br></br>
+      <select id="IndFOIList" size="3">  
+      </select>
+      <br>     
+      <input type="button" name="showHideIndFOI" value="Toogle FOI" onclick="showHideIndFOI()"> 
+      <input type="button" name="removeIndFOI" value="Remove FOI" onclick="removeIndFOI()">
+      <input type="button" name="removeAllIndFois" value="Remove All FOIs" onclick="removeAllIndFOIs()">
+    </td>
+    <td>
+    <div id="map" style="width:100%; height:100%"></div>
+    </td>
+  </tr>
+</table>
+<HR/>
+
+  <div id="demo" style="left:0px; top:10px; width:100%">
+  </div>
+
+<h3>Source code</h3>
+
+The JavaScript source code for this demo is listed below.
+<blockquote>
+<pre>
+  var baseURL = "http://"+document.location.host+"/mapviewer";
+  var mapview;
+  
+  function showMap()
+  {	
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.82;
+    var mapZoom      =  4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+    mapview.setCenter(mpoint);   
+    mapview.setZoomLevel(mapZoom);
+    
+    mapview.display();  			
+  }
+    
+  <font color="#ff0000">
+  function addIndFOI()
+  {
+    var foiId = document.getElementById('foiid').value;
+    var foiCreateString = document.getElementById('geometryStr').value;
+    var foiWidth = document.getElementById('FOIWidth').value;
+    var foiHeight = document.getElementById('FOIHeight').value;
+    var theme = document.getElementById('theme').value;
+    
+    var shape=eval(foiCreateString);
+    var foi = new MVFOI(foiId, shape, theme, "", foiWidth, foiHeight);        
+    if(!(mapview.addFOI(foi)))
+      return;
+    
+    var IndFOIList=document.getElementById("IndFOIList");
+    var option=document.createElement("option");
+    option.text=foiId;
+    option.value=foiId;
+    option.id=foiId;
+    IndFOIList.options[IndFOIList.options.length]=option;
+    foiCount++
+    document.getElementById('foiid').value = "foi" + (1+foiCount);
+  }
+  
+  function removeIndFOI()
+  {
+    var IndFOIList=document.getElementById("IndFOIList");
+    
+    if((IndFOIList.selectedIndex)<0)
+    {
+      alert("Please choose FOI from above list to remove");
+      return;
+    }
+    
+    mapview.removeFOI(IndFOIList.value);
+    listAllIndFOIs();  	
+  }
+  
+  function showHideIndFOI()
+  {
+    var IndFOIList=document.getElementById("IndFOIList");
+    
+    if((IndFOIList.selectedIndex)<0)
+    {
+      alert("Please choose FOI from above list to show/hide");
+      return;
+    }
+    
+    var foi=mapview.getFOI(IndFOIList.value);	
+    if(foi.isVisible())
+    {
+      foi.setVisible(false);
+    }
+    else
+    {
+      foi.setVisible(true);
+    }  	
+  }
+  
+  function removeAllIndFOIs()
+  {
+    mapview.removeAllFOIs();
+    
+    var IndFOIList=document.getElementById("IndFOIList");
+    IndFOIList.options.length=0;
+  }
+  
+  function listAllIndFOIs()
+  {
+    var IndFOIList=document.getElementById("IndFOIList");
+    
+    IndFOIList.options.length=0;
+    
+    var IndFOIArray=mapview.getAllFOIs();
+    for(var i=0; i&lt;IndFOIArray.length; ++i)
+    {
+      var option=document.createElement("option");
+      option.text=IndFOIArray[i].id;
+      option.value=IndFOIArray[i].id;
+      option.id=IndFOIArray[i].id;
+      IndFOIList.options[IndFOIList.options.length]=option;
+    }	  	
+  }
+  
+  function changeTemplate(sel)
+  {
+    document.getElementById('geometryStr').value = sel.options[sel.selectedIndex].value ;
+  }
+</font>
+</pre>
+</blockquote>
+</body>
+	
+</html>
+
+

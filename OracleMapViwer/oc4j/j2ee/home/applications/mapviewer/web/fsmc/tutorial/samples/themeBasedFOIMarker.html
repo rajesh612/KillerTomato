@@ -1,0 +1,88 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Map Cache Server/Map Client</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+  var mapview;
+  
+  function showMap()
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat = 37.7706;
+    var mapZoom      = 4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint);  
+    mapview.setZoomLevel(mapZoom);             
+    customThemeBasedFOIMarker();
+    mapview.display();   
+  }
+  
+  function customThemeBasedFOIMarker()
+  {	
+    var themebasedfoi = new MVThemeBasedFOI('themebasedfoi1','mvdemo.customers');
+    
+    themebasedfoi.setMarkerImage('images/baseball.gif',28,28);      
+    themebasedfoi.setBringToTopOnMouseOver(true);
+    
+    mapview.addThemeBasedFOI(themebasedfoi);
+
+  }
+</script> 		
+</head>
+	
+<body onload="javascript:showMap();">
+<h3>Oracle Maps example - Custom marker for Theme based FOI layer </h3>
+
+  <div id="map" style="left:0px; top:10px; width:100%; height:60%"></div> 
+  
+<HR/>
+<h3>Instructions</h3>
+ This demo shows how to override the style of a point-type FOI layer with
+ a custom marker image. In this case a baseball image is used to represent
+ each FOI in the 'Customers' theme that was previously represented as a red dot.
+<h3>Source code</h3>
+<blockquote>
+	<pre>
+	  var mapview;
+	  
+	  function showMap()
+	  {	
+		var baseURL  = "http://"+document.location.host+"/mapviewer";
+		var mapCenterLon = -122.45;
+		var mapCenterLat = 37.7706;
+		var mapZoom      = 4;  
+		var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+		mapview = new MVMapView(document.getElementById("map"), baseURL);
+		mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+		mapview.setCenter(mpoint);  
+		mapview.setZoomLevel(mapZoom);             
+
+		customThemeBasedFOIMarker();
+
+		mapview.display();   
+	  }
+	  
+	  function customThemeBasedFOIMarker()
+	  {	
+		var themebasedfoi = new MVThemeBasedFOI('themebasedfoi1','mvdemo.customers');
+		<font color="#ff0000">
+		themebasedfoi.setMarkerImage('images/baseball.gif',28,28);      
+		</font>
+		themebasedfoi.setBringToTopOnMouseOver(true);
+		
+		mapview.addThemeBasedFOI(themebasedfoi);
+	
+	  }	
+	</pre>
+</blockquote>
+</body>	
+</html>
+
+

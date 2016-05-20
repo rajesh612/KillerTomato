@@ -1,0 +1,217 @@
+<!-- Main page for Oracle Maps online tutorial -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+    <head>
+      <title>Tutorial: Learning Oracle Maps by Example </title>
+      <style type="text/css">
+          div span {
+              vertical-align: middle;
+          }
+
+          div#TopBar {
+              background: #ff0000 url(images/oracle_bar.gif);
+              margin: 10px 10px 0 10px;
+              height:30px;
+              min-width:700px;
+              color: white;
+              font-family: Arial, Helvetica, sans-serif; 
+              font-weight: bold;
+              text-align: left;
+              text-valign: middle;
+          }
+          
+          div#LeftBar {
+              width: 13em;
+              float: left;
+              margin-left: 10px;
+              margin-top: 10px;
+          }
+          
+          div#Contents a:visited, div#Contents a:link,
+          .NavBit a:visited, .NavBit a:link {
+              color: #35556B;
+              text-decoration: none;
+          }
+          div#Contents a:hover, div#Contents a:active,  
+		  .NavBit a:hover, .NavBit a:active {  
+              color: #35556B;
+              text-decoration: underline;
+          }
+          div#Contents {
+              color: #35556B;
+              float: left;
+              font-family: Arial, Helvetica, sans-serif; 
+              margin-top: 20px;
+          }          
+          div#PageTitle {
+              font-size: 20px;
+          }
+          .linkLESSON, .nolinkLESSON {
+              margin-left: 0.5em;
+              text-indent: -0.5em
+          }
+          .linkAHEAD, .nolinkAHEAD, .linkQUESTIONS, .nolinkQUESTIONS {
+              margin-left: 1.5em; 
+              text-indent: -0.5em
+          }
+          .linkBHEAD, .nolinkBHEAD   {
+              margin-left: 2.5em;
+              text-indent: -0.5em
+          }
+          .linkCHEAD, .nolinkCHEAD   {
+              margin-left: 3.5em;
+              text-indent: -0.5em
+          }
+          .nolinkLESSON, .nolinkAHEAD, .nolinkBHEAD, .nolinkCHEAD, 
+		  .nolinkQUESTIONS {
+              font-weight: bold;
+              color: #35556B;
+          }
+          div#MainFlow {
+              margin-right: 10px;
+              margin-left: 15em;
+              margin-bottom: 2em;
+      
+          }
+      </style>
+    </head>
+<body>
+
+    <div id=TopBar>
+        <div id=PageTitle><span>Tutorial: Learning Oracle Maps by Example</span></div>
+    </div>
+    
+    <div id=LeftBar>        
+      <div id=Contents>
+        <div class="linkAHEAD"><a href="index.html">Introduction</a></div>
+        <div class="nolinkLESSON">Getting started</div>
+        <div class="linkAHEAD"><a href="mapdivs.html">What's in a map</a></div>
+        <div class="linkAHEAD"><a href="setup.html">Demo setup</a></div>
+        <div class="linkAHEAD"><a href="demos.html">Running the demos</a></div>
+      </div>
+    </div>
+
+    <div id=MainFlow>
+    <h3>API changes since MapViewer Early Access 1 release</h3>
+    <blockquote>
+    If you have used the JavaScript API that comes with the 11g Early Access 1
+    release of MapViewer, you may notice a few changes to the API. We apologize
+    if this causes any inconvenience, but we are confident that the latest 
+    API is cleaner, better documented and will be very close to the production
+    API. The main changes are:
+    <ul>
+      <li>All class names are now prefixed with <B>MV</B>. For instance, the
+      <B>FOI</B> class has been renamed to <B>MVFOI</B>. <B>MapView</B> is now <B>MVMapView</B>.
+      </li>
+      <li>When setting  the map center, it is now recommended that you construct the
+      center point as an instance of MVSdoGeometry before setting it on the
+      MVMapView.</li>
+      <li>Quite a few classes had their function names and parameters reviewed and
+      changed up.
+      <li>Many new methods and quite a few new classes have been added since
+      Early Access 1.
+    </ul>
+    </blockquote>
+    <h3>Writing an Oracle Maps application</h3>
+<blockquote>
+
+        The essential steps to building any
+        Oracle Maps application or mashup using the JavaScript API are:
+        <ol>
+          <li>Loading the Oracle Maps JavaScript library in the beginning of a web page</li>
+
+          <li>Placing an HTML DIV component that serves as the master map container on the page</li>
+
+          <li>Writing custom JavaScript code to set up initial map contents 
+              (base-map, FOI layers, etc) and implement application specific logic.
+          </li>
+        </ol>
+      </blockquote>
+	  
+	  <blockquote>
+		Step 1 above is achieved by the following code snippet: 
+		<BR> </BR>
+		<table width="80%"  border="1">
+       	<tr>
+    		<td bordercolor="#000000" bgcolor="#CCCCCC">
+			&lt;script language=&quot;Javascript&quot; src=&quot;/mapviewer/fsmc/jslib/oraclemaps.js&quot;&gt;&lt;/script&gt;
+			</td>
+  		</tr>
+    	</table>
+		This loads the Oracle Maps API library, a single file named <i>oraclemaps.js</i>, from the MapViewer server into the browser. 
+	  </blockquote>
+	  
+	  <blockquote>
+		Step 2 is achieved by inserting a standard DIV element in your page, such as below:
+		<BR> </BR>
+		<table width="80%"  border="1">
+		<tr>
+    		<td bordercolor="#000000" bgcolor="#CCCCCC">
+			&lt;div id=&quot;map&quot; style=&quot;left:1%; top:1%; width:99%; height:99%&quot;&gt;&lt;/div&gt;
+			</td>
+		</tr>
+		</table>
+		Note that this DIV serves as the master map area. It can be placed anywhere on your web page. The unique
+		id ("<I>map</I>" in this case) sould be passed to the Oracle Maps library so that it knows where to display
+		the various map contents.
+	  </blockquote>
+	  
+	  <blockquote>
+		Step 3 is where the application logic is coded. For instance you can set up the initial 
+		map contents to be displayed. You may also provide custom event handling for interesting events
+		fired by the Oracle Maps client. The following is just a simple example. It displays a base map that is 
+		rendered by the MapViewer server. A navigation bar is also displayed so you can zoom or pan the map. You
+		can always pan the map by dragging it around.
+		<BR></BR>		
+		<table width="80%"  border="1">
+  		<tr>
+    		<td bordercolor="#000000" bgcolor="#CCCCCC">
+			&lt;script language=javascript&gt; <br>
+
+			function showMap() <br>
+			{ <br>
+			<blockquote>
+			var baseURL = "http://"+document.location.host+"/mapviewer"; <br>
+			var mapCenterLon = -122.45; <br>
+			var mapCenterLat = 37.6706; <br>
+			var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307); <br>
+			var mapZoom = 5; <br>
+			<br>
+			var mapview = new MVMapView(document.getElementById("map"), baseURL); <br>
+			mapview.addBaseMapLayer(new MVBaseMap("mvdemo.demo_map")); <br>         
+			mapview.setCenter(mpoint); <br>
+			mapview.setZoomLevel(mapZoom); <br>
+			mapview.addNavigationPanel("EAST"); <br>
+			mapview.display(); <br>
+			</blockquote>
+			} <br>
+			&lt;/script&gt;
+			</td>
+  		</tr>
+		</table>
+		<p>Note that the variable <I>baseURL</I> in the above code points to the URL of a running 
+		MapViewer instance. The client library needs to communicate with this MapViewer instance in order to 
+		function properly. Oracle Maps client can however, fetch map contents (such as base map tiles or
+		FOIs) from other MapViewer servers, even ones running on a different network domain.
+		</p>
+
+	  </blockquote>
+	  
+	  <blockquote>
+	  	Finally, to tie it all together, the browser needs to 
+	  	invoke the <B>showMap()</B> function in order for the above code to
+	  	be executed. This is commonly achieved by using the <I>onLoad</I> event of the
+	  	HTML body, as shown below.
+	  	<BR></BR>
+	  	<table width="80%"  border="1">
+  		<tr>
+    		<td bordercolor="#000000" bgcolor="#CCCCCC">
+    		&lt;body onLoad="javascript:showMap();"&gt;
+    		</td>
+    	</tr>
+    	</table>
+	  </blockquote>
+	</div>
+</body>
+</html>

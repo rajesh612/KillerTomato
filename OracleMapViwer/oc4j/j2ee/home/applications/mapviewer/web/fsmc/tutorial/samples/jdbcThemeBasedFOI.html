@@ -1,0 +1,324 @@
+<html>
+<HEAD>
+  <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+  <META NAME="GENERATOR" CONTENT="JDBC Demo">
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+<SCRIPT TYPE="text/javascript">
+  var mapview;
+  var customertheme;
+  var buffertheme;
+  var baseQuery;
+  var baseURL  = "http://"+document.location.host+"/mapviewer";
+  var mapCenterLon = -122.45;
+  var mapCenterLat =  37.7706;
+  var mapZoom      =  4;  
+  var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);     
+  function on_load_mapview() 
+  {
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    var basemap = new MVMapTileLayer("mvdemo.demo_map");
+    mapview.addMapTileLayer(basemap);   
+    mapview.setCenter(mpoint);   
+    mapview.setZoomLevel(mapZoom);  
+    customertheme = new MVThemeBasedFOI('customertheme','mvdemo.customers');
+    customertheme.setBringToTopOnMouseOver(true);
+    mapview.addThemeBasedFOI(customertheme);
+    mapview.display();
+    addBuffertheme('customers',1) ;                                      
+  }
+  function doZoomIn() 
+  {
+    mapview.zoomIn();
+  }
+  function doZoomOut() 
+  {
+    mapview.zoomOut();
+  }
+
+  function toggle(themebasedfoi)
+  {
+    themebasedfoi.setVisible(!themebasedfoi.isVisible());
+  }
+  
+  var bufferStyle = "mvdemo:c.red" ;
+  
+  function addBuffertheme(themeTable, radius)
+  {
+    baseQuery= "select sdo_geom.sdo_buffer(A.location, "+radius+
+           ", 0.005, 'unit=mile arc_tolerance=0.005') location "+
+           " from "+themeTable+" A" ;
+    var theme = "<themes><theme name='JDBC_THEME' >" +
+                "<jdbc_query asis='true' spatial_column='location' jdbc_srid='8307' " +
+                "render_style='"+bufferStyle+"' datasource='mvdemo'>" + baseQuery +
+                "</jdbc_query></theme></themes>" ; 
+    buffertheme = new MVThemeBasedFOI('buffertheme',theme);    
+    buffertheme.setBringToTopOnMouseOver(true);
+    buffertheme.setVisible(false);
+    mapview.addThemeBasedFOI(buffertheme); 
+    // place the buffer theme beneath the customer theme
+    mapview.setThemeIndex(buffertheme, 1) ;
+    mapview.setThemeIndex(customertheme, 2);  
+      
+  }
+
+  var bufferIsVisible = false ;
+  
+  function updateBuffer()
+  {
+    var theme = getSelectedOption(document.getElementById('bufferTheme')) ;
+    var radius = document.getElementById('bufferDistance').value ;
+    bufferStyle = getSelectedOption(document.getElementById('fill')) ;
+    mapview.removeThemeBasedFOI(buffertheme);
+    baseQuery = "select sdo_geom.sdo_buffer(A.location, "+radius+
+                ", 0.005, 'unit=mile arc_tolerance=0.005') location "+
+                " from "+theme+" A" ;
+    var theme = '<themes><theme name="JDBC_THEME" >' +
+                '<jdbc_query asis="true" spatial_column="location" jdbc_srid="8307" ' +
+                'render_style="'+bufferStyle+'" datasource="mvdemo">' + baseQuery +
+                '</jdbc_query></theme></themes>' ;      
+    buffertheme = new MVThemeBasedFOI('buffertheme',theme);    
+    buffertheme.setBringToTopOnMouseOver(true);
+    mapview.addThemeBasedFOI(buffertheme);
+    // place the buffer theme beneath the customer theme
+    mapview.setThemeIndex(buffertheme, 1) ;
+  }
+  
+  function toggleBuffer()
+  {
+    if(!bufferIsVisible)
+    {
+      bufferIsVisible = true ;
+      document.getElementById('showHideBuffer').value='Hide Buffer';
+      buffertheme.setVisible(true);
+    }
+    else
+    {
+      bufferIsVisible = false ;
+      document.getElementById('showHideBuffer').value='Show Buffer';
+      buffertheme.setVisible(false);
+    }
+  }  
+  
+  function getSelectedOption(sel)
+  {
+    var i=0; 
+    for(; i<sel.options.length; i++)
+    {
+      if(sel.options[i].selected)
+        return sel.options[i].value ;
+    }
+  }
+  
+</SCRIPT>
+</HEAD>
+
+<BODY onload= javascript:on_load_mapview()>
+<h3>Business Analysis with Oracle Spatial & MapViewer</h3>
+<table width="95%"   cellpadding="0"  cellspacing="0">
+<tr><td width="75%" height="400px">
+<div id="map" style="left:0px; top:0px; width:100%; height:100%;"></div> 
+</td>
+<td width="25%" align=center>
+<div id="demo" style=" width: 90%; height: 100%;">
+<table cellpadding="0"  cellspacing="0">
+    		<tr><td> <FONT><B>Layers</B></FONT> </td>
+    			  <td> <FONT><B>Display</B></FONT> </td>
+    </td>
+  </tr>
+  <tr>
+    <td>  <!--  theme list -->
+        <Font size="-1">Customers </FONT>
+    </td>
+    <td> <!-- Display checkbox -->
+        <input type="checkbox" name="checkedThemes" onclick="toggle(customertheme);"
+                    value="customertheme" 
+                    checked  >
+    </td>
+  </tr>  
+  <tr><td  colspan="2"  heghit="20px">&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="2" align="left" valign="top">
+      <TABLE cellpadding="0"  cellspacing="0">
+        <TR>
+          <TD> <FONT><B>Buffers</B></FONT></TD>
+        </tr>
+        <tr>
+          <TD>
+              Theme:  <select id="bufferTheme">
+                <option value=customers> customers
+              </select> 
+          </TD>
+        </tr>
+
+        <tr>
+          <TD>    
+              Distance: <input type="text" id="bufferDistance" 
+                     value="1.0" size="2" maxlength="3" > miles
+          </TD>
+        </TR>
+        <tr>
+          <td>
+              Fill:  <SELECT id="fill" >
+
+                        <OPTION VALUE="mvdemo:c.red"  >red
+                        <OPTION VALUE="mvdemo:c.t7"  >green
+                        <OPTION VALUE="mvdemo:c.blue"  >blue
+              </SELECT> 
+           </td>
+        </tr>
+        <tr>
+          <TD align=center>
+          <input type="button" name="updateBuffer" value="Update" onclick="updateBuffer()"> 
+          <input type="button" id="showHideBuffer" value="Show Buffer" onclick="toggleBuffer()">
+          </TD>
+
+        </tr>
+      </TABLE>
+      </td>
+    </tr>
+   </table>
+</div>
+</td>
+</tr>
+</table>
+<hr/>
+<H3>Instructions</H3>
+The demo shows you how to add/display a JDBC theme using the JavaScript API. A JDBC theme lets you supply a dynamic SQL query as well as styling info on the fly. <p>
+ Note that in order for this demo to work, you must enable JDBC theme-based FOI for the data source you are using. By default this is disabled by MapViewer, but you can enable it by adding the following line to your permanent data source definition in mapViewerConfig.xml: <br>
+
+<blockquote>
+<pre>
+  &lt;map_data_source name="mvdemo"
+                   jdbc_host="db.my_corp.com"
+                   jdbc_sid="orcl"
+                   jdbc_port="1521"
+                   jdbc_user="scott"
+                   jdbc_password="!tiger"
+                   jdbc_mode="thin"
+                   number_of_mappers="3"
+                   <font color="#ff0000">allow_jdbc_theme_based_foi="true"</font>
+   /&gt;
+
+</pre>
+</blockquote>
+
+<h3>Source code</h3>
+The JavaScript code for this demo is listed below.
+<blockquote>
+<pre>
+  var customertheme;
+  var buffertheme;
+  var baseQuery;
+  var baseURL  = "http://"+document.location.host+"/mapviewer";
+  var mapCenterLon = -122.45;
+  var mapCenterLat =  37.7706;
+  var mapZoom      =  4;  
+  var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);     
+  function on_load_mapview() 
+  {
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    var basemap = new MVMapTileLayer("mvdemo.demo_map");
+    mapview.addMapTileLayer(basemap);   
+    mapview.setCenter(mpoint);   
+    mapview.setZoomLevel(mapZoom);  
+    customertheme = new MVThemeBasedFOI('customertheme','mvdemo.customers');
+    customertheme.setBringToTopOnMouseOver(true);
+    mapview.addThemeBasedFOI(customertheme);
+    mapview.display();
+    addBuffertheme('customers',1) ;                                      
+  }
+  function doZoomIn() 
+  {
+    mapview.zoomIn();
+  }
+  function doZoomOut() 
+  {
+    mapview.zoomOut();
+  }
+
+  function toggle(themebasedfoi)
+  {
+    themebasedfoi.setVisible(!themebasedfoi.isVisible());
+  }
+  
+  var bufferStyle = "mvdemo:c.red" ;
+  <font color="#ff0000">
+  function addBuffertheme(themeTable, radius)
+  {
+    baseQuery= "select sdo_geom.sdo_buffer(A.location, "+radius+
+           ", 0.005, 'unit=mile arc_tolerance=0.005') location "+
+           " from "+themeTable+" A" ;
+    var theme = "&lt;themes&gt;&lt;theme name='JDBC_THEME' &gt;" +
+                "&lt;jdbc_query asis='true' spatial_column='location' jdbc_srid='8307' " +
+                "render_style='"+bufferStyle+"' datasource='mvdemo'&gt;" + baseQuery +
+                "&lt;/jdbc_query&gt;&lt;/theme&gt;&lt;/themes&gt;" ; 
+    buffertheme = new MVThemeBasedFOI('buffertheme',theme);    
+    buffertheme.setBringToTopOnMouseOver(true);
+    buffertheme.setVisible(false);
+    mapview.addThemeBasedFOI(buffertheme);    
+    // place the buffer theme beneath the customer theme
+    mapview.setThemeIndex(buffertheme, 1) ;
+    mapview.setThemeIndex(customertheme, 2);  
+      
+  }
+
+  var bufferIsVisible = false ;
+  
+  function updateBuffer()
+  {
+    var theme = getSelectedOption(document.getElementById('bufferTheme')) ;
+    var radius = document.getElementById('bufferDistance').value ;
+    bufferStyle = getSelectedOption(document.getElementById('fill')) ;
+    mapview.removeThemeBasedFOI(buffertheme);
+    baseQuery = "select sdo_geom.sdo_buffer(A.location, "+radius+
+                ", 0.005, 'unit=mile arc_tolerance=0.005') location "+
+                " from "+theme+" A" ;
+    var theme = '&lt;themes&gt;&lt;theme name="JDBC_THEME" &gt;' +
+                '&lt;jdbc_query asis="true" spatial_column="location" jdbc_srid="8307" ' +
+                'render_style="'+bufferStyle+'" datasource="mvdemo"&gt;' + baseQuery +
+                '&lt;/jdbc_query&gt;&lt;/theme&gt;&lt;/themes&gt;' ;      
+    buffertheme = new MVThemeBasedFOI('buffertheme',theme);    
+    buffertheme.setBringToTopOnMouseOver(true);
+    mapview.addThemeBasedFOI(buffertheme);
+    // place the buffer theme beneath the customer theme
+    mapview.setThemeIndex(buffertheme, 1) ;
+  }
+  </font>
+  function toggleBuffer()
+  {
+    if(!bufferIsVisible)
+    {
+      bufferIsVisible = true ;
+      document.getElementById('showHideBuffer').value='Hide Buffer';
+      buffertheme.setVisible(true);
+    }
+    else
+    {
+      bufferIsVisible = false ;
+      document.getElementById('showHideBuffer').value='Show Buffer';
+      buffertheme.setVisible(false);
+    }
+  }  
+  
+  function getSelectedOption(sel)
+  {
+    for(var i=0; i&lt;sel.options.length; i++)
+    {
+      if(sel.options[i].selected)
+        return sel.options[i].value ;
+    }
+  }
+</pre>
+</blockquote>
+The onLoad function of the page body invokes the on_load_mapview() method above, which
+initializes the map.
+<blockquote>
+<pre>
+&lt;BODY onload= javascript:on_load_mapview()&gt;
+</pre>
+</blockquote>
+</BODY>
+</html>

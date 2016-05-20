@@ -1,0 +1,398 @@
+body {
+    font-size: 12px;
+}
+
+.header {
+    background: #85b841;
+    font-family: Arial, sans-serif;
+    font-size: 36px;
+    line-height: 40px;
+    font-variant: small-caps;
+    margin: 2px;
+    padding: 4px;
+    height: 88px;
+}
+
+.header-image {
+    z-index: 1;
+    background-image: url( ../../peekfiles/peek.png );
+    background-repeat: no-repeat;
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    width: 640px;
+    height: 100px;
+}
+
+.menu-bar {
+    background: #69a11d;
+    margin: 2px 2px 2px 2px;
+    padding: 4px 4px 4px 4px;
+    height: 22px;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+#text {
+    width: 479px;
+}
+
+.result {
+    color: #00008B;
+    font-family: Courier New, monospace;
+    font-size: 12px;
+    padding: 2px;
+    margin: 4px 0 0 0;
+    min-height: 400px;
+}
+
+hr {
+    background: #69a11d;
+    color: #69a11d;
+}
+
+.footer {
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    color: #69a11d;
+}
+
+h3 {
+    color: #69a11d;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+    margin: -2px 0 8px 0;
+}
+
+.no-break {
+    display: inline;
+}
+
+td {
+    color: #00008B;
+    font-family: Courier New, monospace;
+    font-size: 12px;
+}
+
+form {
+    display: inline;
+}
+
+.black {
+    color: black;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+.black a {
+    font-weight: bold;
+}
+
+.label {
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    color: black;
+}
+
+.code {
+    font-size: 8pt;
+    font-family: "courier new", courier, sans-serif;
+    color: black;
+    white-space: nowrap;
+}
+
+.key {
+    font-size: 8pt;
+    font-weight: bold;
+    font-family: "courier new", courier, monospace;
+    color: #00008b;
+}
+
+.field {
+    font-size: 8pt;
+    font-weight: bold;
+    font-family: "courier new", courier, monospace;
+    font-style: italic;
+    color: #909;
+}
+
+.lightbg1 {
+    background-color: #F5F5F5;
+    padding: 0 4px 0 2px;
+}
+
+.lightbg2 {
+    background-color: #FFFFF0;
+    padding: 0 4px 0 2px;
+}
+
+.lightbg3 {
+    background-color: #FFFFF0;
+    padding: 0 4px 0 2px;
+}
+
+.num-box {
+    background-color: #E2E2E2;
+    color: gray;
+    padding: 0 0 0 3px;
+}
+
+.info-box {
+    background-color: #F5F5F5;
+    height: 24px;
+}
+
+#msg {
+    width: 560px;
+}
+
+#file {
+    width: 539px;
+}
+
+#file-default {
+    width: 560px;
+}
+
+#options {
+    width: 560px;
+}
+
+.black pre {
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-weight: normal;
+}
+
+/* Links */
+
+a {
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+a:link {
+    color: #00008b;
+    text-decoration: none;
+}
+
+a:visited {
+    color: #00008b;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #69a11d;
+    text-decoration: underline;
+}
+
+a:active {
+    color: #69a11d;
+    text-decoration: underline;
+}
+
+.code a:link {
+    color: black;
+}
+
+.code a:visited {
+    color: black;
+}
+
+.code a:hover {
+    color: #69a11d;
+}
+
+.code a:active {
+    color: #69a11d;
+}
+
+.trace a:link {
+    color: #383838;
+}
+
+.trace a:visited {
+    color: #383838;
+}
+
+.trace a:hover {
+    color: #69a11d;
+}
+
+.trace a:active {
+    color: #69a11d;
+}
+
+/* Tree */
+
+.tree {
+    font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    color: #666;
+    background: white;
+    white-space: nowrap;
+    padding: 3px 3px 3px 3px;
+}
+
+.tree img {
+    border: 0;
+    vertical-align: middle;
+}
+
+/* Shadow Box http://phoenity.com/newtedge/drop_shadow/ */
+
+.box-blur {
+    background-color: #ccc; /*shadow color*/
+    color: inherit;
+    margin-left: 4px;
+    margin-top: 4px;
+}
+
+.box-shadow, .box-content {
+    position: relative;
+    bottom: 2px;
+    right: 2px;
+}
+
+.box-shadow {
+    background-color: #666; /*shadow color*/
+    color: inherit;
+}
+
+.box-content {
+    background-color: #fff; /*background color of content*/
+    color: #909; /*text color of content*/
+    border: 1px solid #000; /*border color*/
+    padding: .5em 2ex;
+}
+
+.menu-box {
+    margin: 16px 0 0 22px;
+}
+
+/* ================================================================
+This copyright notice must be untouched at all times.
+
+The original version of this stylesheet and the associated (x)html
+is available at http://www.cssplay.co.uk/menus/basic_dd.html
+Copyright (c) 2005-2007 Stu Nicholls. All rights reserved.
+This stylesheet and the assocaited (x)html may be modified in any
+way to fit your requirements.
+=================================================================== */
+
+/* remove the bullets, padding and margins from the lists */
+.menu ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: inline;
+    position: absolute;
+}
+
+/* make the top level links horizontal and position relative so that we can position the sub level */
+.menu li {
+    float: left;
+    position: relative;
+    z-index: 100;
+}
+
+/* use the table to position the dropdown list */
+.menu table {
+    position: absolute;
+    border-collapse: collapse;
+    z-index: 80;
+    left: -1px;
+    top: 22px;
+}
+
+/* style all the links */
+.menu a, .menu :visited {
+    display: block;
+    font-size: 12px;
+    width: 80px;
+    padding: 3px 0;
+    color: #000;
+    background: #EEEEEE;
+    text-decoration: none;
+    margin-right: 0;
+    text-align: center;
+    border: 1px solid #5F5F5F;
+    border-width: 1px 1px 1px 1px;
+}
+
+/* style the links hover */
+.menu :hover {
+    background: #B9B9B9;
+}
+
+/* hide the sub level links */
+.menu ul ul {
+    visibility: hidden;
+    position: absolute;
+    width: 80px;
+    height: 0;
+}
+
+/* make the sub level visible on hover list or link */
+.menu ul li:hover ul,
+    .menu ul a:hover ul {
+    visibility: visible;
+}
+
+/* ================================================================ */
+
+table.tablesorter {
+    font-family: Arial, Helvetica, Garuda, sans-serif;
+    background-color: #CDCDCD;
+    font-weight: normal;
+    font-size: 8pt;
+    text-align: left;
+    height: auto;
+    padding: 0;
+    margin: 0;
+    line-height: normal;
+}
+
+table.tablesorter thead tr th, table.tablesorter tfoot tr th {
+    background-color: #e6EEEE;
+    border: 1px solid #FFF;
+    font-size: 8pt;
+    font-weight: bold;
+    height: auto;
+    padding: 2px;
+    margin: 0;
+    line-height: inherit;
+}
+
+table.tablesorter thead tr .header {
+    background-image: url( ../../peekfiles/bg.gif );
+    background-repeat: no-repeat;
+    background-position: center right;
+    cursor: pointer;
+}
+
+table.tablesorter tbody td {
+    font-family: Arial, Helvetica, Garuda, sans-serif;
+    color: #3D3D3D;
+    padding: 4px;
+    background-color: #FFF;
+    vertical-align: top;
+    line-height: 8px;
+}
+
+table.tablesorter thead tr .headerSortUp {
+    background-image: url( ../../peekfiles/asc.gif );
+}
+
+table.tablesorter thead tr .headerSortDown {
+    background-image: url( ../../peekfiles/desc.gif );
+}
+
+table.tablesorter tbody tr.odd td {
+    background-color: #F8F8F8;
+}
+
+table.tablesorter thead tr .headerSortDown, table.tablesorter thead tr .headerSortUp {
+    background-color: #8dbdd8;
+}

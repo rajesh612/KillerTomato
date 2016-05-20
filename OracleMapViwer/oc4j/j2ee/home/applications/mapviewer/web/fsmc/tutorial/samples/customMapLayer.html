@@ -1,0 +1,165 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Custom Map Tile Layer</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+ 
+<script language=javascript>
+  var mapConfig = 
+    {mapTileLayer:"custom_map",
+     format:"PNG",
+     coordSys:{srid:8307,type:"GEODETIC",distConvFactor:0.0,
+               minX:-180.0,minY:-90.0,maxX:180.0,maxY:90.0},
+     zoomLevels:
+     [
+       {zoomLevel:0,name:"level0",tileWidth:15.286028158107968,tileHeight:15.286028158107968,tileImageWidth:256,tileImageHeight:256},
+       {zoomLevel:1,name:"level1",tileWidth:4.961746909541633,tileHeight:4.961746909541633,tileImageWidth:256,tileImageHeight:256},
+       {zoomLevel:2,name:"level2",tileWidth:1.6105512127664132,tileHeight:1.6105512127664132,tileImageWidth:256,tileImageHeight:256},
+       {zoomLevel:3,name:"level3",tileWidth:0.5227742142726501,tileHeight:0.5227742142726501,tileImageWidth:256,tileImageHeight:256},
+       {zoomLevel:4,name:"level4",tileWidth:0.16968897570090388,tileHeight:0.16968897570090388,tileImageWidth:256,tileImageHeight:256},
+       {zoomLevel:5,name:"level5",tileWidth:0.05507983954154727,tileHeight:0.05507983954154727,tileImageWidth:256,tileImageHeight:256},
+       {zoomLevel:6,name:"level6",tileWidth:0.017878538533723076,tileHeight:0.017878538533723076,tileImageWidth:256,tileImageHeight:256},
+       {zoomLevel:7,name:"level7",tileWidth:0.005803187729944108,tileHeight:0.005803187729944108,tileImageWidth:256,tileImageHeight:256},
+       {zoomLevel:8,name:"level8",tileWidth:0.0018832386690789012,tileHeight:0.0018832386690789012,tileImageWidth:256,tileImageHeight:256},
+       {zoomLevel:9,name:"level9",tileWidth:6.114411263243185E-4,tileHeight:6.114411263243185E-4,tileImageWidth:256,tileImageHeight:256}
+     ]
+    };
+    
+  var baseURL  = "http://"+document.location.host+"/mapviewer";
+  
+  function showMap() 
+  { 
+    var mapview = new MVMapView(document.getElementById("map"), baseURL);
+    var basemap = new MVCustomMapTileLayer(mapConfig, getMapTileURL);
+    mapview.addMapTileLayer(basemap);
+    mapview.setCenter(MVSdoGeometry.createPoint(-122.45,37.6706,8307));
+    mapview.setZoomLevel(4);
+    mapview.addNavigationPanel() ;    
+    mapview.display();
+  }
+  
+  function getMapTileURL(minx, miny, width, height, level)
+  {
+    var x = (minx-mapConfig.coordSys.minX)/mapConfig.zoomLevels[level].tileWidth ;
+    var y = (miny-mapConfig.coordSys.minY)/mapConfig.zoomLevels[level].tileHeight ;
+    return baseURL+"/mcserver?request=gettile&format=" + mapConfig.format + 
+           "&zoomlevel="+level+"&mapcache=mvdemo.demo_map&mx=" + Math.round(x) + "&my=" + Math.round(y) ;
+  }
+</script>
+</head>
+
+<body onload="javascript:showMap()">
+<h3>Oracle Maps example - Custom map tile layer</h3>
+
+<table width="100%" height="60%">
+<tr>
+<td width="60%">
+   <div id="map" style="left:10px; top:10px;width:100%; height: 100%"></div> 
+</td>
+</tr>
+</table>
+
+<h3>Instructions</h3>
+This demo shows how to use MVCustomMapTileLayer to display a map tile layer that 
+consists of external custom map tiles served directly from a web based map tile 
+server. For simplicity, we use the local Oracle Maps tile server as the web map 
+tile server in this example.  
+   
+<p>In order to let the javascript map client know how to assemble and display
+map tiles, you must provide the map tile layer definition that defines map 
+coordinate system, zoom levels and tiling rules when creating the MVCustomMapTileLayer
+object for the external map tile layer.</p>
+
+Map tile layer definition is defined as a javascript object as follows. Please refer to
+the <a href="../../apidoc/symbols/MVMapView.html#!s!addMapTileLayerDefinition">API doc</a> for more information.  
+<pre>
+  var mapConfig = 
+    {mapTileLayer:"custom_map",
+     format:"PNG",
+     coordSys:{srid:8307,type:"GEODETIC",distConvFactor:0.0,
+               minX:-180.0,minY:-90.0,maxX:180.0,maxY:90.0},
+     zoomLevels:
+     [
+       {zoomLevel:0,name:"level0",tileWidth:15.286028158107968,tileHeight:15.286028158107968,tileImageWidth:256,tileImageHeight:256},
+       {zoomLevel:1,name:"level1",tileWidth:4.961746909541633,tileHeight:4.961746909541633,tileImageWidth:256,tileImageHeight:256},
+       {zoomLevel:2,name:"level2",tileWidth:1.6105512127664132,tileHeight:1.6105512127664132,tileImageWidth:256,tileImageHeight:256},
+       {zoomLevel:3,name:"level3",tileWidth:0.5227742142726501,tileHeight:0.5227742142726501,tileImageWidth:256,tileImageHeight:256},
+       {zoomLevel:4,name:"level4",tileWidth:0.16968897570090388,tileHeight:0.16968897570090388,tileImageWidth:256,tileImageHeight:256},
+       {zoomLevel:5,name:"level5",tileWidth:0.05507983954154727,tileHeight:0.05507983954154727,tileImageWidth:256,tileImageHeight:256},
+       {zoomLevel:6,name:"level6",tileWidth:0.017878538533723076,tileHeight:0.017878538533723076,tileImageWidth:256,tileImageHeight:256},
+       {zoomLevel:7,name:"level7",tileWidth:0.005803187729944108,tileHeight:0.005803187729944108,tileImageWidth:256,tileImageHeight:256},
+       {zoomLevel:8,name:"level8",tileWidth:0.0018832386690789012,tileHeight:0.0018832386690789012,tileImageWidth:256,tileImageHeight:256},
+       {zoomLevel:9,name:"level9",tileWidth:6.114411263243185E-4,tileHeight:6.114411263243185E-4,tileImageWidth:256,tileImageHeight:256}
+     ]
+    };
+</pre>
+
+<p>The javascript map client calculates the map tiles that are needed to display
+the map and their positioning based on the map tile layer definition information. It then
+calls a tileURLProvider function defined by the application to get the URLs of the 
+map tiles that it needs. In this example, the tileURLProvider function is named getMapTileURL.
+Please refer to the <a href="../../apidoc/symbols/MVCustomMapTileLayer.html">API doc</a> for more details.
+<pre>
+  function getMapTileURL(minx, miny, width, height, level)
+  {
+    var x = (minx-mapConfig.coordSys.minX)/mapConfig.zoomLevels[level].tileWidth ;
+    var y = (miny-mapConfig.coordSys.minY)/mapConfig.zoomLevels[level].tileHeight ;
+    return baseURL+"/mcserver?request=gettile&format=" + mapConfig.format + 
+           "&zoomlevel="+level+"&mapcache=mvdemo.demo_map&mx=" + Math.round(x) + "&my=" + Math.round(y) ;
+  }
+</pre>
+
+<h3>Source code</h3>
+<blockquote>
+<pre>
+  <font color="#ff0000">
+  var mapConfig = 
+    {mapTileLayer:"custom_map",
+     format:"PNG",
+     coordSys:{srid:8307,type:"GEODETIC",distConvFactor:0.0,
+               minX:-180.0,minY:-90.0,maxX:180.0,maxY:90.0},
+     zoomLevels:
+     [
+       {zoomLevel:0,name:"level0",tileWidth:15.286028158107968,tileHeight:15.286028158107968,tileImageWidth:256,tileImageHeight:256},
+       {zoomLevel:1,name:"level1",tileWidth:4.961746909541633,tileHeight:4.961746909541633,tileImageWidth:256,tileImageHeight:256},
+       {zoomLevel:2,name:"level2",tileWidth:1.6105512127664132,tileHeight:1.6105512127664132,tileImageWidth:256,tileImageHeight:256},
+       {zoomLevel:3,name:"level3",tileWidth:0.5227742142726501,tileHeight:0.5227742142726501,tileImageWidth:256,tileImageHeight:256},
+       {zoomLevel:4,name:"level4",tileWidth:0.16968897570090388,tileHeight:0.16968897570090388,tileImageWidth:256,tileImageHeight:256},
+       {zoomLevel:5,name:"level5",tileWidth:0.05507983954154727,tileHeight:0.05507983954154727,tileImageWidth:256,tileImageHeight:256},
+       {zoomLevel:6,name:"level6",tileWidth:0.017878538533723076,tileHeight:0.017878538533723076,tileImageWidth:256,tileImageHeight:256},
+       {zoomLevel:7,name:"level7",tileWidth:0.005803187729944108,tileHeight:0.005803187729944108,tileImageWidth:256,tileImageHeight:256},
+       {zoomLevel:8,name:"level8",tileWidth:0.0018832386690789012,tileHeight:0.0018832386690789012,tileImageWidth:256,tileImageHeight:256},
+       {zoomLevel:9,name:"level9",tileWidth:6.114411263243185E-4,tileHeight:6.114411263243185E-4,tileImageWidth:256,tileImageHeight:256}
+     ]
+    };
+  </font>
+  var baseURL  = "http://"+document.location.host+"/mapviewer";
+  
+  function showMap() 
+  { 
+    var mapview = new MVMapView(document.getElementById("map"), baseURL);
+    var basemap = new MVCustomMapTileLayer(mapConfig, getMapTileURL);
+    mapview.addMapTileLayer(basemap);
+    mapview.setCenter(MVSdoGeometry.createPoint(-122.45,37.6706,8307));
+    mapview.setZoomLevel(4);
+    mapview.addNavigationPanel() ;    
+    mapview.display();
+  }
+  
+  <font color="#ff0000">
+  function getMapTileURL(minx, miny, width, height, level)
+  {
+    var x = (minx-mapConfig.coordSys.minX)/mapConfig.zoomLevels[level].tileWidth ;
+    var y = (miny-mapConfig.coordSys.minY)/mapConfig.zoomLevels[level].tileHeight ;
+    return baseURL+"/mcserver?request=gettile&format=" + mapConfig.format + 
+           "&zoomlevel="+level+"&mapcache=mvdemo.demo_map&mx=" + Math.round(x) + "&my=" + Math.round(y) ;
+  }
+  </font>
+</pre>
+</blockquote>
+</body>
+</html>
+
+

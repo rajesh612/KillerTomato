@@ -1,0 +1,112 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Oracle Maps Tutorial - theme highlighting</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+  function showMap()
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122;
+    var mapCenterLat =  37.5;
+    var mapZoom      =  3;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    var mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);    
+
+    var themebasedfoi = new MVThemeBasedFOI('themebasedfoi1','mvdemo.customers');
+    themebasedfoi.setBringToTopOnMouseOver(true);
+
+    /*
+    //this shows how to add a Marker style based on an image
+    var style = new MVStyleMarker("my_image_icon", "image");
+    style.setSize(31, 10);
+    style.setImageUrl("http://www.my_corp.com/images/new.gif");
+    */
+    
+    //this shows how to add a vector Marker style    
+    var style = new MVStyleMarker("my_vector_icon", "vector");
+    style.setSize(19, 19);
+    style.setStrokeColor("ff0000");
+    style.setStrokeWidth("1.5");
+    style.setFillColor("00ff00");    
+    //style.setVectorShape("50,199,0,100,50,1,100,100,50,199");
+    style.setVectorShape("c:50");
+        
+    themebasedfoi.addStyle(style);
+    themebasedfoi.setRenderingStyle("my_vector_icon");
+
+
+    mapview.addThemeBasedFOI(themebasedfoi);
+
+    mapview.addNavigationPanel("EAST") ;
+
+    mapview.display();  			
+    
+  }
+
+
+
+</script>
+    
+</head>
+
+<body onload=javascript:showMap();>
+<h3>Oracle Maps example - FOI theme with dynamically created Marker style</h3>
+
+  <div id="map" style="left:0px; top:0px; width:60%; height:60%"></div>
+
+<HR/>
+<H3>Instructions</H3>
+This demo shows  how to draw a customer theme-based FOI layer using dynamically 
+generated Marker style. The new client side JavaScript class <b>MVStyleMarker</b> is
+used in this case to create a Marker style object which is then added to the 
+associated theme-based FOI instance.
+
+
+<h3>Source code</h3>
+
+To create and use a vector Marker style (as shown in this demo):
+
+<blockquote>
+<pre>
+    var style = new MVStyleMarker("my_vector_icon", "vector");
+    style.setSize(19, 19);
+    style.setStrokeColor("ff0000");
+    style.setFillColor("00ff00");    
+    style.setVectorShape("50,199,0,100,50,1,100,100,50,199");
+    
+        
+    themebasedfoi.addStyle(style);
+    themebasedfoi.setRenderingStyle("my_vector_icon");
+</pre>
+
+</blockquote>
+In the above code the vector shape coordinates define a diamond symbol with 
+green fill and red boundary.
+
+<p>
+To create and use a Marker style based on an image URL:
+<blockquote>
+<pre>
+    var style = new MVStyleMarker("my_image_icon", "image");
+    style.setSize(31, 10);
+    style.setImageUrl("http://www.foo.com/bar.gif");
+
+    themebasedfoi.addStyle(style);
+    themebasedfoi.setRenderingStyle("my_image_icon");    
+</pre>
+</blockquote>
+The above will fetch the image from the given URL and then use it as the
+marker icon when rendering the theme's features.
+
+</body>
+</html>      
+
+
+

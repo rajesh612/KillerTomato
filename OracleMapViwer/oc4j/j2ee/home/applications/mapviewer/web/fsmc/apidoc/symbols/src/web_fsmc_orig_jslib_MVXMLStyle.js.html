@@ -1,0 +1,79 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/* $Header: MVXMLStyle.js 24-jan-2007.16:26:58 jxyang Exp $ */</span><span class="WHIT">
+<span class='line'>  2</span> 
+<span class='line'>  3</span> </span><span class="COMM">/* Copyright (c) 2001, 2007, Oracle. All rights reserved.  */</span><span class="WHIT">
+<span class='line'>  4</span> 
+<span class='line'>  5</span> </span><span class="COMM">/*
+<span class='line'>  6</span>    DESCRIPTION
+<span class='line'>  7</span>      client side XML Style support
+<span class='line'>  8</span> 
+<span class='line'>  9</span>    PRIVATE CLASSES
+<span class='line'> 10</span>     &lt;list of private classes defined - with one-line descriptions>
+<span class='line'> 11</span> 
+<span class='line'> 12</span>    NOTES
+<span class='line'> 13</span>     &lt;other useful comments, qualifications, etc.>
+<span class='line'> 14</span> 
+<span class='line'> 15</span>    MODIFIED    (MM/DD/YY)
+<span class='line'> 16</span>     jxyang      07/05/18 - create
+<span class='line'> 17</span> */</span><span class="WHIT">
+<span class='line'> 18</span> 
+<span class='line'> 19</span> </span><span class="COMM">/**
+<span class='line'> 20</span>  * @class MVXMLStyle lets you create a MapViewer style using the valid XML style 
+<span class='line'> 21</span>    definition at the client side. You can create any MapViewer style using this method.
+<span class='line'> 22</span>    The XML style definition format is described in MapViewer User's Guide. 
+<span class='line'> 23</span>    &lt;br> Typical useage of this class is illustrated below.
+<span class='line'> 24</span>    &lt;pre>
+<span class='line'> 25</span>       // create a marker style
+<span class='line'> 26</span>       var xmlDef = '&lt;svg width="1in" height="1in">'+
+<span class='line'> 27</span>                       '&lt;g class="marker" '+
+<span class='line'> 28</span>                          'style="width:19;height:19;stroke:0xff0000;fill:0x00ff00;stroke-width:1.5">'+
+<span class='line'> 29</span>                            '&lt;circle cx="0" cy="0" r="1"/>'+
+<span class='line'> 30</span>                        '&lt;/g>'+
+<span class='line'> 31</span>                    '&lt;/svg>' ;
+<span class='line'> 32</span>       var style = new MVXMLStyle("my_style", xmlDef);
+<span class='line'> 33</span>       
+<span class='line'> 34</span>       themebasedfoi.addStyle(style);
+<span class='line'> 35</span>       themebasedfoi.setRenderingStyle("my_style");
+<span class='line'> 36</span>    &lt;/pre>
+<span class='line'> 37</span>    
+<span class='line'> 38</span>    &lt;br>
+<span class='line'> 39</span>    Note that once a style object is added to the theme based FOI instance
+<span class='line'> 40</span>    and set as its rendering style, the MapViewer server side will typically
+<span class='line'> 41</span>    cache and reuse a renderered version of the style for all subsequent
+<span class='line'> 42</span>    theme-based FOI requests that uses a style with the same name and size.  
+<span class='line'> 43</span>    As such, when you modify a style client-side, you should 
+<span class='line'> 44</span>    also modify its name (and/or size) in order to display the modified version
+<span class='line'> 45</span>    on the map. If you do modify the style's name, don't forget to change
+<span class='line'> 46</span>    it in the themebasedfoi.setRenderingStyle() call too.
+<span class='line'> 47</span>    
+<span class='line'> 48</span>    @constructor   
+<span class='line'> 49</span>    @param {string} name  name of the style
+<span class='line'> 50</span>    @param {string} xmlDef the XML definition of the style. 
+<span class='line'> 51</span>  */</span><span class="WHIT">
+<span class='line'> 52</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">MVXMLStyle</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">xmlDef</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'> 53</span> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 54</span> </span><span class="WHIT">  </span><span class="COMM">/**@private*/</span><span class="WHIT">
+<span class='line'> 55</span> </span><span class="WHIT">  </span><span class="NAME">this.name</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">name</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 56</span> </span><span class="WHIT">  </span><span class="COMM">/**@private*/</span><span class="WHIT">
+<span class='line'> 57</span> </span><span class="WHIT">  </span><span class="NAME">this.xmlDef</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">xmlDef</span><span class="WHIT"> </span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 58</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 59</span> 
+<span class='line'> 60</span> </span><span class="COMM">/**
+<span class='line'> 61</span>   @private
+<span class='line'> 62</span>   Gets the MapViewer XML representation of this style.
+<span class='line'> 63</span>  */</span><span class="WHIT">
+<span class='line'> 64</span> </span><span class="NAME">MVXMLStyle.prototype.getXMLString</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'> 65</span> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 66</span> </span><span class="WHIT">  </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">xml</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'&lt;style name="'</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">this.name</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">'">'</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT">
+<span class='line'> 67</span> </span><span class="WHIT">            </span><span class="NAME">this.xmlDef</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT">
+<span class='line'> 68</span> </span><span class="WHIT">            </span><span class="STRN">'&lt;/style>'</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 69</span> </span><span class="WHIT">  </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">xml</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 70</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 71</span> 
+<span class='line'> 72</span> </span></pre></body></html>

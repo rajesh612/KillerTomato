@@ -1,0 +1,240 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
+          xmlns:h="http://java.sun.com/jsf/html"
+          xmlns:f="http://java.sun.com/jsf/core"
+          xmlns:af="http://xmlns.oracle.com/adf/faces"
+          xmlns:afh="http://xmlns.oracle.com/adf/faces/html">
+  <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+  <f:view>
+    <afh:html>
+      <afh:head title="OracleAS MapViewer Home">
+        <meta http-equiv="Content-Type"
+              content="text/html; charset=windows-1252"/>
+      </afh:head>
+      <afh:body>
+        <h:form>
+          <af:panelPage title="Metadata for MapViewer">
+            <f:facet name="menu1">
+              <af:menuTabs var="menuTab" id="menuTabsArea"
+                           value="#{menuModel.model}">
+                <f:facet name="nodeStamp">
+                  <af:commandMenuItem text="#{menuTab.label}"
+                                      action="#{menuTab.getOutcome}"
+                                      rendered="#{menuTab.shown and 
+                                                  menuTab.type=='default'}"/>
+                </f:facet>
+              </af:menuTabs>
+            </f:facet>
+            <f:facet name="menuGlobal">
+              <af:menuButtons var="menuButton" id="menuButtsArea"
+                              value="#{menuModel.model}">
+                <f:facet name="nodeStamp">
+                  <af:commandMenuItem text="#{menuButton.label}"
+                                      action="#{menuButton.getOutcome}"
+                                      icon="#{menuButton.icon}"
+                                      rendered="#{menuButton.type=='global'}"
+                                      type="global"/>
+                </f:facet>
+              </af:menuButtons>
+            </f:facet>
+            <f:facet name="branding">
+              <af:objectImage source="/myicons/oracle_logo.gif"/>
+            </f:facet>
+            <f:facet name="brandingApp">
+              <af:objectImage source="/myicons/mapviewer.gif"/>
+            </f:facet>
+            <f:facet name="appCopyright">
+              <af:outputText value="#{mvbundle.copyright}"/>
+            </f:facet>
+            <f:facet name="appPrivacy"/>
+            <f:facet name="appAbout"/>
+            <h:panelGrid width="100%" columns="1">
+              <af:commandButton text="#{mvbundle.refresh}"
+                                actionListener="#{metadata.refresh}"
+                                id="refresh1"/>
+              <af:panelBox text="Existing Data Sources" background="medium"
+                           icon="/myicons/info.gif" width="80%">
+                <af:panelGroup>
+                  <af:table value="#{metadata.dataSources}" var="ds">
+                    <af:column>
+                      <f:facet name="header">
+                        <af:outputText value="MapViewer Data Source"/>
+                      </f:facet>
+                      <af:outputText value="#{ds}"/>
+                    </af:column>
+                  </af:table>
+                </af:panelGroup>
+              </af:panelBox>
+              <af:objectSpacer width="10" height="15"/>
+              <af:panelBox width="80%" text="Existing Map Image Cache instances"
+                           background="medium" icon="/myicons/info.gif">
+                <af:panelGroup>
+                  <af:table emptyText="No items were found"
+                            value="#{metadata.micInstances}" var="micache"
+                            rows="5">
+                    <af:column sortable="false" headerText="Map image cache">
+                      <af:outputText value="#{micache}"/>
+                    </af:column>
+                  </af:table>
+                </af:panelGroup>
+              </af:panelBox>
+              <af:objectSpacer width="10" height="15"/>
+              <af:panelBox text="List base maps" background="medium"
+                           icon="/myicons/dbconnect.gif" width="80%">
+                <af:panelGroup layout="vertical">
+                  <af:panelGroup layout="horizontal">
+                    <af:outputLabel value="In data source: "/>
+                    <af:objectSpacer width="14" height="1"/>
+                    <af:selectOneChoice value="#{metadata.selectedDataSrc}"
+                                        required="#{metadata.numDataSrcs > 0}">
+                      <f:selectItems value="#{metadata.dsrcList}"/>
+                    </af:selectOneChoice>
+                    <af:objectSpacer width="14" height="1"/>
+                    <af:commandButton text="Submit"
+                                      actionListener="#{metadata.fetchMaps}"/>
+                    <af:objectSpacer height="1" width="14"/>
+                    <af:commandButton text="Hide Results"
+                                      actionListener="#{metadata.clearResults}"
+                                      id="r_maps"/>
+                  </af:panelGroup>
+                  <af:panelGroup>
+                    <af:objectSpacer width="1" height="10"/>
+                    <af:table rendered="true" value="#{metadata.baseMaps}"
+                              var="maps">
+                      <af:column>
+                        <f:facet name="header">
+                          <af:outputText value="Base map"/>
+                        </f:facet>
+                        <af:outputText value="#{maps}"/>
+                      </af:column>
+                    </af:table>
+                  </af:panelGroup>
+                </af:panelGroup>
+              </af:panelBox>
+              <af:objectSpacer width="10" height="15"/>
+              <af:panelBox text="List predefined themes" background="medium"
+                           icon="/myicons/dbconnect.gif" width="80%">
+                <af:panelGroup layout="vertical">
+                  <af:panelGroup layout="horizontal">
+                    <af:outputLabel value="In data source: "/>
+                    <af:objectSpacer width="14" height="1"/>
+                    <af:selectOneChoice value="#{metadata.selectedDataSrc2}"
+                                        required="#{metadata.numDataSrcs > 0}">
+                      <f:selectItems value="#{metadata.dsrcList}"/>
+                    </af:selectOneChoice>
+                    <af:objectSpacer width="14" height="1"/>
+                    <af:commandButton text="Submit"
+                                      actionListener="#{metadata.fetchAllThemes}"/>
+                    <af:objectSpacer width="14" height="1"/>
+                    <af:commandButton actionListener="#{metadata.clearResults}"
+                                      id="r_themes" text="Hide Results"/>
+                  </af:panelGroup>
+                  <af:panelGroup>
+                    <af:objectSpacer width="1" height="10"/>
+                    <af:table rendered="true" value="#{metadata.allThemes}"
+                              var="themes">
+                      <af:column>
+                        <f:facet name="header">
+                          <af:outputText value="Predefined Theme"/>
+                        </f:facet>
+                        <af:outputText value="#{themes}"/>
+                      </af:column>
+                    </af:table>
+                  </af:panelGroup>
+                </af:panelGroup>
+              </af:panelBox>
+              <af:objectSpacer width="10" height="15"/>
+              <af:panelBox text="List predefined themes in a basemap"
+                           background="medium" icon="/myicons/dbconnect.gif"
+                           width="80%">
+                <af:panelGroup layout="vertical">
+                  <af:panelGroup layout="horizontal">
+                    <af:outputLabel value="In data source: "/>
+                    <af:objectSpacer width="14" height="1"/>
+                    <af:selectOneChoice value="#{metadata.selectedDataSrc3}"
+                                        required="#{metadata.numDataSrcs > 0}"
+                                        valueChangeListener="#{metadata.dsrc3Changed}"
+                                        onchange="submit();">
+                      <f:selectItems value="#{metadata.dsrcList}"/>
+                    </af:selectOneChoice>
+                    <af:objectSpacer width="14" height="1"/>
+                    <af:outputLabel value="that are members of base map:"/>
+                    <af:objectSpacer width="14" height="1"/>
+                    <af:selectOneChoice value="#{metadata.selectedMap3}"
+                                        required="#{metadata.numDataSrcs > 0}">
+                      <f:selectItems value="#{metadata.mapList}"/>
+                    </af:selectOneChoice>
+                    <af:objectSpacer width="14" height="1"/>
+                    <af:commandButton text="Submit"
+                                      actionListener="#{metadata.fetchThemesInMaps}"/>
+                    <af:objectSpacer height="1" width="14"/>
+                    <af:commandButton actionListener="#{metadata.clearResults}"
+                                      id="r_themes_in_map" text="Hide Results"/>
+                  </af:panelGroup>
+                  <af:panelGroup>
+                    <af:objectSpacer width="1" height="10"/>
+                    <af:table rendered="true" value="#{metadata.mapThemes}"
+                              var="themes">
+                      <af:column>
+                        <f:facet name="header">
+                          <af:outputText value="Predefined Theme"/>
+                        </f:facet>
+                        <af:outputText value="#{themes}"/>
+                      </af:column>
+                    </af:table>
+                  </af:panelGroup>
+                </af:panelGroup>
+              </af:panelBox>
+              <af:objectSpacer width="10" height="15"/>
+              <af:panelBox text="List styles" background="medium"
+                           icon="/myicons/dbconnect.gif" width="80%">
+                <af:panelGroup layout="vertical">
+                  <af:panelGroup layout="horizontal">
+                    <af:outputLabel value="In data source: "/>
+                    <af:objectSpacer width="14" height="1"/>
+                    <af:selectOneChoice value="#{metadata.selectedDataSrc4}"
+                                        required="#{metadata.numDataSrcs > 0}">
+                      <f:selectItems value="#{metadata.dsrcList}"/>
+                    </af:selectOneChoice>
+                    <af:objectSpacer width="14" height="1"/>
+                    <af:outputLabel value="that are of type:"/>
+                    <af:objectSpacer width="14" height="1"/>
+                    <af:selectOneChoice value="#{metadata.selectedStyleType}"
+                                        required="#{metadata.numDataSrcs > 0}">
+                      <f:selectItems value="#{metadata.styleTypes}"/>
+                    </af:selectOneChoice>
+                    <af:objectSpacer width="14" height="1"/>
+                    <af:commandButton text="Submit"
+                                      actionListener="#{metadata.fetchStyles}"/>
+                    <af:objectSpacer height="1" width="14"/>
+                    <af:commandButton actionListener="#{metadata.clearResults}"
+                                      id="r_styles" text="Hide Results"/>
+                  </af:panelGroup>
+                  <af:panelGroup>
+                    <af:objectSpacer width="1" height="10"/>
+                    <af:table rendered="true" value="#{metadata.styles}"
+                              var="styles">
+                      <af:column>
+                        <f:facet name="header">
+                          <af:outputText value="Style"/>
+                        </f:facet>
+                        <af:outputText value="#{styles}"/>
+                      </af:column>
+                    </af:table>
+                  </af:panelGroup>
+                </af:panelGroup>
+              </af:panelBox>
+              <af:commandButton text="Refresh"
+                                actionListener="#{metadata.refresh}"
+                                id="refresh_2"/>
+            </h:panelGrid>
+            <f:facet name="brandingAppContextual">
+              <af:outputFormatted value="#{mvbundle.loclocloc}"
+                                  styleUsage="inContextBranding"/>
+            </f:facet>
+          </af:panelPage>
+        </h:form>
+      </afh:body>
+    </afh:html>
+  </f:view>
+</jsp:root>

@@ -1,0 +1,94 @@
+﻿<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Oracle Maps Tutorial - theme highlighting</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+  function showMap()
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -100;
+    var mapCenterLat =  35.5;
+    var mapZoom      =  2;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    var mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);    
+
+    var themebasedfoi = new MVThemeBasedFOI('themebasedfoi1','mvdemo.theme_demo_cities');
+    themebasedfoi.setBringToTopOnMouseOver(true);
+    themebasedfoi.setBoundingTheme(true);
+    
+    setupNsdp(themebasedfoi);
+    setupDynamicStyle(themebasedfoi);
+
+    mapview.addThemeBasedFOI(themebasedfoi);
+
+    mapview.addNavigationPanel("EAST") ;
+
+    mapview.display();  			
+    
+    //themebasedfoi.zoomToTheme();
+  }
+
+  function setupNsdp(themebasedfoi)
+  {
+    var nsdpInfo = new MVNSDP("defaultNSDP");
+    nsdpInfo.setTheme("theme_demo_cities");
+    nsdpInfo.setKeyColumn("state");
+
+    var xml_data = "<nsdp_xml meta='LJ got me this.'>"+
+  "<rendering>"+
+  "  <style name='myStyle' value_columns='Dollars' />"+  
+  "</rendering>"+
+  "<table>"+
+	"<tr><th>City</th><th>Dollars</th></tr>"+
+	"<tr><td>Chicago</td><td>45</td></tr>"+
+	"<tr><td>Boston</td><td>124.0</td></tr>"+
+  "</table>"+
+"</nsdp_xml>";
+
+    var ps = new Object();
+    ps["xml"] = xml_data;
+    nsdpInfo.setParameters(ps);
+    themebasedfoi.setNSDP(nsdpInfo);  
+  }
+  
+  function setupDynamicStyle(themebasedfoi)
+  {
+    var buckets = new Array(2);    
+    buckets[0] = new  MVNumericRangedBucket(10.80, 50.06,   "m.star", "0-150k");
+    buckets[1] = new  MVNumericRangedBucket(50.06, 190.80,  "m.triangle", "150k-350k");
+
+    var bseries = new MVBucketSeries("SCHEME_CUSTOM");
+    bseries.setBuckets(buckets);
+    
+    var bucketSty = new MVBucketStyle("mystyle", bseries);
+
+    //now add the piechart style
+    themebasedfoi.addStyle(bucketSty);
+    themebasedfoi.setRenderingStyle("mystyle");
+    
+  }
+
+</script>
+    
+</head>
+
+<body onload=javascript:showMap();>
+<h3>Oracle Maps example - Displaying dynamic BI data</h3>
+
+  <div id="map" style="left:0px; top:0px; width:60%; height:60%"></div>
+
+<HR/>
+
+
+
+</body>
+</html>      
+
+

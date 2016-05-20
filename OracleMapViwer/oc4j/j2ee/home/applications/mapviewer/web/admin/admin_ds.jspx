@@ -1,0 +1,189 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<jsp:root xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0"
+          xmlns:af="http://xmlns.oracle.com/adf/faces"
+          xmlns:afh="http://xmlns.oracle.com/adf/faces/html"
+          xmlns:f="http://java.sun.com/jsf/core"
+          xmlns:h="http://java.sun.com/jsf/html">
+  <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+  <f:view>
+    <afh:html>
+      <afh:head title="OracleAS MapViewer Admin">
+        <meta http-equiv="Content-Type"
+              content="text/html; charset=windows-1252"/>
+      </afh:head>
+      <afh:body>
+      <h:form>
+        <af:panelPage title="Manage data sources">
+          <f:facet name="menu1">
+            <af:menuTabs id="menuTabsArea" value="#{menuModel.model}"
+                         var="menuTab">
+              <f:facet name="nodeStamp">
+                <af:commandMenuItem text="#{menuTab.label}"
+                                    action="#{menuTab.getOutcome}"
+                                    type="default"
+                                    rendered="#{menuTab.shown and   
+                                    menuTab.type=='default'
+                                    }"/>
+              </f:facet>
+            </af:menuTabs>
+          </f:facet>
+          <f:facet name="menuGlobal">
+            <af:menuButtons var="menuButton" id="menuButtsArea"
+                            value="#{menuModel.model}">
+              <f:facet name="nodeStamp">
+                <af:commandMenuItem text="#{menuButton.label}"
+                                    action="#{menuButton.getOutcome}"
+                                    icon="#{menuButton.icon}"
+                                    rendered="#{menuButton.type=='global'}"
+                                    type="global"/>
+              </f:facet>
+            </af:menuButtons>
+          </f:facet>
+          <f:facet name="branding">
+            <af:objectImage source="/myicons/oracle_logo.gif"/>
+          </f:facet>
+          <f:facet name="brandingApp">
+            <af:objectImage source="/myicons/mapviewer_admin.gif"/>
+          </f:facet>
+          <f:facet name="appCopyright">
+            <af:outputText value="#{mvbundle.copyright}"/>
+          </f:facet>
+          <f:facet name="appPrivacy"/>
+          <f:facet name="appAbout"/>
+          <f:facet name="brandingAppContextual">
+            <af:outputFormatted value="#{mvbundle.loclocloc}"
+                                styleUsage="inContextBranding"/>
+          </f:facet>
+          <f:facet name="menu2">
+            <af:menuBar var="menuSubTab" id="menuSubTabsArea" startDepth="1"
+                        value="#{menuModel.model}">
+              <f:facet name="nodeStamp">
+                <af:commandMenuItem text="#{menuSubTab.label}"
+                                    action="#{menuSubTab.getOutcome}"/>
+              </f:facet>
+            </af:menuBar>
+          </f:facet>
+            <f:facet name="menu3">
+              <af:menuList id="menuListArea" var="menuListItem" startDepth="2"
+                           value="#{menuModel.model}">
+                <f:facet name="nodeStamp">
+                  <af:commandMenuItem text="#{menuListItem.label}"
+                                      action="#{menuListItem.getOutcome}"/>
+                </f:facet>
+              </af:menuList>
+            </f:facet>
+            <af:panelGroup layout="vertical">
+              <af:commandButton text="#{mvbundle.refresh}"
+                                action="#{adminDataSrcs.refresh}"/>
+              <af:objectSpacer width="10" height="12"/>
+              <af:panelBox text="Existing data sources"
+                           width="90%">
+                <af:table value="#{adminDataSrcs.dataSources}" var="row" emptyText="No items were found" banding="row"
+                          bandingInterval="1" width="100%"
+                          selectionListener="#{adminDataSrcs.markCurrentRow}"
+                          binding="#{adminDataSrcs.uiTable}">
+                  <af:column sortable="false" headerText="Name"
+                             formatType="text">
+                    <af:outputText value="#{row.name}"/>
+                  </af:column>
+                  <af:column sortable="false" headerText="User"
+                             formatType="text">
+                    <af:outputText value="#{row.user}"/>
+                  </af:column>
+                  <af:column sortable="false" headerText="OC4J DS"
+                             formatType="text">
+                    <af:outputText value="#{row.containerDS}"/>
+                  </af:column>
+                  <af:column sortable="false" headerText="JDBC Url"
+                             formatType="text">
+                    <af:outputText value="#{row.url}"/>
+                  </af:column>
+                  <af:column sortable="false" headerText="TNS name"
+                             formatType="text">
+                    <af:outputText value="#{row.tnsName}"/>
+                  </af:column>
+                  <af:column sortable="false" headerText="Mappers"
+                             formatType="number">
+                    <af:outputText value="#{row.numMappers}"/>
+                  </af:column>
+                  <af:column sortable="false" headerText="Max conns"
+                             formatType="number">
+                    <af:outputText value="#{row.maxConn}"/>
+                  </af:column>
+                  <f:facet name="selection">
+                    <af:tableSelectOne text="Select a data source and ">
+                      <af:commandButton text="Edit"
+                                        action="#{adminDataSrcs.edit}"/>
+                      <af:commandButton text="Delete"
+                                        action="dialog:deleteWarn"
+                                        useWindow="true" windowHeight="220"
+                                        windowWidth="400" partialSubmit="false"
+                                        returnListener="#{adminDataSrcs.deleteDialogDone}"
+                                        launchListener="#{adminDataSrcs.handleDialogLaunch}"/>
+                      <af:commandButton text="Purge cached metadata"
+                                        action="#{adminDataSrcs.clearMetadataCache}"/>                                           
+                    </af:tableSelectOne>
+                  </f:facet>
+                </af:table>
+          
+              </af:panelBox>
+              <af:objectSpacer width="10" height="15"/>              
+              <af:panelBox width="90%" text="Create a dynamic data source">
+                <af:panelGroup layout="vertical">
+                  <af:panelForm partialTriggers="DSrcTypeCreate"
+                                fieldWidth="60%" labelWidth="40%" width="75%">
+                    <f:facet name="footer">
+                      <af:panelButtonBar>
+                        <af:commandButton text="Submit"
+                                          actionListener="#{newDataSrc.createDataSrc_submitted}"
+                                          action="#{newDataSrc.createNewDS}"/>
+                      </af:panelButtonBar>
+                    </f:facet>
+                    <af:objectSpacer width="10" height="8"/>
+                    <af:inputText label="Name:" value="#{newDataSrc.name}"
+                                  required="false"/>
+                    <af:objectSpacer width="10" height="8"/>
+                    <af:selectOneRadio label="Based on:" layout="horizontal"
+                                       required="true"
+                                       value="#{newDataSrc.type}"
+                                       valueChangeListener="#{newDataSrc.typeChanged}"
+                                       autoSubmit="true" id="DSrcTypeCreate">
+                      <f:selectItems  value="#{newDataSrc.dataSrcTypes}"/>
+                    </af:selectOneRadio>
+                    <af:objectSpacer width="10" height="8"/>
+                    <af:inputText label="J2EE ds:"  value="#{newDataSrc.containerDS}" wrap="off"
+                                  rendered="#{newDataSrc.type=='J2EE DS'}"
+                                  tip="#{mvbundle.j2eeds}"/>
+                    <af:inputText label="TNS Name:" value="#{newDataSrc.tnsName}" wrap="off"
+                                  rendered="#{newDataSrc.type=='TNS name'}"/>
+                    <af:inputText label="Host:"     value="#{newDataSrc.host}" 
+                                  rendered="#{newDataSrc.type=='JDBC URL'}"/>
+                    <af:inputText label="Port:" value="#{newDataSrc.port}"
+                                  rendered="#{newDataSrc.type=='JDBC URL'}"/>
+                    <af:inputText label="Sid:" value="#{newDataSrc.sid}"
+                                  rendered="#{newDataSrc.type=='JDBC URL'}"/>
+                    <af:inputText label="User:" value="#{newDataSrc.user}"
+                                  rendered="#{newDataSrc.type=='JDBC URL' or newDataSrc.type=='TNS name'}"/>
+                    <af:inputText label="Password:" value="#{newDataSrc.password}"
+                                  rendered="#{newDataSrc.type=='JDBC URL' or newDataSrc.type=='TNS name'}"/>
+                    <af:inputText label="# Mappers:"
+                                  value="#{newDataSrc.numMappers}"/>
+                    <af:inputText label="Max Connections:"
+                                  value="#{newDataSrc.maxConns}"
+                                  rendered="#{newDataSrc.type=='JDBC URL' or newDataSrc.type=='TNS name'}"
+                                  tip="#{mvbundle.maxconns}"/>
+                    <af:objectSpacer width="10" height="10"/>
+                  </af:panelForm>
+                </af:panelGroup>
+              </af:panelBox>
+              <af:objectSpacer width="10" height="15"/>
+            </af:panelGroup>
+            <f:facet name="messages">
+              <af:messages/>
+            </f:facet>
+          </af:panelPage>
+        </h:form>
+      </afh:body>
+    </afh:html>
+  </f:view>
+</jsp:root>

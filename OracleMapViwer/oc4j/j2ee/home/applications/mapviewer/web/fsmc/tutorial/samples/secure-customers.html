@@ -1,0 +1,57 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html" charset=UTF-8">
+<TITLE>Map Cache Server/Map Client</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+  var mapview;
+  
+  function on_load_mapview() 
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.7706;
+    var mapZoom      =  4;       
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+    mapview.setCenter(mpoint);   
+    mapview.setZoomLevel(mapZoom);    
+    
+    var themebasedfoi = new MVThemeBasedFOI('themebasedfoi1','mvdemo.mycustomers');
+    
+    themebasedfoi.setBringToTopOnMouseOver(true);
+    mapview.addThemeBasedFOI(themebasedfoi);
+    navPan = new MVMapDecoration(new MVNavigationPanel(),0,0,null,null,4,4) ;
+    mapview.addMapDecoration(navPan) ;      
+    mapview.display();
+  }
+  
+  function removeThemeBasedFOI()
+  {
+    var themebasedfoiName = document.getElementById('themebasedfoiName').value;
+    var themebasedfoi = mapview.getThemeBasedFOI (themebasedfoiName);
+    mapview.removeThemeBasedFOI(themebasedfoi);
+  }	                     
+</script>
+</head>
+
+<body onload= javascript:on_load_mapview() >
+<h3>Oracle Maps example - Secure Map Rendering demo </h3>
+
+<div id="map" style="left:0px; top:10px;width: 80%; height: 70%"></div> 
+
+<HR/>
+<h3>Instructions</h3>
+  The pins represent customer locations, and are generated from a MapViewer
+  theme named 'mycustomers'. Note that only those customers whose account manager
+  matches the current authenticated web user are displayed. You can check the 
+  account manager of each customer by clicking on the pins.
+
+</body>
+</html>
+
+

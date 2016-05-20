@@ -1,0 +1,143 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html" charset=UTF-8">
+<TITLE>Map Cache Server/Map Client</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+  var mapview;
+    
+  function showMap() 
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.7706;
+    var mapZoom      =  4;       
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+    mapview.setCenter(mpoint);   
+    mapview.setZoomLevel(mapZoom);    
+    
+    var themebasedfoi = new MVThemeBasedFOI('themebasedfoi1','mvdemo.customers') ;
+    
+    themebasedfoi.setBringToTopOnMouseOver(true);
+    
+    themebasedfoi.attachEventListener(MVEvent.MOUSE_CLICK, foiClick);
+    themebasedfoi.attachEventListener(MVEvent.BEFORE_REFRESH, beforeRefresh);
+    themebasedfoi.attachEventListener(MVEvent.AFTER_REFRESH, afterRefresh);	
+    themebasedfoi.attachEventListener(MVEvent.MOUSE_OVER, foiOver);
+    themebasedfoi.attachEventListener(MVEvent.MOUSE_OUT, foiOut);
+    mapview.addThemeBasedFOI(themebasedfoi);
+                      
+    mapview.display();
+  }    	
+
+  function foiClick(point,foi)
+  {
+    var htmlString = "<UL><LI>name="+foi.name+"<LI>attrs="+foi.attrs+"<LI>attrsName="+foi.attrnames+"</UL>";
+    mapview.displayInfoWindow(point, htmlString,400,100);
+    //window.open('http://www.oracle.com','mywindow');
+  }
+  function foiOver(point,foi)
+  {
+    defaultStatus="foi name:"+foi.name;
+  }
+  function foiOut(point,foi)
+  {
+    defaultStatus="";
+  }
+  function beforeRefresh()
+  {
+    alert("about to refresh theme based FOIs");
+  }
+  
+  function afterRefresh()
+  {
+    alert("theme based FOIs have been refreshed");
+  }  
+</script>
+</head>
+
+<body onload="javascript:showMap()">
+<h3>Oracle Maps example - handling theme based FOI layer events </h3>
+   <div id="map" style="left:0px; top:10px;width:100%; height:60%"></div> 
+
+<h3>Instructions</h3>
+  This demo shows how to write event listeners that handle certain events
+  associated with a Theme based FOI layer. The types of events being handled 
+  are:
+    <UL>
+    	<LI>mouse clicking on any FOI of the theme</LI>
+    	<LI>mouse over any FOI of the theme</LI>
+    	<LI>mouse moves away from a FOI the theme</LI>
+    	
+    	<LI>theme is about to be refreshed</LI>
+    	<LI>theme has just been refreshed</LI>
+    </UL>
+ 
+<h3>Source code</h3>
+<blockquote>
+  <pre>
+  var mapview;
+    
+  function showMap() 
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.7706;
+    var mapZoom      =  4;       
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+    mapview.setCenter(mpoint);   
+    mapview.setZoomLevel(mapZoom);    
+    
+    var themebasedfoi = new MVThemeBasedFOI('themebasedfoi1','mvdemo.customers') ;
+    
+    themebasedfoi.setBringToTopOnMouseOver(true);
+    <font color="#ff0000">
+    themebasedfoi.attachEventListener(MVEvent.MOUSE_CLICK, foiClick);
+    themebasedfoi.attachEventListener(MVEvent.BEFORE_REFRESH, beforeRefresh);
+    themebasedfoi.attachEventListener(MVEvent.AFTER_REFRESH, afterRefresh);	
+    themebasedfoi.attachEventListener(MVEvent.MOUSE_OVER, foiOver);
+    themebasedfoi.attachEventListener(MVEvent.MOUSE_OUT, foiOut);
+    </font>
+    mapview.addThemeBasedFOI(themebasedfoi);
+                      
+    mapview.display();
+  }    	
+  <font color="#ff00000">
+  function foiClick(point,foi)
+  {
+    var htmlString = "&lt;UL&gt;&lt;LI&gt;name="+foi.name+"&lt;LI&gt;attrs="+foi.attrs+"&lt;LI&gt;attrsName="+ foi.attrnames+"&lt;/UL&gt;";
+    mapview.displayInfoWindow(point, htmlString,400,100);
+    //window.open('http://www.oracle.com','mywindow');
+  }
+  function foiOver(point,foi)
+  {
+    defaultStatus="foi name:"+foi.name;
+  }
+  function foiOut(point,foi)
+  {
+    defaultStatus="";
+  }
+  function beforeRefresh()
+  {
+    alert("before refresh");
+  }
+  
+  function afterRefresh()
+  {
+    alert("after refresh");
+  }    
+  </font>
+  </pre>
+</blockquote>
+</body>
+
+</html>
+
+

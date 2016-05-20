@@ -1,0 +1,83 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Map Cache Server/Map Client</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+    var microscope;
+    var detailMap;
+	
+    function showDetailMap()
+    {
+      detailMap = new MVMapView(microscope.getContainerDiv());
+      detailMap.addBaseMapLayer(new MVBaseMap("mvdemo.demo_map"));
+      var customerTheme = new MVThemeBasedFOI("customers", "mvdemo.customers") ;
+      customerTheme.setQueryWindowMultiplier(5);
+      detailMap.addThemeBasedFOI(customerTheme) ;
+      var loc = microscope.getPosition() ;
+      detailMap.setCenterAndZoomLevel(mapview.getMapCoordinates({x:loc.x+100,y:loc.y+100}), 
+	                                  mapview.getZoomLevel()+1) ;
+      detailMap.enableLoadingIcon(false); 
+      detailMap.display();
+      microscope.setEventListener(MVEvent.DRAG, recenterDetailMap);
+    }
+    function recenterDetailMap()
+    {
+      var loc = microscope.getPosition() ;
+      detailMap.setCenter(mapview.getMapCoordinates({x:loc.x+100,y:loc.y+100}), true) ;
+    }
+	
+    function changeMagnifierZoomLevel()
+    {
+      var loc = microscope.getPosition() ;
+      detailMap.setCenterAndZoomLevel(mapview.getMapCoordinates({x:loc.x+100,y:loc.y+100}), 
+	                                  mapview.getZoomLevel()+1) ;
+    }
+
+  function showMap()
+  {
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addBaseMapLayer(new MVBaseMap("mvdemo.demo_map"));
+    customerTheme = new MVThemeBasedFOI("customers", "mvdemo.customers") ;
+    mapview.addThemeBasedFOI(customerTheme) ;
+    mapview.setCenter(mpoint);
+    mapview.setZoomLevel(mapZoom);
+
+    //create and display the microscope window (map deco)
+    microscope = new MVMapDecoration(null,0.5,0.5,200,200,-100,-100);
+    microscope.setCollapsible(true);
+    microscope.setDraggable(true);
+    microscope.setTitleBar("Microscope", "/mapviewer/myicons/zoomin.gif", "Magnifying glass");
+    mapview.addMapDecoration(microscope);
+
+
+    nav = new MVMapDecoration(new MVNavigationPanel(true,true,true,true),0,0,null,null,10,10);
+    nav.setDraggable(true);
+    mapview.addMapDecoration(nav);
+
+    mapview.setEventListener(MVEvent.INITIALIZE, showDetailMap) ;
+    mapview.setEventListener(MVEvent.RECENTER, recenterDetailMap) ;
+    mapview.setEventListener(MVEvent.ZOOM_LEVEL_CHANGE, changeMagnifierZoomLevel) ;
+    mapview.display();
+
+  }
+
+</script>
+
+</head>
+
+<body onload=javascript:showMap();>
+<h3>Magnifying glass - a demonstration of map decoration</h3>
+
+  <div id="map" style="width:80%; height:60%"></div>
+  <div id="message" style="width:90%;height:25%;overflow:auto"></div>
+
+

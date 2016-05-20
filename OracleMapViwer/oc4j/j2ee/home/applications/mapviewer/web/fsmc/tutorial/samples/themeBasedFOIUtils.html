@@ -1,0 +1,125 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html" charset=UTF-8">
+<TITLE>Map Cache Server/Map Client</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+  var mapview;
+  var themebasedfoi;
+  
+  function showMap() 
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.7706;
+    var mapZoom      =  4;       
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+    mapview.setCenter(mpoint);   
+    mapview.setZoomLevel(mapZoom);
+    
+    themebasedfoi = new MVThemeBasedFOI('themebasedfoi1','mvdemo.THEME_DEMO_COUNTY_POPDENSITY');
+    mapview.addThemeBasedFOI(themebasedfoi);
+    
+    mapview.addNavigationPanel() ;
+    mapview.display();
+  }
+  
+  function enableLabels(item)
+  {
+    themebasedfoi.enableLabels(item.checked);
+    themebasedfoi.refresh();
+  }
+
+  function enableInfoWindowForMO(item)
+  {
+    themebasedfoi.enableInfoWindowForMouseOver(item.checked);
+  }
+
+  function enableImages(item)
+  {
+    themebasedfoi.enableImageRendering(item.checked);
+    themebasedfoi.refresh();
+  }
+</script>
+</head>
+
+<body onload="javascript:showMap();">
+<h3>Oracle Maps example - Some theme based FOI utility methods</h3>
+
+      <ul>  
+        <LI ><INPUT TYPE="checkbox" onclick="enableLabels(this)" />Show polygon FOI labels
+        <LI ><INPUT TYPE="checkbox" onclick="enableInfoWindowForMO(this)" />Show info window for mouse hover
+        <LI ><INPUT TYPE="checkbox" onclick="enableImages(this)" checked/>Eanble polygon FOI image rendering
+      </ul>
+
+   <div id="map" style="left:0px;top:10px;width:100%; height:60%"></div> 
+   
+<HR/>
+<h3>Instructions</h3>
+  This demo shows the following theme based FOI utility methods.
+  <ul>  
+    <LI >The method that turns on or off labels for a polygon theme based FOI layer.
+    <LI >The method that enables or disables info window for mouse hover.
+    <LI >The method that enables or disables polygon FOI image rendering. The polygon FOI areas are always clickable no matter whether FOI image rendering is enabled or disabled. 
+  </ul>
+<h3> Source code </h3>
+
+The JavaScript code for the above map is below.
+
+<blockquote>
+	<pre>
+  var mapview;
+  var themebasedfoi;
+  
+  function showMap() 
+  { 
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.7706;
+    var mapZoom      =  4;       
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+    mapview.setCenter(mpoint);   
+    mapview.setZoomLevel(mapZoom);
+    
+    themebasedfoi = new MVThemeBasedFOI('themebasedfoi1','mvdemo.THEME_DEMO_COUNTY_POPDENSITY');
+    mapview.addThemeBasedFOI(themebasedfoi);
+    
+    mapview.addNavigationPanel() ;
+    mapview.display();
+  }
+  
+  function enableLabels(item)
+  {
+    <font color="#ff0000">
+    themebasedfoi.enableLabels(item.checked);
+    themebasedfoi.refresh();
+    </font>
+  }
+
+  function enableInfoWindowForMO(item)
+  {
+    <font color="#ff0000">
+    themebasedfoi.enableInfoWindowForMouseOver(item.checked);
+    </font>
+  }
+
+  function enableImages(item)
+  {
+    <font color="#ff0000">
+    themebasedfoi.enableImageRendering(item.checked);
+    themebasedfoi.refresh();
+    </font>
+  }
+	</pre>
+</blockquote>
+</body>
+</html>
+
+

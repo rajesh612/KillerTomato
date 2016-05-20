@@ -1,0 +1,120 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html" charset=UTF-8">
+<TITLE>Map Cache Server/Map Client</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+  var mapview;
+  
+  function on_load_mapview() 
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -100.45;
+    var mapCenterLat =  37.7706;
+    var mapZoom      =  0;       
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+    mapview.setCenter(mpoint);   
+    mapview.setZoomLevel(mapZoom);    
+    var georss="mvdemo.__georss__"+baseURL+"/fsmc/tutorial/samples/georss.xml"; 
+    var themebasedfoi = new MVThemeBasedFOI('themebasedfoi1',georss);
+    
+    themebasedfoi.setBringToTopOnMouseOver(true);
+    mapview.addThemeBasedFOI(themebasedfoi);
+          
+    mapview.display();
+  }
+  
+  function removeThemeBasedFOI()
+  {
+    var themebasedfoiName = document.getElementById('themebasedfoiName').value;
+    var themebasedfoi = mapview.getThemeBasedFOI (themebasedfoiName);
+    mapview.removeThemeBasedFOI(themebasedfoi);
+  }	                     
+</script>
+</head>
+
+<body onload= javascript:on_load_mapview() >
+<h3>Oracle Maps example - GeoRSS support</h3>
+
+<div id="map" style="left:0px; top:10px;width: 100%; height: 60%"></div> 
+
+<HR/>
+<h3>Instructions</h3>
+  This demo shows the basic support for displaying data from a GeoRSS feed. To 
+  achieve this, all you need to do is create a theme-based FOI layer, and
+  provide the URL of the GeoRSS feed with a special prefix string "__georss__" as
+  the name of the MapViewer theme. For instance, typicall you create a 
+  theme-based FOI layer based on a predefined mapviewer theme such as "customers"
+  in this manner:
+<pre>
+  var themebasedfoi = new MVThemeBasedFOI('themebasedfoi1', 'mvdemo.customers');
+</pre>
+
+  To display the data from a GeoRSS accessible at the url 'http://foo.com/georss.xml',
+  you will create the theme-based FOI layer like this:
+
+<pre>
+  
+    var georss="mvdemo.__georss__http://foo.com/georss.xml";
+    var themebasedfoi = new MVThemeBasedFOI('themebasedfoi1',georss);
+
+</pre>
+  That's all you need to do to display the geographic data or items in the 
+  GeoRSS feed. Note that typically MapViewer will render the geo-features in a
+  GeoRSS feed using the default (gray) style. If you want to use a different style
+  simply supply a MapViewer style name and set it on the theme-based FOI layer
+  through MVThemeBasedFOI.setRenderingStyle().
+
+  <br>
+  Dont'f forget to specify proper web proxy info in the MapViewer's config file
+  if you are running MapViewer inside a firewall and the GeoRSS feed comes from
+  an external source.
+
+<p>
+  For more information about GeoRSS, please check the GeoRSS web site, http://www.georss.org.
+  MapViewer supports both Atom and RSS 1 or 2 feeds. 
+  For the detailed information regarding MapViewer's support of GeoRSS, please check the
+  MapViewer User's Guide.
+
+<p>
+  Here is the sample <A href="georss.xml">GeoRSS xml file</a> that is used for this demo.
+
+<h3>Source code</h3>
+Here is the JavaScript code for the above map.
+<blockquote>
+
+<pre>
+  var mapview;
+  
+  function on_load_mapview() 
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.7706;
+    var mapZoom      =  4;       
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+    mapview.setCenter(mpoint);   
+    mapview.setZoomLevel(mapZoom);    
+    <font color="#ff0000">
+    var georss="mvdemo.__georss__"+baseURL+"/fsmc/tutorial/samples/georss.xml";
+    var themebasedfoi = new MVThemeBasedFOI('themebasedfoi1',georss);
+    </font>
+    
+    themebasedfoi.setBringToTopOnMouseOver(true);
+    mapview.addThemeBasedFOI(themebasedfoi);
+    mapview.display();
+  }
+</pre>
+</blockquote>
+
+</body>
+</html>
+
+

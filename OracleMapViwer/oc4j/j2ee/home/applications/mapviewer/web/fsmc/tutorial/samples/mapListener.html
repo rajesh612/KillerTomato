@@ -1,0 +1,170 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html" charset=UTF-8">
+<TITLE>Map Cache Server/Map Client</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+  var mapview;
+  
+  function showMap()
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+    mapview.setCenter(mpoint);   
+    mapview.setZoomLevel(mapZoom);
+    
+    mapview.addNavigationPanel();
+    mapview.display();  
+    setMapListener();
+
+  }
+  
+  function setMapListener() 
+  {	
+    mapview.attachEventListener(MVEvent.MOUSE_CLICK, mouseClick);
+    mapview.attachEventListener(MVEvent.MOUSE_RIGHT_CLICK, mouseRightClick);
+    mapview.attachEventListener(MVEvent.RECENTER, recenter);
+    mapview.attachEventListener(MVEvent.BEFORE_ZOOM_LEVEL_CHANGE, beforeZoom);
+    mapview.attachEventListener(MVEvent.ZOOM_LEVEL_CHANGE, zoom);
+    mapview.attachEventListener(MVEvent.MOUSE_MOVE, showMouseLocation);
+  }
+  
+  function mouseClick()
+  {
+    var mouseLoc = mapview.getMouseLocation();
+    var locStr = 'mouse location:' + mouseLoc.getPointX() + ', ' + mouseLoc.getPointY() ;
+    alert("you clicked at: "+locStr);
+  }
+  
+  function mouseRightClick()
+  {
+    var mouseLoc = mapview.getMouseLocation();
+    var locStr = 'mouse location:' + mouseLoc.getPointX() + ', ' + mouseLoc.getPointY() ;
+    alert("you right clicked at: "+locStr);
+  }
+  
+  function recenter()
+  {
+    alert("map recenter event fired");
+  }    		
+ 
+  function beforeZoom(beforeLevel, afterLevel)
+  {
+    alert("before_zoom_level_change event fired:"+beforeLevel+"->"+afterLevel) ;
+  }
+
+  function zoom(beforeLevel, afterLevel)
+  {
+    alert("zoom_level_change event fired:"+beforeLevel+"->"+afterLevel) ;
+  }
+  
+  function showMouseLocation()
+  {
+    document.getElementById("mouse_location").innerHTML = mapview.getMouseLocation();
+  }
+</script>
+
+</head>
+
+<body onload="javascript:showMap();">
+<h3>Oracle Maps example - write map event listeners</h3>
+  <div id="map" style="width:100%; height:60%"></div> 
+  <div id="mouse_location"></div> 
+
+<HR/>
+<h3>Instructions</h3>
+This demo shows how to write event listeners to listen for such events as
+mouse clicking and recentering of the map.  
+<BR></BR>
+This particular demo displays an 
+alert box whenever the map is recentered (map recenter event). It also
+displays the current map location whenever you click on the map (mouse click event).
+
+<h3>Source code</h3>
+The source code for this demo is here.
+<blockquote>
+<pre>
+  var mapview;
+  
+  function showMap()
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+    mapview.setCenter(mpoint);   
+    mapview.setZoomLevel(mapZoom);
+    
+    mapview.display();  			
+    <font color="#ff0000">
+    setMapListener();
+	</font>
+  }
+    
+
+  
+  function setMapListener() 
+  {	
+    <font color="#ff0000">
+    mapview.attachEventListener(MVEvent.MOUSE_CLICK, mouseClick);
+    mapview.attachEventListener(MVEvent.MOUSE_RIGHT_CLICK, mouseRightClick);
+    mapview.attachEventListener(MVEvent.RECENTER, recenter);
+    mapview.attachEventListener(MVEvent.BEFORE_ZOOM_LEVEL_CHANGE, beforeZoom);
+    mapview.attachEventListener(MVEvent.ZOOM_LEVEL_CHANGE, zoom);
+    mapview.attachEventListener(MVEvent.MOUSE_MOVE, showMouseLocation);
+    </font>
+  }
+  <font color="#ff0000">  
+  function mouseclick()
+  {
+    var mouseLoc = mapview.getMouseLocation();
+    var locStr = 'mouse location:' + mouseLoc.getPointX() + ', ' + mouseLoc.getPointY() ;
+    alert("you clicked at: "+locStr);
+  }
+  
+  function mouseRightClick()
+  {
+    var mouseLoc = mapview.getMouseLocation();
+    var locStr = 'mouse location:' + mouseLoc.getPointX() + ', ' + mouseLoc.getPointY() ;
+    alert("you right clicked at: "+locStr);
+  }
+  
+  function recenter()
+  {
+    alert("map recenter event fired");
+  }    		
+ 
+  function beforeZoom(beforeLevel, afterLevel)
+  {
+    alert("before_zoom_level_change event fired:"+beforeLevel+"->"+afterLevel) ;
+  }
+
+  function zoom(beforeLevel, afterLevel)
+  {
+    alert("zoom_level_change event fired:"+beforeLevel+"->"+afterLevel) ;
+  }
+  
+  function showMouseLocation()
+  {
+    document.getElementById("mouse_location").innerHTML = mapview.getMouseLocation();
+  }
+  </font>
+</pre>
+</blockquote>
+
+</body>
+
+</html>
+
+

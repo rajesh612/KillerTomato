@@ -1,0 +1,206 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META content="text/html; charset=UTF-8" http-equiv=Content-Type>
+<BODY bgcolor="FFFFFF">
+
+
+<span style="width:100%">
+<table cellpadding="0" cellspacing="0" border="0" width="100%" summary="">
+<tr><td>
+    <table cellpadding="0" cellspacing="2" border="0" width="100%" summary="">
+		<tr><td valign="top"><img src="../myicons/oracle_logo.gif" border="0" ALT="oracle logo"> </td></tr>
+		<tr><td valign="bottom"><img src="../myicons/mapviewer.gif" border="0" ALT="map viewer logo"> <FONT color="#449922" size="+2"><b>Map Cache Server</b></FONT></td>
+        <td valign="bottom"><A HREF="index.html">Home</A></td>
+    </tr>
+    </table>
+</tr>
+<tr><td valign="top">
+    <table cellpadding="0" cellspacing="0" border="0" summary="">
+         <tr><td align="center"><img src="../myicons/t.gif" border="0" ALT="empty image"></td></tr>
+    </table>
+</tr>
+</table>
+</span>
+
+<HR>
+
+<A NAME="admin_request">
+<FONT COLOR="#ff0000"><H2> Admin Requests </H2> </FONT>
+<H3> Get Client Config</H3>
+<FORM action=/mapviewer/mcsadmin method=post>
+<TEXTAREA cols=70 name=xml_request rows=5>&lt;?xml version="1.0" standalone="yes"?&gt;
+&lt;map_cache_admin_request&gt;
+  &lt;get_client_config map_cache_names="mvdemo.demo_map" format="JSON" /&gt;
+&lt;/map_cache_admin_request&gt;
+</TEXTAREA> <BR><INPUT type=submit value=Submit> </FORM>
+<br>
+<H3> List Cache Status</H3>
+<FORM action=/mapviewer/mcsadmin method=post>
+<TEXTAREA cols=70 name=xml_request rows=5>&lt;?xml version="1.0" standalone="yes"?&gt;
+&lt;map_cache_admin_request&gt;
+  &lt;get_cache_status /&gt;
+&lt;/map_cache_admin_request&gt;
+</TEXTAREA> <BR><INPUT type=submit value=Submit> </FORM>
+<br>
+<H3> Show admin requests status</H3>
+<FORM action=/mapviewer/mcsadmin method=post>
+<TEXTAREA cols=70 name=xml_request rows=5>&lt;?xml version="1.0" standalone="yes"?&gt;
+&lt;map_cache_admin_request&gt;
+  &lt;get_admin_request_status data_source="mvdemo" map_tile_layer="demo_map"/&gt;
+&lt;/map_cache_admin_request&gt;
+</TEXTAREA> <BR><INPUT type=submit value=Submit> </FORM>
+<br>
+<H3> Stop an admin request</H3>
+<FORM action=/mapviewer/mcsadmin method=post>
+<TEXTAREA cols=70 name=xml_request rows=5>&lt;?xml version="1.0" standalone="yes"?&gt;
+&lt;map_cache_admin_request&gt;
+  &lt;tile_admin_task 
+    operation="stop_task"
+    task_id="0"
+  &gt;
+  &lt;/tile_admin_task&gt;
+&lt;/map_cache_admin_request&gt;
+</TEXTAREA> <BR><INPUT type=submit value=Submit> </FORM>
+<br>
+<H3> Resume an admin request</H3>
+<FORM action=/mapviewer/mcsadmin method=post>
+<TEXTAREA cols=70 name=xml_request rows=5>&lt;?xml version="1.0" standalone="yes"?&gt;
+&lt;map_cache_admin_request&gt;
+  &lt;tile_admin_task 
+    operation="resume_task"
+    task_id="0"
+  &gt;
+  &lt;/tile_admin_task&gt;
+&lt;/map_cache_admin_request&gt;
+</TEXTAREA> <BR><INPUT type=submit value=Submit> </FORM>
+<br>
+<H3> Remove an admin request</H3>
+<FORM action=/mapviewer/mcsadmin method=post>
+<TEXTAREA cols=70 name=xml_request rows=5>&lt;?xml version="1.0" standalone="yes"?&gt;
+&lt;map_cache_admin_request&gt;
+  &lt;tile_admin_task 
+    operation="remove_task"
+    task_id="0"
+  &gt;
+  &lt;/tile_admin_task&gt;
+&lt;/map_cache_admin_request&gt;
+</TEXTAREA> <BR><INPUT type=submit value=Submit> </FORM>
+<br>
+<H3> Clear Cache</H3>
+<FORM action=/mapviewer/mcsadmin method=post>
+<TEXTAREA cols=70 name=xml_request rows=5>&lt;?xml version="1.0" standalone="yes"?&gt;
+&lt;map_cache_admin_request&gt;
+  &lt;tile_admin_task 
+    operation="clear_tiles"
+    map_tile_layer="mvdemo.demo_map"
+    zoom_levels="8,9"
+    bounding_box="-122,37,-121.8,37.2"&gt;
+    &lt;schedule start_time="2008-10-01 9:00:00" repeat_interval="0" duration=""/&gt;
+  &lt;/tile_admin_task&gt;
+&lt;/map_cache_admin_request&gt;
+</TEXTAREA> <BR><INPUT type=submit value=Submit> </FORM>
+<br>
+<H3> Prefetch Cache</H3>
+<FORM action=/mapviewer/mcsadmin method=post>
+<TEXTAREA cols=70 name=xml_request rows=5>&lt;?xml version="1.0" standalone="yes"?&gt;
+&lt;map_cache_admin_request&gt;
+  &lt;tile_admin_task 
+    operation="fetch_tiles"
+    map_tile_layer="mvdemo.demo_map"
+    zoom_levels="8,9"
+    bounding_box="-122,37,-121.8,37.2"&gt;
+    &lt;schedule start_time="2008-10-01 9:00:00" repeat_interval="0" duration="" /&gt;
+  &lt;/tile_admin_task&gt;
+&lt;/map_cache_admin_request&gt;
+</TEXTAREA> <BR><INPUT type=submit value=Submit> </FORM>
+<br>
+<H3>Refresh Cache</H3>
+<FORM action=/mapviewer/mcsadmin method=post>
+<TEXTAREA cols=70 name=xml_request rows=5>&lt;?xml version="1.0" standalone="yes"?&gt;
+&lt;map_cache_admin_request&gt;
+  &lt;tile_admin_task 
+    operation="refresh_tiles"
+    map_tile_layer="mvdemo.demo_map"
+    zoom_levels="8,9"
+    bounding_box="-122,37,-121.8,37.2"&gt;
+    &lt;schedule start_time="2008-10-01 9:00:00" repeat_interval="0" duration="" /&gt;
+  &lt;/tile_admin_task&gt;
+&lt;/map_cache_admin_request&gt;
+</TEXTAREA> <BR><INPUT type=submit value=Submit> </FORM>
+<br>
+<H3> Create Cache Instance</H3>
+<FORM action=/mapviewer/mcsadmin method=post>
+<TEXTAREA cols=70 name=xml_request rows=15>&lt;?xml version="1.0" standalone="yes"?&gt;
+&lt;map_cache_admin_request&gt;
+  &lt;create_cache_instance data_source="mvdemo"&gt;
+    &lt;cache_instance 
+        name="demo_map" 
+        image_format="PNG"&gt;
+      &lt;internal_map_source base_map="demo_map"/&gt;
+      &lt;cache_storage root_path="/scratch/mapcache" /&gt;
+      &lt;coordinate_system 
+          srid="8307" 
+          minX="-180" maxX="180" minY="-90" maxY="90"/&gt;
+      &lt;tile_image width="250" height="250" /&gt;
+      &lt;zoom_levels levels="10" min_scale="5000" max_scale="10000000"&gt;
+      &lt;/zoom_levels&gt;
+    &lt;/cache_instance&gt;
+  &lt;/create_cache_instance&gt;
+&lt;/map_cache_admin_request&gt;
+</TEXTAREA> <BR><INPUT type=submit value=Submit> </FORM>
+<br>
+<H3> Redefine Cache Instance</H3>
+<FORM action=/mapviewer/mcsadmin method=post>
+<TEXTAREA cols=70 name=xml_request rows=15>&lt;?xml version="1.0" standalone="yes"?&gt;
+&lt;map_cache_admin_request&gt;
+  &lt;redefine_cache_instance data_source="mvdemo" &gt;
+    &lt;cache_instance 
+        name="demo_map" 
+        image_format="PNG"&gt;
+      &lt;internal_map_source base_map="demo_map"/&gt;
+      &lt;cache_storage root_path="/scratch/mapcache" /&gt;
+      &lt;coordinate_system 
+          srid="8307" 
+          minX="-180" maxX="180" minY="-90" maxY="90"/&gt;
+      &lt;tile_image width="250" height="250" /&gt;
+      &lt;zoom_levels levels="10" min_scale="5000" max_scale="10000000"&gt;
+      &lt;/zoom_levels&gt;
+    &lt;/cache_instance&gt;
+  &lt;/redefine_cache_instance&gt;
+&lt;/map_cache_admin_request&gt;
+</TEXTAREA> <BR><INPUT type=submit value=Submit> </FORM>
+<br>
+<H3>Remove Cache Instance</H3>
+<FORM action=/mapviewer/mcsadmin method=post>
+<TEXTAREA cols=70 name=xml_request rows=5>&lt;?xml version="1.0" standalone="yes"?&gt;
+&lt;map_cache_admin_request&gt;
+  &lt;remove_cache_instance 
+    map_cache_name="mvdemo.demo_map" clean_disk="true" remove_permanently="false"/&gt;
+&lt;/map_cache_admin_request&gt;
+</TEXTAREA> <BR><INPUT type=submit value=Submit> </FORM>
+<br>
+<H3>Restart map cache server</H3>
+<FORM action=/mapviewer/mcsadmin method=post>
+<TEXTAREA cols=70 name=xml_request rows=5>&lt;?xml version="1.0" standalone="yes"?&gt;
+&lt;map_cache_admin_request&gt;
+  &lt;restart_cache_server /&gt;
+&lt;/map_cache_admin_request&gt;
+</TEXTAREA> <BR><INPUT type=submit value=Submit> </FORM>
+<br>
+<H3>Take cache instance offline</H3>
+<FORM action=/mapviewer/mcsadmin method=post>
+<TEXTAREA cols=70 name=xml_request rows=5>&lt;?xml version="1.0" standalone="yes"?&gt;
+&lt;map_cache_admin_request&gt;
+  &lt;take_cache_offline map_cache_name="mvdemo.demo_map" /&gt;
+&lt;/map_cache_admin_request&gt;
+</TEXTAREA> <BR><INPUT type=submit value=Submit> </FORM>
+<br>
+<H3>Bring cache instance online</H3>
+<FORM action=/mapviewer/mcsadmin method=post>
+<TEXTAREA cols=70 name=xml_request rows=5>&lt;?xml version="1.0" standalone="yes"?&gt;
+&lt;map_cache_admin_request&gt;
+  &lt;bring_cache_online map_cache_name="mvdemo.demo_map" /&gt;
+&lt;/map_cache_admin_request&gt;
+</TEXTAREA> <BR><INPUT type=submit value=Submit> </FORM>
+
+</BODY></HTML>

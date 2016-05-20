@@ -1,0 +1,204 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<META http-equiv="Content-Type" content="text/html" charset=UTF-8">
+<TITLE>Map Cache Server/Map Client</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+
+<script language=javascript>
+  var mapview;
+  var polygon = MVSdoGeometry.createPolygon ([-122.5,37.8,-122.45,37.85,-122.41,37.83],8307);
+  function init()
+  {
+    document.getElementById("baseurl").value="http://"+document.location.host+"/mapviewer" ;
+  }
+  function drawMap() 
+  {	
+    var baseURL  = document.getElementById("baseurl").value;
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+    var basemap = document.getElementById("basemap").value;
+    mapview.addMapTileLayer(new MVMapTileLayer(basemap), afterMapAdded);
+  }
+  
+  function afterMapAdded()
+  {
+    var mapCenterLon = parseFloat(document.getElementById("x").value+"");
+    var mapCenterLat =  parseFloat(document.getElementById("y").value+"");
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,parseInt(document.getElementById("srid").value+""));
+    mapview.setCenter(mpoint);   
+    mapview.setZoomLevel(parseInt(document.getElementById("zoomlevel").value+""));
+    mapview.addNavigationPanel() ;
+    
+    var themebasedfoi = new MVThemeBasedFOI('themebasedfoi1',document.getElementById("theme").value);
+    mapview.addThemeBasedFOI(themebasedfoi);
+          
+    mapview.display();
+    mapview.addScaleBar();
+  }
+
+  function displayResult(result)
+  {
+    alert(result);
+  }
+  
+  function CSTransform()
+  { 
+    if(!mapview)
+      alert("The mapview object hasn't been initialized yet. \nClick \"Show map\" button and initialize the map first!");
+    else
+      mapview.transformGeom(polygon, 8301, null, displayResult);
+  }
+  
+  function calcLength()
+  {
+    if(!mapview)
+      alert("The mapview object hasn't been initialized yet. \nClick \"Show map\" button and initialize the map first!");
+    else
+      polygon.getLength("METER", true, null, displayResult) ;
+  }
+  
+  function calcArea()
+  {
+    if(!mapview)
+      alert("The mapview object hasn't been initialized yet. \nClick \"Show map\" button and initialize the map first!");
+    else
+      polygon.getArea("SQ_M", true, null, displayResult) ;
+  }
+</script>
+</head>
+
+<body onload= javascript:init()>
+<h3>Oracle Maps example - Accessing map cache and foi server in a different domain</h3>
+<table width=100% height=60% border=0 cellpadding=0>
+<tr valign=top>
+<td width=250px>
+<table>
+<tr><td>MapViewer base URL</td><td><input id="baseurl" size="30"/></td></tr>
+<tr><td>Base map</td><td><input id="basemap" size="30" value="mvdemo.demo_map"/></td></tr>
+<tr><td>Theme</td><td><input id="theme" size="30" value="mvdemo.customers" /></td></tr>
+<tr><td>Center X</td><td><input id="x" size="30" value="-122.45" /></td></tr>
+<tr><td>Center Y</td><td><input id="y" size="30" value="37.8" /></td></tr>
+<tr><td>SRID</td><td><input id="srid" size="30" value="8307" /></td></tr>
+<tr><td>Zoom level</td><td><input id="zoomlevel" size="30" value="4" /></td></tr>
+<tr><td align=center colspan=2><input type=button value="Show map" onclick="drawMap()"/></td></tr>
+<tr><td align=center colspan=2></td></tr>
+<tr><td align=center colspan=2><a href="javascript:CSTransform();">Transform coordinate system</a></td></tr>
+<tr><td align=center colspan=2><a href="javascript:calcLength();">Calculate geometry length in meters</a></td></tr>
+<tr><td align=center colspan=2><a href="javascript:calcArea();">Calculate geometry area in square meters</a></td></tr>
+</table>
+</td>
+<td>
+<div id="map" style="width:98%; height:98%"></div>
+</td>
+</tr>
+</table>
+
+<H3>Instructions</H3>
+<p>This demo shows how to use Oracle Maps client to access map tiles and FOIs rendered by a mapviewer instance running in a web domain different from the application domain. 
+
+<p>Web browsers usually do not allow cross-domain AJAX calls, which are remote calls made with XMLHttpRequest/XMLHTTP objects to a remote server in a domain different from the domain where the application web pages are hosted. This requires that all map and FOI requests sent from application web pages must be sent to a MapViewer instance in the same domain, which might be inconvienient or even infeasible for some applications. With Oracle Maps, cross domain remote map and FOI requests can be sent in two different ways: with XMLHttpRequest/XMLHTTP objects enabled or disabled. By default, XMLHttpRequest/XMLHTTP objects are enabled.
+
+<p>When XMLHttpRequest/XMLHTTP objects are enabled, cross domain requests are sent via a proxy server that runs in the application local domain and can forward map and FOI requests to any remote server. The proxy server is provided as part of MapViewer and must be deployed in the application domain. No sepecial treatment is needed when writing application in such case as long as the URL of the remote mapviewer instance is properly specified. 
+
+<p>When XMLHttpRequest/XMLHTTP objects are disabled, cross-domain remote map and FOI requests are sent without using XMLHttpRequest/XMLHTTP objects and therefore can be sent direclty to any remote server in any domain without going through any proxy. This allows great flexibility in application architecture, but also requires slightly different coding approach.
+
+<p>When being sent using browser built-in XMLHttpRequest/XMLHTTP objects, remote requests can be send in both asynchronous and synchronous mode. When being sent without using XMLHttpRequest/XMLHTTP objects, remote requests can be sent only in asynchronous mode. In synchronous mode, the application Javascript code that follows the Oracle Maps Javascript client code that initiates the remote request is not executed until the remote request is sent and the response is received from the remote server. In asynchronous mode, the same application code is always executed immediately after the remote request is sent even before the response from the remote server is received. This can be problemetic when the application code needs to wait for the outcome of the remote request/response. To properly handle such situation, the application should pass a call back function to all Oracle Maps client API methods that make remote AJAX calls and pass result back to the application. The call back function is called once the response is received from the server and should implement the application logic that consumes the result returned from the remote server. The call back function can be used for both synchronous and asynchronous remote reqeusts. Here is the list of all such Oracle Maps client API methods.
+
+<ul>
+<li>MVMapView.addMapTileLayer<br>
+    This method loads base map configuration from the remote map cache server, 
+    which is essential from most map and FOI operations. </li>
+<li>MVMapView.transformGeom<br>
+    This method invokes remote server side function to perform coordinate system
+    transformation.</li>
+<li>MVSdoGeometry.getLength<br>
+    This method invokes remote server side function to calculate the length
+    of a geometry.</li>
+<li>MVSdoGeometry.getArea<br>
+    This method invokes remote server side function to calculate the area of a
+    geometry.</li>
+</ul>
+
+This example shows how to use call back functions when invoking these methods for communicating to a cross-domain remote server. The same code also works when the server is in the same domain or the server is in a different domain and the XMLHttpRequest/XMLHTTP objects are enabled.
+
+<H3>Source code</H3>
+The javaScript code for this demo is shown below.
+<blockquote>
+<pre>
+  var mapview;
+  var polygon = MVSdoGeometry.createPolygon ([-122.5,37.8,-122.45,37.85,-122.41,37.83],8307);
+  function init()
+  {
+    document.getElementById("baseurl").value="http://"+document.location.host+"/mapviewer" ;
+  }
+  function drawMap() 
+  { 
+    var baseURL  = document.getElementById("baseurl").value;
+    mapview = new MVMapView(document.getElementById("map"), baseURL);
+  <font color="#ff0000">
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"), afterMapAdded);
+  </font>
+  }
+  
+  <font color="#ff0000">
+  function afterMapAdded()
+  {
+    var mapCenterLon = parseFloat(document.getElementById("x").value+"");
+    var mapCenterLat =  parseFloat(document.getElementById("y").value+"");
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,parseInt(document.getElementById("srid").value+""));
+    mapview.setCenter(mpoint);   
+    mapview.setZoomLevel(parseInt(document.getElementById("zoomlevel").value+""));
+    mapview.addNavigationPanel() ;
+    
+    var themebasedfoi = new MVThemeBasedFOI('themebasedfoi1',document.getElementById("theme").value);
+    mapview.addThemeBasedFOI(themebasedfoi);
+          
+    mapview.display();
+    mapview.addScaleBar();
+  }
+  </font>
+
+  <font color="#ff0000">
+  function displayResult(result)
+  {
+    alert(result);
+  }
+  </font>
+  
+  function CSTransform()
+  { 
+    if(!mapview)
+      alert("The mapview object hasn't been initialized yet. \nClick \"Show map\" button and initialize the map first!");
+    else
+  <font color="#ff0000">
+      mapview.transformGeom(polygon, 8301, null, displayResult);
+  </font>
+  }
+  
+  function calcLength()
+  {
+    if(!mapview)
+      alert("The mapview object hasn't been initialized yet. \nClick \"Show map\" button and initialize the map first!");
+    else
+  <font color="#ff0000">
+      polygon.getLength("METER", true, null, displayResult) ;
+  </font>
+  }
+  
+  function calcArea()
+  {
+    if(!mapview)
+      alert("The mapview object hasn't been initialized yet. \nClick \"Show map\" button and initialize the map first!");
+    else
+  <font color="#ff0000">
+      polygon.getArea("SQ_M", true, null, displayResult) ;
+  </font>
+  }
+  
+</pre>
+</blockquote>
+</body>
+</html>
+
+

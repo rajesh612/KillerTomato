@@ -1,0 +1,274 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Map Cache Server/Map Client</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+  
+<script language=javascript>
+  var mapview;
+  var circleToolIns=new Array();
+  var circleTool=null;
+
+  function showMap()
+  { 
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var centerPoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    
+    mapview = new MVMapView(document.getElementById("map"), baseURL);           
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+    mapview.setCenter(centerPoint);   
+    mapview.setZoomLevel(mapZoom);
+
+    mapview.display();        
+  }
+  
+  function addCircleTool()
+  {
+    circleTool = new MVCircleTool("mvdemo.L.MAJOR STREET");
+    mapview.addCircleTool(circleTool);
+    circleToolIns.push(circleTool);
+    refreshCircleToolList();
+  }
+  
+  function initCircleTool()
+  {
+    var circleToolList=document.getElementById("circleToolList");
+    if((circleToolList.selectedIndex)<0)
+    {
+      alert("Please choose circle tool instance from the list above to initialize! ");
+      return;
+    }
+    else
+      circleTool=circleToolIns[circleToolList.selectedIndex];
+    
+    circleToolIns[circleToolList.selectedIndex].init();
+    var listenerFlag=document.getElementById("listenerFlag");
+    AddEventListener(listenerFlag.checked);
+  }
+
+  function clearCircleTool()
+  {
+    var circleToolList=document.getElementById("circleToolList");
+    if((circleToolList.selectedIndex)<0)
+    {
+      alert("Please choose circle tool instance from the list above to clear! ");
+      return;
+    }
+    circleToolIns[circleToolList.selectedIndex].clear();
+  }
+
+  function refreshCircleToolList()
+  {
+    var circleToolList=document.getElementById("circleToolList");
+    
+    circleToolList.options.length=0;
+        
+    for(var i=0; i<circleToolIns.length; ++i)
+    {
+      var option=document.createElement("option");
+      option.text="CircleTool"+(i+1);
+      option.value=circleToolIns[i].id;      
+      circleToolList.options[circleToolList.options.length]=option;
+    }     
+  }
+
+  function getOrdinates()
+  { 
+    var mouseLoc = mapview.getMouseLocation();
+    var latLngStr = '<font color="#FF0000">The location to start dragging mouse:' + mouseLoc.getPointX() + ', ' + mouseLoc.getPointY() + '</font>' ;
+    document.getElementById("message").innerHTML = latLngStr;
+  }
+
+  function getCircle()
+  { 
+    var circle=circleTool.getCircle();
+    
+    if(circle!=null)
+      document.getElementById("message").innerHTML+='<br><font color="#00FF00">The circle: '+
+              circleTool.getCircle()+'</font>';
+    else
+      document.getElementById("message").innerHTML+='<br><br><font color="#00FF00">The circle: null</font>';
+  }
+  
+  function getRadius()
+  {
+    document.getElementById("message").innerHTML='<font color="#00FF00">Raduis: '+circleTool.getRadius("meter")+' meters</font>';
+  }
+  
+  function AddEventListener(flag)
+  {
+    circleTool.attachEventListener(MVEvent.DRAG, getRadius) ;
+    if(flag)
+    {
+      document.getElementById("message").innerHTML = "<font color=\"#FF0000\">Message Area</font>";
+      
+      circleTool.attachEventListener(MVEvent.START, getOrdinates);
+      circleTool.attachEventListener(MVEvent.FINISH, getCircle);
+    }
+    else
+    {
+      document.getElementById("message").innerHTML = "";
+      circleTool.detachEventListener(MVEvent.START, getOrdinates);
+      circleTool.detachEventListener(MVEvent.FINISH, getCircle);
+    }      
+  }
+</script>
+</head>
+
+<body onload=javascript:showMap();>
+<h3>Oracle Maps example - circle tool</h3>
+  <div id="demo" style="position:absolute; left:68%; top:50px; width:28%; height:100%">        
+         Please follow the below steps to draw a circle on the map:
+         <p>
+              Available Circle Tool Instances <br>
+              <select id="circleToolList" size="3">  
+              </select>
+         </p> 
+      
+         <OL>
+                <LI><a href="javascript:addCircleTool()">Create a New Circle Tool Instance</a></LI>
+                
+                <LI>Use Circle Tool</LI>
+                <UL>
+                    <LI><a href="javascript:initCircleTool()">Initialize the selected circle tool</a></LI>
+                    <LI><a href="javascript:clearCircleTool()">Call clear() method of the selected circle tool</a></LI>               
+                </UL>
+         </OL> 
+         
+         <INPUT TYPE="checkbox" id="listenerFlag"> Verbose mode (displays circle coordinates) <br></br>
+         <p id="message"></p>        
+  </div>
+      
+  <div id="map" style="position:absolute; left:10px; top:50px; width:65%; height:75%"></div>
+<div style="position:absolute;top:85%; left:10px;width:98%" class="noprint">
+<HR/>
+<H3>Instructions</H3>
+This example shows how to use the built-in circle tool to create a rubber-band circle on the map.
+As you can see it is quite similar to how you use a red-lining tool.
+<h3>Source code</h3>
+The JavaScript code for this demo is listed below.
+<blockquote>
+<pre>
+  var mapview;
+  var circleToolIns=new Array();
+  var circleTool=null;
+
+  function showMap()
+  { 
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var centerPoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    mapview = new MVMapView(document.getElementById("map"), baseURL);           
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map"));   
+    mapview.setCenter(centerPoint);   
+    mapview.setZoomLevel(mapZoom);
+    mapview.display();        
+  }
+  <font color="#ff0000">
+  //create a circle tool
+  function addCircleTool()
+  {
+    circleTool = new MVCircleTool("mvdemo.L.MAJOR STREET");
+    mapview.addCircleTool(circleTool);
+    circleToolIns.push(circleTool);
+    refreshCircleToolList();
+  }
+  
+  //initialize a circle tool
+  function initCircleTool()
+  {
+    var circleToolList=document.getElementById("circleToolList");
+    if((circleToolList.selectedIndex)&lt;0)
+    {
+      alert("Please choose circle tool instance from the list above to initialize! ");
+      return;
+    }
+    else
+      circleTool=circleToolIns[circleToolList.selectedIndex];
+    
+    circleToolIns[circleToolList.selectedIndex].init();
+    var listenerFlag=document.getElementById("listenerFlag");
+    AddEventListener(listenerFlag.checked);
+  }
+
+  //clear a circle tool
+  function clearCircleTool()
+  {
+    var circleToolList=document.getElementById("circleToolList");
+    if((circleToolList.selectedIndex)&lt;0)
+    {
+      alert("Please choose circle tool instance from the list above to clear! ");
+      return;
+    }
+    circleToolIns[circleToolList.selectedIndex].clear();
+  }
+  </font>
+  function refreshCircleToolList()
+  {
+    var circleToolList=document.getElementById("circleToolList");
+    
+    circleToolList.options.length=0;
+        
+    for(var i=0; i&lt;circleToolIns.length; ++i)
+    {
+      var option=document.createElement("option");
+      option.text="CircleTool"+(i+1);
+      option.value=circleToolIns[i].id;      
+      circleToolList.options[circleToolList.options.length]=option;
+    }     
+  }
+
+  function getOrdinates()
+  { 
+    var mouseLoc = mapview.getMouseLocation();
+    var latLngStr = '&lt;font color="#FF0000"&gt;The location to start dragging mouse:' 
+      + mouseLoc.getPointX() + ', ' + mouseLoc.getPointY() + '&lt;/font&gt;' ;
+    document.getElementById("message").innerHTML = latLngStr;
+  }
+
+  function getCircle()
+  { 
+    var circle=circleTool.getCircle();
+    
+    if(circle!=null)
+      document.getElementById("message").innerHTML+='&lt;br&gt;&lt;br&gt;&lt;font color="#00FF00"&gt;The circle: '+
+              circleTool.getCircle()+'&lt;/font&gt;';
+    else
+      document.getElementById("message").innerHTML+='&lt;br&gt;&lt;br&gt;&lt;font color="#00FF00"&gt;The circle: null&lt;/font&gt;';
+  }
+  
+  function getRadius()
+  {
+    document.getElementById("message").innerHTML='<font color="#00FF00">Raduis: '+circleTool.getRadius("meter")+' meters</font>';
+  }
+  <font color="#ff0000">
+  // add event listener for a circle tool
+  function AddEventListener(flag)
+  {
+    circleTool.attachEventListener(MVEvent.DRAG, getRadius) ;
+    if(flag)
+    {
+      document.getElementById("message").innerHTML = "&lt;font color=\"#FF0000\"&gt;Message Area&lt;/font&gt;";
+      
+      circleTool.attachEventListener(MVEvent.START, getOrdinates);
+      circleTool.attachEventListener(MVEvent.FINISH, getCircle);
+    }
+    else
+    {
+      document.getElementById("message").innerHTML = "";
+      circleTool.detachEventListener(MVEvent.START, getOrdinates);
+      circleTool.detachEventListener(MVEvent.FINISH, getCircle);
+    }      
+  }
+  </font>
+</pre>
+</blockquote> 
+</body>
+  
+</html>

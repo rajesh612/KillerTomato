@@ -1,0 +1,85 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<TITLE>Map Cache Server/Map Client</TITLE>
+<link rel="stylesheet" type="text/css" href="../t.css" />
+<script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+<script language=javascript>
+  var ovcontainer;
+  function showMap()
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    var mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);
+    
+    ovcontainer = new MVMapDecoration(new MVOverviewMap(4),null,null,200,150) ;
+    ovcontainer.setCollapsible(true, true);
+    ovcontainer.setTitleBar("<font face='Tahoma' size='2'>Overview Map</font>", "/mapviewer/fsmc/images/overviewicon.gif", "Overview map");
+    mapview.addMapDecoration(ovcontainer);
+    
+    mapview.addNavigationPanel("WEST"); 
+    mapview.display();
+  }
+  
+  function toggleOverviewMap()
+  {
+    ovcontainer.setVisible(!ovcontainer.isVisible()) ;
+  }
+</script>
+    
+</head>
+
+<body onload=javascript:showMap();>
+<h3>Oracle Maps example - collapsible overview map</h3>
+<a href="javascript:toggleOverviewMap();">Toggle overview map</a>
+<div id="map" style="width:98%; height:75%;"></div>
+<H3>Instructions</H3>
+This example shows how to add an overview map as a collapsible element inside the main map. 
+You can drag the small red rectangle within the overview map to recenter the 
+main map. 
+
+<br></BR>
+Note that when you collapse the overview map, its minimized icon will automatically 
+disspear into the bottom edge of the map after a few seconds. If you mouse over 
+the bottom area of the map where the minimized icon disappeared, it will reemerge 
+so that you can un-collapse the overview map.
+
+<h3>Source code</h3>
+The JavaScript code for this demo is listed below.
+<blockquote>
+<pre>
+  var ovcontainer;
+  function showMap()
+  {	
+    var baseURL  = "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  4;  
+    var mpoint = MVSdoGeometry.createPoint(mapCenterLon,mapCenterLat,8307);
+    var mapview = new MVMapView(document.getElementById("map"), baseURL);
+    mapview.addMapTileLayer(new MVMapTileLayer("mvdemo.demo_map")); 
+    mapview.setCenter(mpoint); 
+    mapview.setZoomLevel(mapZoom);
+    <font color="#ff0000">
+    ovcontainer = new MVMapDecoration(null,null,null,200,150) ;
+    ovcontainer.setCollapsible(true, true);
+    ovcontainer.setTitleBar("<font face='Tahoma' size='2'>Overview Map</font>", "/mapviewer/fsmc/images/overviewicon.png", "Overview map");
+    mapview.addMapDecoration(ovcontainer);
+    var over=new MVOverviewMap(ovcontainer.getContainerDiv(),3);
+    mapview.addOverviewMap(over)
+    </font>
+    mapview.display();  			
+  }
+</pre>
+</blockquote>
+</div>
+</body>
+</html>
+
+

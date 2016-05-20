@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=windows-1252"></meta>
+    <title>mapreq</title>
+  </head>
+  <body>
+  
+  <Strong> XML Map Request: </Strong> Use the following text area to submit 
+  an XML map request to MapViewer. Make sure the datasource and other parameters
+  are correct.
+  <p>
+  <FORM action="omserver" method=post>
+  <P><INPUT type=submit value=Submit> <P>
+  <TEXTAREA cols=80 name=xml_request rows=35>
+&lt;?xml version="1.0" standalone="yes"?&gt;
+&lt;map_request
+             title="Oracle LBS MAP"
+             basemap="demo_map"
+             datasource = "mvdemo"
+             width="640"
+             height="480"
+             bgcolor="#a6cae0"
+             antialiase="false"
+             format="PNG_STREAM"&gt;
+  &lt;center size="0.15"&gt;
+     &lt;geoFeature render_style="m.star"
+                       radius="1600,4800"
+                        label="A Place"
+                   text_style="t.Street Name" &gt;
+         &lt;geometricProperty typeName="center"&gt;
+             &lt;Point srsName="SDO:8307"&gt;
+                 &lt;coordinates&gt;-122.2615, 37.5266&lt;/coordinates&gt;
+             &lt;/Point&gt;
+         &lt;/geometricProperty&gt;
+     &lt;/geoFeature&gt;
+  &lt;/center&gt;
+
+  &lt;!--
+  &lt;legend bgstyle="fill:#ffffff;stroke:#ff0000" profile="MEDIUM" position="SOUTH_EAST"&gt;
+          &lt;column&gt;
+            &lt;entry text="Map Legend" is_title="true" /&gt;
+            &lt;entry style="M.STAR" text="center point" /&gt;
+            &lt;entry style="M.CITY HALL 3" text="cities" /&gt;
+            &lt;entry style="M.CITY HALL 4" text="big cities" /&gt;
+            &lt;entry is_separator="true" /&gt;
+            &lt;entry style="C.ROSY BROWN STROKE" text="state boundary" /&gt;
+            &lt;entry style="L.PH" text="interstate highway" /&gt;
+            &lt;entry text="County population:" /&gt;
+            &lt;entry style="V.COUNTY_POP_DENSITY" tab="1" /&gt;
+          &lt;/column&gt;
+  &lt;/legend&gt;
+  --&gt;
+
+  &lt;!--
+  &lt;themes&gt;
+    &lt;theme name="theme1" min_scale="5.0E7" max_scale="0.0"&gt;
+       &lt;jdbc_query
+         datasource="mvdemo"
+         jdbc_srid="0"
+         spatial_column="geometry"
+         render_style="MDSYS:C.RED"
+         &gt;SELECT geometry from us_counties&lt;/jdbc_query&gt;
+     &lt;/theme&gt;
+  &lt;/themes&gt;
+  --&gt;
+
+&lt;/map_request&gt;
+</TEXTAREA>  </FORM>
+
+  </body>
+</html>

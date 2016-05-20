@@ -1,0 +1,100 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+  
+
+  <title>Oracle LBS </title>
+  <link rel="stylesheet" type="text/css" href="../t.css" />  
+  <link rel="stylesheet" type="text/css" href="css/default.css">
+  <link rel="stylesheet" type="text/css" href="css/menu.css">
+  <script language="Javascript" src="/mapviewer/fsmc/jslib/oraclemaps.js"></script>
+  <script language="JavaScript">
+  var mainmap;
+  var basemap=new MVMapTileLayer("mvdemo.demo_map");
+  function showMap()
+  {
+    var baseURL  =  "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  7;       
+    
+    mainmap = new MVMapView(document.getElementById("map"), baseURL);
+    
+    var center=MVSdoGeometry.createPoint(mapCenterLon, mapCenterLat,8307);
+    mainmap.addMapTileLayer(basemap);   
+    mainmap.setCenter(center);   
+    mainmap.setZoomLevel(mapZoom);
+    
+    mainmap.addCopyRightNote("&#169;2006 powered by oracle&#8482;");                                       
+    mainmap.addNavigationPanel("WEST"); 
+    mainmap.addScaleBar();
+    var over = new MVOverviewMap(document.getElementById("map2"),3);
+    over.setRectangleStyle("1px solid red","red")
+    mainmap.addOverviewMap(over);
+    mainmap.display();
+    
+  }
+</script>
+</head>
+<body onLoad="showMap();">
+
+<h3>Oracle Maps example - Overview map</h3>
+
+<table width="800px">
+<tr>
+<td width="600px">
+  <div id="map" style="width:100%;height:450px;right:10px;top:10px;"></div>
+</td>
+<td width="200px">
+  <div style="top:10px;left:0px;width:100%;height:150px;border:1px solid" id="map2"> </div>
+</td>
+</tr>
+</table>
+
+<HR/>
+<h3>Instructions</h3>
+This demo shows how to place the overview map outside the main map area. 
+
+<h3>Source code</h3>
+<blockquote>
+<pre>
+  var mainmap;
+  var basemap=new MVMapTileLayer("mvdemo.demo_map");
+  function showMap()
+  {
+    var baseURL  =  "http://"+document.location.host+"/mapviewer";
+    var mapCenterLon = -122.45;
+    var mapCenterLat =  37.6706;
+    var mapZoom      =  7;       
+    
+    mainmap = new MVMapView(document.getElementById("map"), baseURL);
+    
+    var center=MVSdoGeometry.createPoint(mapCenterLon, mapCenterLat,8307);
+    mainmap.addMapTileLayer(basemap);   
+    mainmap.setCenter(center);   
+    mainmap.setZoomLevel(mapZoom);
+    
+    mainmap.addCopyRightNote("&#169;2006 powered by oracle&#8482;");                                       
+    mainmap.addNavigationPanel("WEST"); 
+    mainmap.addScaleBar();
+    <font color="#ff0000">
+    var over = new MVOverviewMap(document.getElementById("map2"),3);
+    over.setRectangleStyle("1px solid red","red")
+    mainmap.addOverviewMap(over);
+    </font>
+    mainmap.display();
+    
+  }
+</pre>
+</blockquote>
+
+The HTML code that adds the overview map is shown here.
+<blockquote>
+<pre>
+ &lt;div style="top:10px;left:0px;width:100%;height:150px;border:1px solid" id="map2"&gt; &lt;/div&gt;
+</pre>
+</blockquote>
+</body>
+</html>
+

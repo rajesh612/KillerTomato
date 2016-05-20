@@ -1,0 +1,132 @@
+<page xmlns="http://xmlns.oracle.com/uix/controller"
+      xmlns:ui="http://xmlns.oracle.com/uix/ui"
+      xmlns:data="http://xmlns.oracle.com/uix/ui"
+      xmlns:ctrl="http://xmlns.oracle.com/uix/controller"
+      xmlns:html="http://www.w3.org/TR/REC-html40">
+
+<!--Browser Title Bar-->
+ <ctrl:head xmlns="http://www.w3.org/TR/REC-html40" > 
+  <title>MapViewer Help Page</title>
+ </ctrl:head>
+
+<!--Begin Page Content-->
+ <content>
+ <body xmlns="http://xmlns.oracle.com/uix/ui" >
+   <contents>
+      <pageLayout xmlns="http://xmlns.oracle.com/uix/ui" >
+           <contents>
+              <pageHeaderLayout>
+                 <!-- Branding section -->
+			<corporateBranding>
+      			<image source="/mapviewer/myicons/as10g_logo.gif" 
+                 			 text="Oracle Application Server 10g"/>
+     			</corporateBranding>
+     			<productBranding>
+       			<image source="/mapviewer/myicons/mapviewer.gif" 
+                  		 text="MapViewer"/>
+     			</productBranding>
+     			<cobranding>
+       			<image source="/mapviewer/myicons/oracle_logo.gif"
+                  		 text="Oracle"/>
+     			</cobranding>
+			<pageHeader>
+				<globalHeader text="Map page help text"/>
+			</pageHeader>
+              </pageHeaderLayout>
+		  <styledList listStyle="decimal">
+                 <separator/>
+		     <contents>
+				<styledItem>
+					<contents>
+						<header text="What is MapViewer?">
+							<contents>
+
+The Oracle Application Server MapViewer (or simply, MapViewer) 
+is a programmable tool for rendering maps using spatial data managed by 
+Oracle Spatial or Oracle Locator (also referred to as Locator). MapViewer 
+provides tools that hide the complexity of spatial data queries and
+cartographic rendering, while providing customizable options for more advanced
+users. These tools can be deployed in a platform-independent manner and are
+designed to integrate with map-rendering applications.	
+							
+							</contents>
+						</header>
+					</contents>
+				</styledItem>
+				<styledItem>
+					<contents>
+						<header text="What can I do with the MapViewer Java Bean API?">
+							<contents>
+<html:p> </html:p>
+This API exposes all capabilities of MapViewer through a single JavaBean, 
+<styledText styleClass="OraPromptText" text="oracle.spatial.mapclient.MapViewer"/>
+. This bean is a lightweight client that handles all communications with the actual MapViewer service running on the middle tier on behalf of a user making map requests. 
+
+<html:p> All communications between the bean and the actual MapViewer service follow a 
+request/response model. Requests are always sent as XML documents to the service. 
+Depending on the type and nature of a request, the response received by the bean is 
+either an XML document or some binary data. However, using the MapViewer bean is 
+easier than manipulating XML documents for forming and sending MapViewer requests, 
+as well as for extracting information from the responses. 
+</html:p>
+
+<html:p> The bean delegates most of map data processing and rendering to the MapViewer 
+service. All the bean does is formulate user requests into valid MapViewer XML requests 
+and send them to a MapViewer service for processing. </html:p>
+
+<html:p> </html:p>
+The 
+<styledText styleClass="OraDarkHeaderSubSub" 
+            text=" Oracle Application Server 10g MapViewer User Guide " /> 
+provides further detail on its functionality and usage.
+
+<html:p> </html:p>						
+					         </contents>
+						</header>
+					</contents>
+				</styledItem>
+				<styledItem>
+					<contents>
+						<header text="What can I do with the MapViewer JSP Tag Library?">
+							<contents>
+<html:p> 
+Through an XML-like syntax, the JSP tags provide a set of important (but not complete) MapViewer capabilities, such as setting 
+up a map request, zooming, and panning, as well as identifying nonspatial attributes of user-clicked features. If necessary you can 
+include a call to the Java API (as done in this example JSP). 
+</html:p>
+<html:p> 
+All MapViewer JSP tags in the same session scope share access to a single MapViewer bean. 
+</html:p>
+
+<html:p> </html:p>
+See the 
+<styledText styleClass="OraDarkHeaderSubSub" 
+            text=" Oracle Application Server 10g MapViewer User Guide " /> 
+for further information.
+
+<html:p> </html:p>	
+							</contents>
+						</header>
+					</contents>
+				</styledItem>
+		     </contents>
+		  </styledList>
+           </contents>
+        </pageLayout>
+
+       <globalHeader/>
+
+        <ui:footer>
+           <!-- Footer Elements -->
+           <ui:copyright>
+                  Copyright 2003, Oracle Corp.
+           </ui:copyright>
+           <ui:privacy>
+                    <ui:link text="Privacy Statement"
+                          destination="http://www.oracle.com/html/privacy.html"/>
+           </ui:privacy>
+        </ui:footer>
+    </contents>
+  </body>
+  </content>
+</page>
